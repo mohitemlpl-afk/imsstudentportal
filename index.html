@@ -584,12 +584,12 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
           <!-- ── STUDENT TWO-WAY UPDATE HUB ── -->
 <div class="two-col" style="margin-top: 24px;">
   
-  <!-- Form 1: Update Real Scores -->
+<!-- Form 1: Update Real Scores -->
   <div class="card" style="margin-bottom:0">
     <div class="card-title">
       <span class="card-title-text">
         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        Report Official Scores
+        Report / Edit Official Scores
       </span>
     </div>
     <form onsubmit="handleScoreSubmission(event)" style="display: flex; flex-direction: column; gap: 12px;">
@@ -626,7 +626,11 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
           <input type="text" id="form-score-pct" placeholder="e.g. 99.45" required style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;">
         </div>
       </div>
-      <button type="submit" class="demo-btn" style="margin-top: 6px;">Submit Scores</button>
+      
+      <!-- Submission Hint -->
+      <p id="score-status-hint" style="font-size: 11px; color: var(--text3); margin: 0;">Note: Submitting values for an exam you already logged will overwrite your previous entry.</p>
+      
+      <button type="submit" id="score-submit-btn" class="demo-btn" style="margin-top: 6px;">Save & Sync Scores</button>
     </form>
   </div>
 
@@ -1358,11 +1362,12 @@ async function sendDataToGoogleSheet(payload) {
 }
 
 /**
- * Form Submission handler for Student Self-Reported Scores
+ * Form Submission handler for Student Self-Reported Scores (Supports editing/overwriting)
  */
 async function handleScoreSubmission(event) {
   event.preventDefault();
-  const submitBtn = event.target.querySelector('button');
+  const submitBtn = document.getElementById('score-submit-btn');
+  
   submitBtn.disabled = true;
   submitBtn.textContent = "Syncing with Sheet...";
 
@@ -1377,15 +1382,18 @@ async function handleScoreSubmission(event) {
     percentile: document.getElementById('form-score-pct').value
   };
 
+  // Run the background sync
   const success = await sendDataToGoogleSheet(payload);
+  
   if (success) {
-    alert("Your scores have been recorded successfully!");
-    event.target.reset();
+    alert("Database Synced! Your scores have been successfully logged/updated.");
+    document.getElementById('score-status-hint').innerHTML = "🟢 <b>Last updated:</b> Just now. You can change these inputs and submit again anytime to correct mistakes.";
+    document.getElementById('score-status-hint').style.color = "var(--green)";
   }
+  
   submitBtn.disabled = false;
-  submitBtn.textContent = "Submit Scores";
+  submitBtn.textContent = "Overwrite / Save Changes";
 }
-
 /**
  * Form Submission handler for College Calls and Converts
  */
