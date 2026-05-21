@@ -581,6 +581,87 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
             </span>
           </div>
           <div class="score-list" id="score-list"></div>
+          <!-- ── STUDENT TWO-WAY UPDATE HUB ── -->
+<div class="two-col" style="margin-top: 24px;">
+  
+  <!-- Form 1: Update Real Scores -->
+  <div class="card" style="margin-bottom:0">
+    <div class="card-title">
+      <span class="card-title-text">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Report Official Scores
+      </span>
+    </div>
+    <form onsubmit="handleScoreSubmission(event)" style="display: flex; flex-direction: column; gap: 12px;">
+      <div>
+        <label style="font-size: 12px; font-weight: 600; color: var(--text2);">Exam Name</label>
+        <select id="form-exam-name" required style="width:100%; padding:8px; border-radius:var(--radius-sm); border:1px solid var(--border); font-family:var(--font);">
+          <option value="Official CAT 2025">Official CAT 2025</option>
+          <option value="XAT 2026">XAT 2026</option>
+          <option value="NMAT 2025">NMAT 2025</option>
+          <option value="SNAP 2025">SNAP 2025</option>
+        </select>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+        <div>
+          <label style="font-size: 11px; color: var(--text2);">VARC</label>
+          <input type="number" id="form-score-varc" required style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;">
+        </div>
+        <div>
+          <label style="font-size: 11px; color: var(--text2);">DILR</label>
+          <input type="number" id="form-score-dilr" required style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;">
+        </div>
+        <div>
+          <label style="font-size: 11px; color: var(--text2);">Quant</label>
+          <input type="number" id="form-score-qa" required style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;">
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <div>
+          <label style="font-size: 11px; color: var(--text2);">Total Raw Score</label>
+          <input type="number" id="form-score-total" required style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;">
+        </div>
+        <div>
+          <label style="font-size: 11px; color: var(--text2);">Overall Percentile</label>
+          <input type="text" id="form-score-pct" placeholder="e.g. 99.45" required style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;">
+        </div>
+      </div>
+      <button type="submit" class="demo-btn" style="margin-top: 6px;">Submit Scores</button>
+    </form>
+  </div>
+
+  <!-- Form 2: Log College Calls & Conversions -->
+  <div class="card" style="margin-bottom:0">
+    <div class="card-title">
+      <span class="card-title-text">
+        <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+        College Application Tracker
+      </span>
+    </div>
+    <form onsubmit="handleCallSubmission(event)" style="display: flex; flex-direction: column; gap: 12px;">
+      <div>
+        <label style="font-size: 12px; font-weight: 600; color: var(--text2);">Institute Name</label>
+        <input type="text" id="form-coll-name" placeholder="e.g. IIM Ahmedabad, FMS Delhi" required style="width:100%; padding:8px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font);">
+      </div>
+      <div>
+        <label style="font-size: 12px; font-weight: 600; color: var(--text2);">Current Status (Stage)</label>
+        <select id="form-coll-stage" required style="width:100%; padding:8px; border-radius:var(--radius-sm); border:1px solid var(--border); font-family:var(--font);">
+          <option value="Applied">Form Filled / Applied</option>
+          <option value="Call Received">Shortlisted (Interview Call Received)</option>
+          <option value="Waitlisted">Waitlisted</option>
+          <option value="Converted">Converted (Admission Offered 🎉)</option>
+          <option value="Regret">Regret / Rejected</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size: 12px; font-weight: 600; color: var(--text2);">Interview Experience / Notes</label>
+        <textarea id="form-coll-notes" placeholder="Add details about composite scores, interview slots, or deadlines..." style="width:100%; padding:8px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font); height: 60px; resize: none;"></textarea>
+      </div>
+      <button type="submit" class="demo-btn" style="background: var(--purple);">Log Entry</button>
+    </form>
+  </div>
+
+</div>
         </div>
       </div>
 
@@ -1244,65 +1325,92 @@ function fmtDateShort(str) {
     return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
   } catch(e) { return str; }
 }
+// ===========================================================================
+// TWO-WAY DATA SYNCHRONIZATION (BACKEND BRIDGE)
+// ===========================================================================
+
+// 1. Replace this with the exact Web App URL you copied from your Apps Script Deployment
+const APPS_SCRIPT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzj5Wbnj2sLjux7b8f8AjS35aHnV5Ng0hrARn6JkGbh1VURapO3A297FX5LvdtQF5ut/exec";
+
+/**
+ * Sends Student Data (Scores or College Calls) back to Google Sheets
+ */
+async function sendDataToGoogleSheet(payload) {
+  if (!APPS_SCRIPT_WEBAPP_URL || APPS_SCRIPT_WEBAPP_URL.includes("YOUR_DEPLOYED")) {
+    alert("System Administration Error: Backend Web App URL is not configured yet.");
+    return false;
+  }
+
+  try {
+    // We use fetch with 'no-cors' mode because Google Apps Script redirects requests
+    await fetch(APPS_SCRIPT_WEBAPP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    return true;
+  } catch (error) {
+    console.error("Data synchronization failed:", error);
+    alert("Connection error. Could not save to Google Sheet.");
+    return false;
+  }
+}
+
+/**
+ * Form Submission handler for Student Self-Reported Scores
+ */
+async function handleScoreSubmission(event) {
+  event.preventDefault();
+  const submitBtn = event.target.querySelector('button');
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Syncing with Sheet...";
+
+  const payload = {
+    action: "updateScores",
+    studentId: currentStudent.id || currentStudent['StudentID'],
+    examName: document.getElementById('form-exam-name').value,
+    varc: document.getElementById('form-score-varc').value,
+    dilr: document.getElementById('form-score-dilr').value,
+    qa: document.getElementById('form-score-qa').value,
+    total: document.getElementById('form-score-total').value,
+    percentile: document.getElementById('form-score-pct').value
+  };
+
+  const success = await sendDataToGoogleSheet(payload);
+  if (success) {
+    alert("Your scores have been recorded successfully!");
+    event.target.reset();
+  }
+  submitBtn.disabled = false;
+  submitBtn.textContent = "Submit Scores";
+}
+
+/**
+ * Form Submission handler for College Calls and Converts
+ */
+async function handleCallSubmission(event) {
+  event.preventDefault();
+  const submitBtn = event.target.querySelector('button');
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Logging Call...";
+
+  const payload = {
+    action: "logCall",
+    studentId: currentStudent.id || currentStudent['StudentID'],
+    collegeName: document.getElementById('form-coll-name').value,
+    stage: document.getElementById('form-coll-stage').value,
+    notes: document.getElementById('form-coll-notes').value
+  };
+
+  const success = await sendDataToGoogleSheet(payload);
+  if (success) {
+    alert("College status tracked successfully!");
+    event.target.reset();
+  }
+  submitBtn.disabled = false;
+  submitBtn.textContent = "Log Entry";
+}
 </script>
-
-<!-- ══════════════════════════════════════════════════════
-     SETUP GUIDE (shown below the portal on your WP page)
-══════════════════════════════════════════════════════ -->
-<div style="max-width:760px;margin:48px auto;padding:0 24px 48px;font-family:'DM Sans',sans-serif">
-  <div style="border-top:2px solid #2B4EFF;padding-top:32px">
-    <h2 style="font-size:20px;font-weight:600;color:#1A1814;margin-bottom:8px">Setup Guide — Connect live data</h2>
-    <p style="font-size:14px;color:#6B6860;margin-bottom:24px">Follow these steps once to connect your Google Sheet to this portal. Takes about 15 minutes.</p>
-
-    <div style="display:flex;flex-direction:column;gap:16px">
-
-      <div style="background:#F7F6F2;border-radius:12px;padding:20px 22px">
-        <div style="font-size:13px;font-weight:700;color:#2B4EFF;margin-bottom:6px">Step 1 — Create Google Cloud Project</div>
-        <div style="font-size:13px;color:#4A4845;line-height:1.7">Go to <a href="https://console.cloud.google.com" target="_blank" style="color:#2B4EFF">console.cloud.google.com</a> → New Project → name it "MBA Student Portal" → Create.</div>
-      </div>
-
-      <div style="background:#F7F6F2;border-radius:12px;padding:20px 22px">
-        <div style="font-size:13px;font-weight:700;color:#2B4EFF;margin-bottom:6px">Step 2 — Enable APIs</div>
-        <div style="font-size:13px;color:#4A4845;line-height:1.7">In your project → APIs &amp; Services → Library → Search and enable:<br>
-        1. <b>Google Sheets API</b><br>
-        2. <b>Google Identity Services (OAuth 2.0)</b></div>
-      </div>
-
-      <div style="background:#F7F6F2;border-radius:12px;padding:20px 22px">
-        <div style="font-size:13px;font-weight:700;color:#2B4EFF;margin-bottom:6px">Step 3 — Get your Sheets API Key</div>
-        <div style="font-size:13px;color:#4A4845;line-height:1.7">APIs &amp; Services → Credentials → Create Credentials → API Key → Copy it → paste it as <code style="background:#E2DFD6;padding:1px 5px;border-radius:4px">SHEETS_API_KEY</code> in the CONFIG block in this file.</div>
-      </div>
-
-      <div style="background:#F7F6F2;border-radius:12px;padding:20px 22px">
-        <div style="font-size:13px;font-weight:700;color:#2B4EFF;margin-bottom:6px">Step 4 — Get your OAuth Client ID</div>
-        <div style="font-size:13px;color:#4A4845;line-height:1.7">Credentials → Create Credentials → OAuth Client ID → Web Application → Add your WordPress URL to Authorised JavaScript Origins (e.g. https://yoursite.com) → Create → Copy Client ID → paste as <code style="background:#E2DFD6;padding:1px 5px;border-radius:4px">GOOGLE_CLIENT_ID</code>.</div>
-      </div>
-
-      <div style="background:#F7F6F2;border-radius:12px;padding:20px 22px">
-        <div style="font-size:13px;font-weight:700;color:#2B4EFF;margin-bottom:6px">Step 5 — Get your Spreadsheet ID</div>
-        <div style="font-size:13px;color:#4A4845;line-height:1.7">Open your Google Sheet → look at the URL:<br>
-        <code style="background:#E2DFD6;padding:1px 5px;border-radius:4px">https://docs.google.com/spreadsheets/d/<b>THIS_IS_YOUR_ID</b>/edit</code><br>
-        Copy that long ID and paste it as <code style="background:#E2DFD6;padding:1px 5px;border-radius:4px">SPREADSHEET_ID</code>.</div>
-      </div>
-
-      <div style="background:#F7F6F2;border-radius:12px;padding:20px 22px">
-        <div style="font-size:13px;font-weight:700;color:#2B4EFF;margin-bottom:6px">Step 6 — Share your Google Sheet</div>
-        <div style="font-size:13px;color:#4A4845;line-height:1.7">Open your Sheet → Share → Change to "Anyone with the link can view" (read-only is fine — the API key handles access control).</div>
-      </div>
-
-      <div style="background:#F7F6F2;border-radius:12px;padding:20px 22px">
-        <div style="font-size:13px;font-weight:700;color:#2B4EFF;margin-bottom:6px">Step 7 — Set CONFIGURED = true</div>
-        <div style="font-size:13px;color:#4A4845;line-height:1.7">In this HTML file, find <code style="background:#E2DFD6;padding:1px 5px;border-radius:4px">CONFIGURED: false</code> and change it to <code style="background:#E2DFD6;padding:1px 5px;border-radius:4px">CONFIGURED: true</code>. Save and upload.</div>
-      </div>
-
-      <div style="background:#F7F6F2;border-radius:12px;padding:20px 22px">
-        <div style="font-size:13px;font-weight:700;color:#2B4EFF;margin-bottom:6px">Step 8 — Embed in WordPress</div>
-        <div style="font-size:13px;color:#4A4845;line-height:1.7">In WordPress → Pages → New Page → Switch editor to "Custom HTML" block → Paste the entire contents of this file → Publish. Done.</div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
