@@ -385,6 +385,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .page.active{display:block;animation:fadeUp .2s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 </style>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
@@ -918,20 +919,21 @@ window.onload = async () => {
 ═══════════════════════════════════════════════════════════ */
 function loginWithGoogle() {
   if (!CONFIG.CONFIGURED || CONFIG.GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID_HERE') {
-    alert('Google login requires setup.\n\nPlease configure your Google Client ID in the CONFIG section.\n\nFor now, use "Preview with demo data" to test the portal.');
+    alert('Google login requires setup.\n\nPlease configure your Google Client ID in the CONFIG section.');
     return;
   }
-  /* Load Google Identity Services SDK and prompt */
-  const script = document.createElement('script');
-  script.src = 'https://accounts.google.com/gsi/client';
-  script.onload = () => {
+  
+  try {
+    // Initializes the global Google OAuth instance directly from the head script
     google.accounts.id.initialize({
       client_id: CONFIG.GOOGLE_CLIENT_ID,
       callback: handleGoogleCredential
     });
     google.accounts.id.prompt();
-  };
-  document.head.appendChild(script);
+  } catch (err) {
+    console.error("Google SDK Initialization Fault:", err);
+    alert("Google Sign-In is still initializing. Please wait 2 seconds and try again.");
+  }
 }
 
 async function handleGoogleCredential(response) {
