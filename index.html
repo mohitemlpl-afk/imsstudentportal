@@ -992,6 +992,7 @@ function renderAll() {
   renderScores();
   renderSchedule();
   renderProgress();
+  fetchAllOfficialExamSubTabs(); // <--- Paste this line right here!
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1403,6 +1404,194 @@ async function handleCallSubmission(event) {
   }
   submitBtn.disabled = false;
   submitBtn.textContent = "Log Entry";
+}
+  // Global memory state mapping configurations
+let studentLoadedOfficialScores = {};
+
+/**
+ * Requirement #2: Custom Form Formats per Exam
+ */
+function switchExamFormFields(exam) {
+  const container = document.getElementById('dynamic-fields-container');
+  const fileInput = document.getElementById('form-proof-file');
+  const submitBtn = document.getElementById('master-score-submit-btn');
+  const lockNotice = document.getElementById('exam-lock-notice');
+  const proofDisplay = document.getElementById('existing-proof-link-display');
+  
+  // Clear file input states safely
+  fileInput.value = "";
+  
+  const savedData = studentLoadedOfficialScores[exam];
+  const isLocked = savedData && savedData.lockStatus === "LOCKED";
+  
+  // Render Administrative Lock States (Requirement #5)
+  if (isLocked) {
+    lockNotice.style.display = "block";
+    lockNotice.style.background = "var(--red-light)";
+    lockNotice.style.color = "var(--red)";
+    lockNotice.innerHTML = "🔒 <b>Verification Frozen:</b> This record has been validated and locked by IMS Admin. Changes are disabled.";
+    submitBtn.disabled = true;
+    submitBtn.style.background = "var(--text3)";
+    submitBtn.textContent = "Score Profile Locked";
+  } else {
+    lockNotice.style.display = "block";
+    lockNotice.style.background = "var(--green-light)";
+    lockNotice.style.color = "var(--green)";
+    lockNotice.innerHTML = savedData ? "🟢 <b>Active Logs:</b> Saved records fetched from database. Submitting will update your entries." : "⏳ No entries logged yet for this exam sequence.";
+    submitBtn.disabled = false;
+    submitBtn.style.background = "var(--accent)";
+    submitBtn.textContent = savedData ? "Update Matrix Records" : "Save Exam Profile Records";
+  }
+
+  // Handle proof links
+  if (savedData && savedData.proofUrl) {
+    proofDisplay.innerHTML = `📄 <a href="${savedData.proofUrl}" target="_blank" style="color:var(--accent); font-weight:500;">View Uploaded Document Proof</a>`;
+  } else {
+    proofDisplay.innerHTML = "";
+  }
+
+  // Inject Custom Sub-Fields Structuring Layout Models
+  let html = "";
+  if (exam === "CAT") {
+    html = `
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+        <div><label style="font-size:11px;color:var(--text2);">VARC Raw</label><input type="number" id="inp-varc" value="${savedData?.varc||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
+        <div><label style="font-size:11px;color:var(--text2);">DILR Raw</label><input type="number" id="inp-dilr" value="${savedData?.dilr||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
+        <div><label style="font-size:11px;color:var(--text2);">Quant Raw</label><input type="number" id="inp-qa" value="${savedData?.qa||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div><label style="font-size:11px;color:var(--text2);">Total Aggregate Score</label><input type="number" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
+        <div><label style="font-size:11px;color:var(--text2);">Overall Percentile</label><input type="text" id="inp-pct" value="${savedData?.percentile||''}" placeholder="e.g. 99.81" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
+      </div>`;
+  } else if (exam === "NMAT") {
+    html = `
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+        <div><label style="font-size:11px;color:var(--text2);">Language Skills</label><input type="number" id="inp-lang" value="${savedData?.lang||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
+        <div><label style="font-size:11px;color:var(--text2);">Quant Skills</label><input type="number" id="inp-quant" value="${savedData?.quant||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
+        <div><label style="font-size:11px;color:var(--text2);">Logical Reasoning</label><input type="number" id="inp-logic" value="${savedData?.logic||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
+      </div>
+      <div><label style="font-size:11px;color:var(--text2);">Total Scaled Score</label><input type="number" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;width:50%;"></div>`;
+  } else if (exam === "XAT") {
+    html = `
+      <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+        <div><label style="font-size:11px;color:var(--text2);">VALR</label><input type="number" step="0.01" id="inp-valr" value="${savedData?.valr||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
+        <div><label style="font-size:11px;color:var(--text2);">DM</label><input type="number" step="0.01" id="inp-dm" value="${savedData?.dm||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
+        <div><label style="font-size:11px;color:var(--text2);">QA DI</label><input type="number" step="0.01" id="inp-qadi" value="${savedData?.qadi||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
+        <div><label style="font-size:11px;color:var(--text2);">GK</label><input type="number" step="0.01" id="inp-gk" value="${savedData?.gk||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top:10px;">
+        <div><label style="font-size:11px;color:var(--text2);">Total Score</label><input type="number" step="0.01" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
+        <div><label style="font-size:11px;color:var(--text2);">Overall Percentile</label><input type="text" id="inp-pct" value="${savedData?.percentile||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
+      </div>`;
+  } else if (exam === "SNAP") {
+    html = `
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+        <div><label style="font-size:11px;color:var(--text2);">General English</label><input type="number" step="0.01" id="inp-english" value="${savedData?.english||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
+        <div><label style="font-size:11px;color:var(--text2);">Analytical Reasoning</label><input type="number" step="0.01" id="inp-reasoning" value="${savedData?.reasoning||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
+        <div><label style="font-size:11px;color:var(--text2);">Quantitative</label><input type="number" step="0.01" id="inp-quant" value="${savedData?.quant||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
+      </div>
+      <div><label style="font-size:11px;color:var(--text2);">Total Score</label><input type="number" step="0.01" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;width:50%;"></div>`;
+  }
+  container.innerHTML = html;
+}
+
+/**
+ * Requirement #3: Converts File uploads to Base64 data blocks 
+ */
+async function processOfficialScoreFormSubmit(event) {
+  event.preventDefault();
+  const exam = document.getElementById('master-exam-selector').value;
+  const fileInput = document.getElementById('form-proof-file');
+  const submitBtn = document.getElementById('master-score-submit-btn');
+  
+  let fileData = null;
+  let fileName = null;
+  
+  // Require file upload for new entries
+  if (!studentLoadedOfficialScores[exam] && fileInput.files.length === 0) {
+    alert("Authentication Requirement: Please upload a verification image/PDF proof of your scorecard.");
+    return;
+  }
+  
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Syncing Secure Framework...";
+  
+  if (fileInput.files.length > 0) {
+    const file = fileInput.files[0];
+    fileName = file.name;
+    fileData = await new Promise((res) => {
+      const reader = new FileReader();
+      reader.onload = () => res(reader.result);
+      reader.readAsDataURL(file);
+    });
+  }
+  
+  // Package sub-metrics dynamically based on exam selection
+  let scoresPayload = {};
+  if (exam === "CAT") {
+    scoresPayload = { varc: document.getElementById('inp-varc').value, dilr: document.getElementById('inp-dilr').value, qa: document.getElementById('inp-qa').value, total: document.getElementById('inp-total').value, percentile: document.getElementById('inp-pct').value };
+  } else if (exam === "NMAT") {
+    scoresPayload = { lang: document.getElementById('inp-lang').value, quant: document.getElementById('inp-quant').value, logic: document.getElementById('inp-logic').value, total: document.getElementById('inp-total').value };
+  } else if (exam === "XAT") {
+    scoresPayload = { valr: document.getElementById('inp-valr').value, dm: document.getElementById('inp-dm').value, qadi: document.getElementById('inp-qadi').value, gk: document.getElementById('inp-gk').value, total: document.getElementById('inp-total').value, percentile: document.getElementById('inp-pct').value };
+  } else if (exam === "SNAP") {
+    scoresPayload = { english: document.getElementById('inp-english').value, reasoning: document.getElementById('inp-reasoning').value, quant: document.getElementById('inp-quant').value, total: document.getElementById('inp-total').value };
+  }
+  
+  const masterPayload = {
+    action: "updateOfficialScore",
+    examName: exam,
+    studentId: currentStudent.id || currentStudent['StudentID'],
+    scores: scoresPayload,
+    fileData: fileData,
+    fileName: fileName,
+    existingProofUrl: studentLoadedOfficialScores[exam]?.proofUrl || ""
+  };
+  
+  // Send data to Apps Script via the sendDataToGoogleSheet function you already have
+  const success = await sendDataToGoogleSheet(masterPayload);
+  if (success) {
+    alert(`${exam} Score matrix successfully synced!`);
+    // Hot-update local memory state cache
+    studentLoadedOfficialScores[exam] = {
+      ...scoresPayload,
+      proofUrl: fileData ? "Calculating..." : studentLoadedOfficialScores[exam]?.proofUrl,
+      lockStatus: "OPEN"
+    };
+    // Re-fetch everything cleanly to ensure perfect rendering update
+    await fetchAllOfficialExamSubTabs();
+  }
+  submitBtn.disabled = false;
+  switchExamFormFields(exam);
+}
+
+/**
+ * Requirement #5: Pulls down logged scores and renders lock controls on load
+ */
+async function fetchAllOfficialExamSubTabs() {
+  const sid = currentStudent['StudentID'] || currentStudent.id;
+  try {
+    const [cat, nmat, xat, snap] = await Promise.all([
+      fetchSheetData('Scores CAT'), fetchSheetData('Scores NMAT'), fetchSheetData('Scores XAT'), fetchSheetData('Scores SNAP')
+    ]);
+    
+    const myCat = cat.find(r => r['StudentID'] == sid);
+    if (myCat) studentLoadedOfficialScores["CAT"] = { varc: myCat['VARC Raw'], dilr: myCat['DILR Raw'], qa: myCat['QA Raw'], total: myCat['Total Raw'], percentile: myCat['Percentile'], proofUrl: myCat['Proof Link'], lockStatus: myCat['Lock Status'] };
+    
+    const myNmat = nmat.find(r => r['StudentID'] == sid);
+    if (myNmat) studentLoadedOfficialScores["NMAT"] = { lang: myNmat['Language Skills'], quant: myNmat['Quantitative Skills'], logic: myNmat['Logical Reasoning'], total: myNmat['Total Scaled'], proofUrl: myNmat['Proof Link'], lockStatus: myNmat['Lock Status'] };
+    
+    const myXat = xat.find(r => r['StudentID'] == sid);
+    if (myXat) studentLoadedOfficialScores["XAT"] = { valr: myXat['VALR'], dm: myXat['DM'], qadi: myXat['QA DI'], gk: myXat['GK'], total: myXat['Total Score'], percentile: myXat['Percentile'], proofUrl: myXat['Proof Link'], lockStatus: myXat['Lock Status'] };
+    
+    const mySnap = snap.find(r => r['StudentID'] == sid);
+    if (mySnap) studentLoadedOfficialScores["SNAP"] = { english: mySnap['General English'], reasoning: mySnap['Analytical Reasoning'], quant: mySnap['Quantitative'], total: mySnap['Total Score'], proofUrl: mySnap['Proof Link'], lockStatus: mySnap['Lock Status'] };
+    
+    // Default system initialization view display
+    switchExamFormFields(document.getElementById('master-exam-selector').value);
+  } catch(e) {
+    console.error("Historical score mapping fault:", e);
+  }
 }
 </script>
 </body>
