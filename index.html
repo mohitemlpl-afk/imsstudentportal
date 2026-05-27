@@ -1203,9 +1203,39 @@ function renderScoreList() {
 ═══════════════════════════════════════════════════════════ */
 function renderSchedule() {
   const list = document.getElementById('schedule-list');
-  const today = new Date().toISOString().split('T')[0];
-  let data = [...allSchedule].filter(r => r['Date'] >= today)
-    .sort((a,b)=>a['Date'].localeCompare(b['Date'])||a['Time'].localeCompare(b['Time']));
+  
+  // Create a clean baseline timestamp for today at midnight
+  const todayMidnight = new Date();
+  todayMidnight.setHours(0, 0, 0, 0);
+
+  // Helper function to safely parse variations of date formats (DD/MM/YYYY or YYYY-MM-DD)
+  function parseSheetDate(dateStr) {
+    if (!dateStr) return new Date(0); // Return baseline epoch if empty
+    
+    // If format is DD/MM/YYYY (uses slashes)
+    if (dateStr.includes('/')) {
+      const parts = dateStr.split('/');
+      // Handle DD/MM/YYYY structure securely
+      if (parts[0].length <= 2) {
+        return new Date(parts[2], parts[1] - 1, parts[0]);
+      }
+    }
+    // Fallback default parser for YYYY-MM-DD standard formats
+    return new Date(dateStr);
+  }
+
+  // Filter out expired past classes and sort in true chronological sequence
+  let data = [...allSchedule].filter(r => {
+    const classDate = parseSheetDate(r['Date']);
+    return classDate >= todayMidnight;
+  }).sort((a, b) => {
+    const dateA = parseSheetDate(a['Date']);
+    const dateB = parseSheetDate(b['Date']);
+    
+    // Sort primarily by Date, and secondary by Time if dates match
+    if (dateA - dateB !== 0) return dateA - dateB;
+    return a['Time'].localeCompare(b['Time']);
+  });
   if (scheduleFilter !== 'all') data = data.filter(r=>r['Subject']===scheduleFilter);
 
   if (!data.length) { list.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><p>No upcoming classes</p></div>'; return; }
