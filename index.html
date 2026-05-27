@@ -585,55 +585,40 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 <div class="two-col" style="margin-top: 24px;">
   
 <!-- Form 1: Update Real Scores -->
-  <div class="card" style="margin-bottom:0">
-    <div class="card-title">
-      <span class="card-title-text">
-        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        Report / Edit Official Scores
-      </span>
+  <div class="card" style="margin-top: 24px;">
+  <div class="card-title">
+    <span class="card-title-text">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Official Entrance Exam Records Portal
+    </span>
+  </div>
+  
+  <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 24px;">
+    <div style="border-right: 1px solid var(--border); padding-right: 20px;">
+      <label style="font-size: 12px; font-weight: 600; color: var(--text2); display:block; margin-bottom:6px;">Select Entrance Examination</label>
+      <select id="master-exam-selector" onchange="switchExamFormFields(this.value)" style="width:100%; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border); font-family:var(--font); font-weight:500;">
+        <option value="CAT">Common Admission Test (CAT)</option>
+        <option value="NMAT">NMAT by GMAC</option>
+        <option value="XAT">Xavier Aptitude Test (XAT)</option>
+        <option value="SNAP">Symbiosis National Aptitude Test (SNAP)</option>
+      </select>
+      
+      <div id="exam-lock-notice" style="margin-top: 16px; padding: 10px; border-radius: 6px; font-size: 12px; display: none;"></div>
     </div>
-    <form onsubmit="handleScoreSubmission(event)" style="display: flex; flex-direction: column; gap: 12px;">
-      <div>
-        <label style="font-size: 12px; font-weight: 600; color: var(--text2);">Exam Name</label>
-        <select id="form-exam-name" required style="width:100%; padding:8px; border-radius:var(--radius-sm); border:1px solid var(--border); font-family:var(--font);">
-          <option value="Official CAT 2025">Official CAT 2025</option>
-          <option value="XAT 2026">XAT 2026</option>
-          <option value="NMAT 2025">NMAT 2025</option>
-          <option value="SNAP 2025">SNAP 2025</option>
-        </select>
-      </div>
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
-        <div>
-          <label style="font-size: 11px; color: var(--text2);">VARC</label>
-          <input type="number" id="form-score-varc" required style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;">
-        </div>
-        <div>
-          <label style="font-size: 11px; color: var(--text2);">DILR</label>
-          <input type="number" id="form-score-dilr" required style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;">
-        </div>
-        <div>
-          <label style="font-size: 11px; color: var(--text2);">Quant</label>
-          <input type="number" id="form-score-qa" required style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;">
-        </div>
-      </div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <div>
-          <label style="font-size: 11px; color: var(--text2);">Total Raw Score</label>
-          <input type="number" id="form-score-total" required style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;">
-        </div>
-        <div>
-          <label style="font-size: 11px; color: var(--text2);">Overall Percentile</label>
-          <input type="text" id="form-score-pct" placeholder="e.g. 99.45" required style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;">
-        </div>
+    
+    <form id="master-score-form" onsubmit="processOfficialScoreFormSubmit(event)" style="display: flex; flex-direction: column; gap: 14px;">
+      <div id="dynamic-fields-container"></div>
+      
+      <div style="background: var(--bg); padding: 12px; border-radius: var(--radius-sm); border: 1px dashed var(--border);">
+        <label style="font-size: 12px; font-weight:600; color:var(--text); display:block; margin-bottom:4px;">Upload Scorecard Verification Proof (PDF / Image)</label>
+        <input type="file" id="form-proof-file" accept="image/*,application/pdf" style="font-size:12px; color:var(--text2);">
+        <div id="existing-proof-link-display" style="margin-top:6px; font-size:12px;"></div>
       </div>
       
-      <!-- Submission Hint -->
-      <p id="score-status-hint" style="font-size: 11px; color: var(--text3); margin: 0;">Note: Submitting values for an exam you already logged will overwrite your previous entry.</p>
-      
-      <button type="submit" id="score-submit-btn" class="demo-btn" style="margin-top: 6px;">Save & Sync Scores</button>
+      <button type="submit" id="master-score-submit-btn" class="demo-btn">Save Exam Profile Records</button>
     </form>
   </div>
-
+</div>
   <!-- Form 2: Log College Calls & Conversions -->
   <div class="card" style="margin-bottom:0">
     <div class="card-title">
