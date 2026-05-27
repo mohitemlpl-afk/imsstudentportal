@@ -1518,6 +1518,16 @@ async function processOfficialScoreFormSubmit(event) {
   
   if (fileInput.files.length > 0) {
     const file = fileInput.files[0];
+    
+    // 1 MB Size Limit Configuration (1 * 1024 * 1024 bytes)
+    const MAX_FILE_SIZE_BYTES = 1048576; 
+    
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      alert("❌ File Too Large!\n\nTo ensure system stability, scorecard proofs are limited to a maximum of 1 MB.\n\nPlease upload a compressed PDF or a lower-resolution screenshot instead.");
+      fileInput.value = ""; // Clear out the oversized file
+      return; // Stop the submission completely
+    }
+    
     fileName = file.name;
     fileData = await new Promise((res) => {
       const reader = new FileReader();
