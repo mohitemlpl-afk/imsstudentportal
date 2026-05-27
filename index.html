@@ -209,14 +209,45 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .att-stat-val{font-size:24px;font-weight:600;color:var(--text);line-height:1}
 .att-stat-lbl{font-size:12px;color:var(--text3);margin-top:4px}
 
-.cal-header{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px}
-.cal-day-label{font-size:11px;font-weight:600;color:var(--text3);text-align:center;padding:4px 0;text-transform:uppercase}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.cal-cell{
-  aspect-ratio:1;border-radius:6px;display:flex;align-items:center;justify-content:center;
-  font-size:12px;font-weight:500;cursor:default;transition:transform .1s;
+.cal-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-bottom: 4px;
+  max-width: 340px; /* Limits the maximum width of the calendar */
+  margin-left: auto;
+  margin-right: auto;
 }
-.cal-cell:hover{transform:scale(1.1)}
+.cal-day-label {
+  font-size: 10px; /* Slightly smaller day text */
+  font-weight: 600;
+  color: var(--text3);
+  text-align: center;
+  padding: 2px 0;
+  text-transform: uppercase;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  max-width: 340px; /* Keeps the grid perfectly aligned and compact */
+  margin-left: auto;
+  margin-right: auto;
+}
+.cal-cell {
+  width: 32px;      /* Fixed compact width */
+  height: 32px;     /* Fixed compact height */
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;  /* Clean, crisp small number sizing */
+  font-weight: 500;
+  cursor: default;
+  transition: transform .1s;
+  margin: 0 auto;   /* Centers cells inside grid tracks */
+}
+.cal-cell:hover { transform: scale(1.15); }
 .cal-present{background:var(--green-light);color:var(--green)}
 .cal-absent{background:var(--red-light);color:var(--red)}
 .cal-holiday{background:var(--surface2);color:var(--text3)}
