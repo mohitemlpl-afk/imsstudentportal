@@ -331,7 +331,16 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .empty p{font-size:14px}
 
 /* ─── MONTH NAV ────────────────────────────────────────── */
-.month-nav{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Spreads buttons neatly across the narrow width */
+  gap: 12px;
+  margin-bottom: 12px;
+  max-width: 340px; /* Matches the grid perfectly */
+  margin-left: auto;
+  margin-right: auto;
+}
 .month-nav button{
   width:30px;height:30px;border-radius:50%;border:1px solid var(--border);
   background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
