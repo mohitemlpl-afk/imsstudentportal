@@ -891,15 +891,25 @@ let scheduleFilter = 'all';
 /* ═══════════════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════════════ */
-window.onload = () => {
+window.onload = async () => {
   if (!CONFIG.CONFIGURED) {
     document.getElementById('setup-notice').style.display = 'block';
   }
-  // Check if already signed in (session)
+  
+  // Check if a valid student token already exists in the local session profile
   const saved = sessionStorage.getItem('sp_student');
   if (saved) {
     currentStudent = JSON.parse(saved);
-    loadApp();
+    
+    // Core Fix: Re-download fresh spreadsheet records right before drawing components
+    try {
+      await fetchAllData(); 
+      loadApp();
+    } catch (err) {
+      console.error("Automated background lifecycle refresh fault:", err);
+      // Fallback fallback load if API network drops momentarily
+      loadApp();
+    }
   }
 };
 
