@@ -503,6 +503,19 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
             <div id="profile-qr-subtext" style="font-size: 11px; font-weight: 600; color: var(--text2); margin-top: 4px; font-family: monospace;">ID: ----</div>
           </div>
         </div>
+        
+        <!-- ── DYNAMIC SYSTEM ANNOUNCEMENT BOARD CENTER ── -->
+        <div id="announcement-board-container" style="display: none; margin-bottom: 24px;">
+          <div class="card" style="border-left: 4px solid var(--accent); padding: 20px;">
+            <div class="card-title" style="margin-bottom: 12px;">
+              <span class="card-title-text">
+                <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                Important Institutional Updates & Deadlines
+              </span>
+            </div>
+            <div id="announcements-feed" style="display: flex; flex-direction: column; gap: 12px;"></div>
+          </div>
+        </div>
 
         <div class="stat-grid">
           <div class="stat-card">
@@ -544,18 +557,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
           </div>
         </div>
       </div>
-      <!-- ── DYNAMIC SYSTEM ANNOUNCEMENT BOARD CENTER ── -->
-        <div id="announcement-board-container" style="display: none; margin-bottom: 24px;">
-          <div class="card" style="border-left: 4px solid var(--accent); padding: 20px;">
-            <div class="card-title" style="margin-bottom: 12px;">
-              <span class="card-title-text">
-                <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                Important Institutional Updates & Deadlines
-              </span>
-            </div>
-            <div id="announcements-feed" style="display: flex; flex-direction: column; gap: 12px;"></div>
-          </div>
-        </div>
+      
 
       <!-- ── ATTENDANCE PAGE ── -->
       <div id="page-attendance" class="page">
