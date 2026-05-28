@@ -475,16 +475,25 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
           <p class="page-sub" id="profile-greeting">Welcome back</p>
         </div>
 
-        <div class="profile-hero" id="profile-hero">
-          <div class="profile-avatar" id="profile-avatar">AR</div>
-          <div>
-            <div class="profile-name" id="profile-name">Arjun Rawal</div>
-            <div class="profile-meta" id="profile-meta">CAT 2025 · Batch A · Roll No. MBA-0001</div>
-            <div class="profile-badges">
-              <span class="badge badge-green">Active</span>
-              <span class="badge badge-blue" id="profile-exam-badge">CAT 2025</span>
-              <span class="badge badge-purple" id="profile-rank-badge">Rank #14</span>
+        <div class="profile-hero" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+          <div style="display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
+            <div class="profile-avatar" id="profile-avatar">ST</div>
+            <div>
+              <div class="profile-name" id="profile-name">Student Workspace</div>
+              <div class="profile-meta" id="profile-meta">Metadata profile row</div>
+              <div class="profile-badges">
+                <span class="badge badge-green">Active Student</span>
+                <span class="badge badge-blue" id="profile-exam-badge">IMS Matrix</span>
+              </div>
             </div>
+          </div>
+          
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; text-align: center; box-shadow: var(--shadow); width: 140px; margin-left: auto; margin-right: auto; min-width: 140px;">
+            <div style="font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Attendance QR</div>
+            <div style="background: #fff; padding: 6px; border-radius: 6px; display: inline-block;">
+              <img id="profile-qr-code" src="" alt="Digital ID Token" style="width: 100px; height: 100px; display: block; background: var(--surface2);">
+            </div>
+            <div id="profile-qr-subtext" style="font-size: 11px; font-weight: 600; color: var(--text2); margin-top: 4px; font-family: monospace;">ID: ----</div>
           </div>
         </div>
 
@@ -1082,6 +1091,17 @@ function renderProfile() {
   document.getElementById('d-enrolled').textContent = s.enrolled || s['Enrollment Date'];
   document.getElementById('d-exam').textContent = s.exam || s['Target Exam'];
 
+  // ─── DYNAMIC PERMANENT QR CODE CONFIGURATION ───
+  const uniqueID = s.id || s['StudentID'] || 'UNKNOWN';
+  const qrImageElement = document.getElementById('profile-qr-code');
+  const qrSubtextElement = document.getElementById('profile-qr-subtext');
+  
+  if (qrImageElement && uniqueID !== 'UNKNOWN') {
+    // Encodes the student's ID securely into a high-density, sharp 200x200 canvas graphic
+    qrImageElement.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(uniqueID)}&color=1a1814&bgcolor=ffffff&qzone=1`;
+    qrSubtextElement.textContent = `ID: ${uniqueID}`;
+  }
+  
   /* Stats */
   const present = allAttendance.filter(r => r['Status']==='Present').length;
   const total = allAttendance.filter(r => r['Status']!=='').length;
