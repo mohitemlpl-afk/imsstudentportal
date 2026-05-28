@@ -1685,6 +1685,53 @@ async function fetchAllOfficialExamSubTabs() {
     console.error("Historical score mapping fault:", e);
   }
 }
+  <!-- ══════════════════════════════════════════════════════
+     MENTOR PORTAL WORKSPACE LAYOUT
+══════════════════════════════════════════════════════ -->
+<div id="mentor-app" style="display:none; min-height:100vh; flex-direction:column;">
+  <!-- Mentor Top Navigation -->
+  <nav class="topnav">
+    <div class="topnav-logo">IMS<span>Gujarat</span> <span style="font-size:12px; font-family:var(--font); background:var(--purple-light); color:var(--purple); padding:2px 8px; border-radius:10px; margin-left:8px;">Mentor Portal</span></div>
+    <div class="topnav-spacer"></div>
+    <div class="topnav-user">
+      <div class="topnav-avatar" style="background:var(--purple);" id="mentor-avatar">MN</div>
+      <div>
+        <div class="topnav-name" id="mentor-nav-name">Mentor Load</div>
+        <div class="topnav-batch" id="mentor-nav-role">Authorized Faculty</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Sign out</button>
+    </div>
+  </nav>
+
+  <div class="app-body">
+    <!-- Mentor Control Sidebar Panel -->
+    <aside class="sidebar" style="width:260px;">
+      <div class="sidebar-label">Cohort Directory</div>
+      <div style="padding: 0 10px 10px 10px;">
+        <label style="font-size:11px; font-weight:600; color:var(--text3);">Filter Batch</label>
+        <select id="mentor-batch-filter" onchange="runMentorStudentFilter()" style="width:100%; padding:8px; border-radius:var(--radius-sm); border:1px solid var(--border); font-family:var(--font); margin-bottom:12px;">
+          <option value="ALL">All Assigned Batches</option>
+        </select>
+
+        <label style="font-size:11px; font-weight:600; color:var(--text3);">Search Student</label>
+        <input type="text" id="mentor-search-input" onkeyup="runMentorStudentFilter()" placeholder="Type Name or ID..." style="width:100%; padding:8px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font); font-size:13px;">
+      </div>
+      <div class="sidebar-label">Student List (<span id="mentor-student-count">0</span>)</div>
+      <div id="mentor-student-directory-list" style="display:flex; flex-direction:column; gap:4px; padding:0 8px; overflow-y:auto; max-height:calc(100vh - 240px);">
+        <!-- Student selection buttons populate here dynamically -->
+      </div>
+    </aside>
+
+    <!-- Master Reporting Workspace Window Area -->
+    <main class="main-content" id="mentor-report-workspace">
+      <div class="empty" style="padding-top:100px;">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <h3>No Student Selected</h3>
+        <p>Select a student profile from the sidebar directory matrix to run an interactive audit report.</p>
+      </div>
+    </main>
+  </div>
+</div>
 </script>
 </body>
 </html>
