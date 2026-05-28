@@ -719,40 +719,21 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
       </div>
 
       <!-- ── SCHEDULE PAGE ── -->
-     <div id="page-schedule" class="page">
+      <div id="page-schedule" class="page">
         <div class="page-header">
-          <h2 class="page-title">Class Schedule Timeline</h2>
-          <p class="page-sub">Track upcoming live coaching lectures, modules, and timings</p>
+          <h2 class="page-title">Schedule</h2>
+          <p class="page-sub">Upcoming classes for your batch</p>
         </div>
-
-        <div class="two-col">
-          
-          <div style="display: flex; flex-direction: column; gap: 16px; flex: 2; min-width: 0;">
-            <div class="card" style="margin-bottom: 0;">
-              <div class="card-title"><span class="card-title-text">Upcoming Lectures</span></div>
-              <div class="sched-list" id="schedule-list"></div>
-            </div>
-          </div>
-
-          <div style="display: flex; flex-direction: column; gap: 16px; flex: 1; min-width: 280px;">
-            <div class="card" style="margin-bottom: 0; background: var(--surface2); border: 1px dashed var(--border);">
-              <div class="card-title"><span class="card-title-text">Classroom Rules</span></div>
-              <p style="font-size: 13px; color: var(--text2); line-height: 1.5; margin: 0;">
-                • Please join live streaming links at least 5 minutes prior to the scheduled lecture time slot.<br><br>
-                • Keep your digital scannable QR verification credential card active for physical center marking attendance check points.
-              </p>
-            </div>
-          </div>
-
-        </div> </div> ```
-
----
-
-### Next Step: Apply the Same Blueprint to the Material Page
-
-Check your **`page-material`** division container immediately below it. Ensure that your search filter tabs and the resource cards grid container are both wrapped cleanly inside a `<div class="two-col">` element, rather than sitting loosely inside the parent page div.
-
-Once those columns are contained within the `two-col` grid wrapper, commit your edits, execute a hard refresh (**`Ctrl` + `F5`**), and your layout will snap back into place across every single navigation tab!
+        <div class="tabs">
+          <button class="tab-btn active" onclick="filterSchedule('all',this)">All</button>
+          <button class="tab-btn" onclick="filterSchedule('QA',this)">Quant</button>
+          <button class="tab-btn" onclick="filterSchedule('VARC',this)">VARC</button>
+          <button class="tab-btn" onclick="filterSchedule('DILR',this)">DILR</button>
+        </div>
+        <div class="card">
+          <div class="schedule-list" id="schedule-list"></div>
+        </div>
+      </div>
       
 <!-- ── STUDY MATERIAL VAULT PAGE ── -->
       <div id="page-material" class="page">
