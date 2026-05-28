@@ -715,7 +715,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
   </div>
 </div></div>
       <!-- ── SCHEDULE PAGE ── -->
-   <div id="page-schedule" class="page">
+   <div id="page-schedule" class="page" style="display: none;">
         <div class="page-header">
           <h2 class="page-title">Schedule</h2>
           <p class="page-sub">Upcoming classes for your batch</p>
@@ -1115,15 +1115,25 @@ function renderAll() {
 /* ═══════════════════════════════════════════════════════════
    NAVIGATION
 ═══════════════════════════════════════════════════════════ */
-function showPage(page, btn, type) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  if (type === 'bnav') {
-    document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
-  } else {
-    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+function showPage(pageId, element, navType = 'side') {
+  // Hide all system page wrappers completely
+  const pages = document.querySelectorAll('.page');
+  pages.forEach(p => {
+    p.classList.remove('active');
+    p.style.display = 'none'; // Forces every page closed
+  });
+  
+  // Activate and reveal the target selected page view panel
+  const targetPage = document.getElementById('page-' + pageId);
+  if (targetPage) {
+    targetPage.classList.add('active');
+    targetPage.style.display = 'block'; // Forces ONLY the clicked page open
   }
-  btn.classList.add('active');
+  
+  // Toggle sidebar active highlights
+  const navItems = document.querySelectorAll('.nav-item, .bnav-item');
+  navItems.forEach(item => item.classList.remove('active'));
+  if (element) element.classList.add('active');
 }
 
 /* ═══════════════════════════════════════════════════════════
