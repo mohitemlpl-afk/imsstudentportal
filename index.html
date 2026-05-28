@@ -719,7 +719,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
       </div>
 
       <!-- ── SCHEDULE PAGE ── -->
-   <div id="page-schedule" class="page">
+   <div id="page-schedule" class="page" style="clear: both; display: block; width: 100%;">
         <div class="page-header">
           <h2 class="page-title">Schedule</h2>
           <p class="page-sub">Upcoming classes for your batch</p>
@@ -732,18 +732,12 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
           <button class="tab-btn" onclick="filterSchedule('DILR',this)">DILR</button>
         </div>
 
-        <div class="two-col">
-          
-          <div style="flex: 2; min-width: 0;">
-            <div class="card" style="margin-top: 0;">
-              <div class="schedule-list" id="schedule-list"></div>
-            </div>
+        <div style="display: block; width: 100%; clear: both; float: none; margin-top: 20px;">
+          <div class="card" style="width: 100%; box-sizing: border-box;">
+            <div class="schedule-list" id="schedule-list"></div>
           </div>
-
-          <div style="flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 16px;">
-            </div>
-
-        </div> </div>
+        </div>
+      </div>
       
 <!-- ── STUDY MATERIAL VAULT PAGE ── -->
       <div id="page-material" class="page">
