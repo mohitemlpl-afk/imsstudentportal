@@ -466,6 +466,10 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
         <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-4"/></svg>
         Learning Flow
       </button>
+      <button class="nav-item" onclick="showPage('material',this)">
+        <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5V3.5A2.5 2.5 0 0 1 6.5 1H20v21H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>
+        Study Material
+      </button>
     </aside>
 
     <!-- Main Content -->
@@ -735,7 +739,26 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
           <div class="schedule-list" id="schedule-list"></div>
         </div>
       </div>
-
+      
+<!-- ── STUDY MATERIAL VAULT PAGE ── -->
+      <div id="page-material" class="page">
+        <div class="page-header">
+          <h2 class="page-title">Learning Resources Vault</h2>
+          <p class="page-sub">Download class handouts, assignments, and prep material</p>
+        </div>
+        
+        <!-- Filter Bar -->
+        <div class="tabs">
+          <button class="tab-btn active" onclick="filterMaterial('all', this)">All Materials</button>
+          <button class="tab-btn" onclick="filterMaterial('QA', this)">Quant (QA)</button>
+          <button class="tab-btn" onclick="filterMaterial('VARC', this)">VARC</button>
+          <button class="tab-btn" onclick="filterMaterial('DILR', this)">DILR Matrix</button>
+        </div>
+        
+        <!-- Resources Grid Receiver -->
+        <div id="material-grid-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;"></div>
+      </div>
+      
       <!-- ── LEARNING FLOW PAGE ── -->
       <div id="page-progress" class="page">
         <div class="page-header">
@@ -797,6 +820,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
         <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-4"/></svg>
         Progress
       </button>
+      <button class="bnav-item" onclick="showPage('material',this,'bnav')"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5V3.5A2.5 2.5 0 0 1 6.5 1H20v21H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>Material</button>
     </div>
   </nav>
 </div>
@@ -1010,12 +1034,13 @@ async function fetchAllData() {
   const sid = currentStudent['StudentID'] || currentStudent.id;
   const batch = currentStudent['BatchID'] || currentStudent.batch;
   
-  const [att, scores, sched, prog, announcementsData] = await Promise.all([
+  const [att, scores, sched, prog, announcementsData, materialsData] = await Promise.all([
     fetchSheetData('Attendance'),
     fetchSheetData('Mock Scores'),
     fetchSheetData('Schedule'),
     fetchSheetData('Learning Flow'),
-    fetchSheetData('Announcements') // Fetches your new announcements sheet tab
+    fetchSheetData('Announcements'),
+    fetchSheetData('Material') // <-- Line added to extract the materials tab data rows
   ]);
   
   allAttendance = att.filter(r => r['StudentID'] === sid);
@@ -1023,23 +1048,21 @@ async function fetchAllData() {
   allSchedule = sched.filter(r => r['BatchID'] === batch);
   allProgress = prog.filter(r => r['StudentID'] === sid);
   
-  // Filter announcements down to this student's specific batch or global broadcasts
-  const todayMidnight = new Date();
-  todayMidnight.setHours(0, 0, 0, 0);
-  
+  // Save global announcement state variables
+  const todayMidnight = new Date(); todayMidnight.setHours(0,0,0,0);
   window.myAnnouncements = announcementsData.filter(r => {
     const isTargeted = r['Target Batch'] === 'ALL' || r['Target Batch'] === batch;
-    
-    // Check if the announcement has expired
     let isNotExpired = true;
     if (r['Expiry Date']) {
       const expParts = r['Expiry Date'].includes('/') ? r['Expiry Date'].split('/') : null;
       const expiry = expParts ? new Date(expParts[2], expParts[1] - 1, expParts[0]) : new Date(r['Expiry Date']);
       isNotExpired = expiry >= todayMidnight;
     }
-    
     return isTargeted && isNotExpired;
   });
+
+  // Filter materials purely down to this student's specific batch or global resources
+  window.myMaterials = materialsData.filter(r => r['Target Batch'] === 'ALL' || r['Target Batch'] === batch);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1090,7 +1113,8 @@ function renderAll() {
   renderSchedule();
   renderProgress();
   fetchAllOfficialExamSubTabs();
-  renderAnnouncements(); // Line added to build your notice board layout
+  renderAnnouncements();
+  renderMaterialsEngine('all'); // <-- Line added to draw materials on load
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1790,6 +1814,74 @@ function renderAnnouncements() {
       </div>
     `;
   }).join('');
+}
+  let currentMaterialFilter = 'all';
+
+/**
+ * Builds high-density downloadable file resource asset cards dynamically
+ */
+function renderMaterialsEngine(filterValue) {
+  const container = document.getElementById('material-grid-container');
+  const materials = window.myMaterials || [];
+  
+  if (!container) return;
+  
+  // Filter content arrays by subject category selections
+  let targetData = [...materials];
+  if (filterValue !== 'all') {
+    targetData = targetData.filter(r => r['Subject'] === filterValue);
+  }
+  
+  if (targetData.length === 0) {
+    container.innerHTML = `
+      <div class="card" style="grid-column: 1 / -1; text-align: center; color: var(--text3); padding: 40px 20px;">
+        📂 No study handouts uploaded yet for this subject category matrix.
+      </div>`;
+    return;
+  }
+  
+  container.innerHTML = targetData.map(r => {
+    // Dynamic badge coloring based on subject context tag properties
+    let tagColor = "var(--accent)";
+    let tagBg = "var(--accent-light)";
+    if (r['Subject'] === 'QA') { tagColor = "var(--green)"; tagBg = "var(--green-light)"; }
+    if (r['Subject'] === 'DILR') { tagColor = "var(--purple)"; tagBg = "var(--purple-light)"; }
+    if (r['Subject'] === 'VARC') { tagColor = "var(--amber)"; tagBg = "var(--amber-light)"; }
+    
+    return `
+      <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0; padding: 18px 20px; box-shadow: var(--shadow); transition: transform 0.15s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span class="badge" style="background:${tagBg}; color:${tagColor}; font-weight:600;">${r['Subject']}</span>
+            <span style="font-size: 11px; color: var(--text3); font-weight: 500;">${r['Type'] || 'Resource'}</span>
+          </div>
+          <h4 style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; line-height: 1.4;">${r['Title']}</h4>
+          <p style="font-size: 13px; color: var(--text2); margin-bottom: 16px; line-height: 1.5;">${r['Description'] || 'No lecture brief descriptions recorded.'}</p>
+        </div>
+        
+        <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 12px; margin-top: auto;">
+          <span style="font-size: 11px; color: var(--text3);">Added: ${r['Uploaded Date'] || '---'}</span>
+          <a href="${r['Download Link']}" target="_blank" class="demo-btn" style="text-decoration:none; text-align:center; font-size:12px; padding:6px 12px; width:auto; display:inline-flex; align-items:center; gap:6px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4M7 10l5 5 5-5M12 15V3"/></svg>
+            Download
+          </a>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+/**
+ * Handles tab clicks inside the Study Material module dashboard view tabs
+ */
+function filterMaterial(subject, buttonElement) {
+  // Toggle the visual active tracking selectors
+  const sectionTabs = buttonElement.parentElement.querySelectorAll('.tab-btn');
+  sectionTabs.forEach(btn => btn.classList.remove('active'));
+  buttonElement.classList.add('active');
+  
+  currentMaterialFilter = subject;
+  renderMaterialsEngine(subject);
 }
 </script>
 </body>
