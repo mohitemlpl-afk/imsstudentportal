@@ -617,41 +617,34 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
       </div>
 
       <!-- ── SCORES PAGE ── -->
-      <div id="page-scores" class="page">
+     <div id="page-scores" class="page">
         <div class="page-header">
-          <h2 class="page-title">Mock Scores</h2>
-          <p class="page-sub">Your test performance over time</p>
+          <h2 class="page-title">Advanced Performance Analytics</h2>
+          <p class="page-sub">Comprehensive multi-test diagnostic matrix and topic proficiency tracks</p>
         </div>
 
-        <div class="two-col">
-          <div class="card" style="margin-bottom:0">
-            <div class="card-title">
-              <span class="card-title-text">
-                <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                Score trend
-              </span>
-            </div>
-            <div class="chart-wrap"><canvas id="scoreChart"></canvas></div>
-          </div>
-          <div class="card" style="margin-bottom:0">
-            <div class="card-title">
-              <span class="card-title-text">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-                Section-wise avg
-              </span>
-            </div>
-            <div id="section-bars"></div>
-          </div>
+        <div class="tabs" style="margin-bottom: 24px;">
+          <button class="tab-btn active" onclick="setScoreFilters('SimCAT', 'all')">SimCAT Analysis Dashboard</button>
+          <button class="tab-btn" onclick="setScoreFilters('Benchmarking', 'all')">Benchmarking Diagnostic Logs</button>
         </div>
 
-        <div class="card" style="margin-top:20px">
-          <div class="card-title">
-            <span class="card-title-text">
-              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              All test results
-            </span>
+        <div class="stat-grid" style="margin-bottom: 24px;">
+          <div class="stat-card" style="border-top: 3px solid var(--accent);">
+            <div class="stat-label">Overall Accuracy</div>
+            <div class="stat-val" id="an-accuracy">0%</div>
+            <div class="stat-sub stat-neutral">Total attempted tracks</div>
           </div>
-          <div class="score-list" id="score-list"></div>
+          <div class="stat-card" style="border-top: 3px solid var(--green);">
+            <div class="stat-label">Peak Percentile</div>
+            <div class="stat-val" id="an-peak-pct">0.00</div>
+            <div class="stat-sub stat-up">Highest recorded score</div>
+          </div>
+          <div class="stat-card" style="border-top: 3px solid var(--purple);">
+            <div class="stat-label">Average Efficiency</div>
+            <div class="stat-val" id="an-efficiency">0%</div>
+            <div class="stat-sub stat-neutral">Score vs Max ratio</div>
+          </div>
+        </div>
           <!-- ── STUDENT TWO-WAY UPDATE HUB ── -->
 <div class="two-col" style="margin-top: 24px;">
   
@@ -1036,21 +1029,26 @@ async function fetchAllData() {
   const sid = currentStudent['StudentID'] || currentStudent.id;
   const batch = currentStudent['BatchID'] || currentStudent.batch;
   
-  const [att, scores, sched, prog, announcementsData, materialsData] = await Promise.all([
+  const [att, simcatData, benchmarkData, sched, prog, announcementsData, materialsData] = await Promise.all([
     fetchSheetData('Attendance'),
-    fetchSheetData('Mock Scores'),
+    fetchSheetData('Scores SimCAT'),   // Pulls your new SimCAT tab
+    fetchSheetData('Scores Benchmark'), // Pulls your new Benchmark tab
     fetchSheetData('Schedule'),
     fetchSheetData('Learning Flow'),
     fetchSheetData('Announcements'),
-    fetchSheetData('Material') // <-- Line added to extract the materials tab data rows
+    fetchSheetData('Material')
   ]);
   
   allAttendance = att.filter(r => r['StudentID'] === sid);
-  allScores = scores.filter(r => r['StudentID'] === sid);
+  
+  // Save filtered global arrays for our analytics router to access
+  window.rawSimCATs = simcatData.filter(r => r['StudentID'] === sid);
+  window.rawBenchmarks = benchmarkData.filter(r => r['StudentID'] === sid);
+  
   allSchedule = sched.filter(r => r['BatchID'] === batch);
   allProgress = prog.filter(r => r['StudentID'] === sid);
   
-  // Save global announcement state variables
+  // Announcements Engine Layer
   const todayMidnight = new Date(); todayMidnight.setHours(0,0,0,0);
   window.myAnnouncements = announcementsData.filter(r => {
     const isTargeted = r['Target Batch'] === 'ALL' || r['Target Batch'] === batch;
@@ -1063,7 +1061,6 @@ async function fetchAllData() {
     return isTargeted && isNotExpired;
   });
 
-  // Filter materials purely down to this student's specific batch or global resources
   window.myMaterials = materialsData.filter(r => r['Target Batch'] === 'ALL' || r['Target Batch'] === batch);
 }
 
@@ -1260,62 +1257,155 @@ function renderAttList() {
 /* ═══════════════════════════════════════════════════════════
    SCORES
 ═══════════════════════════════════════════════════════════ */
-function renderScores() {
-  renderScoreChart();
-  renderSectionBars();
-  renderScoreList();
-}
+let currentSelectedType = 'SimCAT'; // Default to SimCAT view on page load
 
-function renderScoreChart() {
-  const ctx = document.getElementById('scoreChart').getContext('2d');
-  if (scoreChartInstance) scoreChartInstance.destroy();
-  const labels = allScores.map(r => r['Test Name'].replace('Mock Test ','T'));
-  const totals = allScores.map(r => Number(r['Total Score']));
-  scoreChartInstance = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Total Score',
-        data: totals,
-        borderColor: '#2B4EFF',
-        backgroundColor: 'rgba(43,78,255,0.06)',
-        borderWidth: 2,
-        pointBackgroundColor: '#2B4EFF',
-        pointRadius: 4,
-        tension: 0.4,
-        fill: true
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#A09D98' } },
-        y: { grid: { color: '#F0EEE8' }, ticks: { font: { size: 11 }, color: '#A09D98' }, beginAtZero: false }
-      }
-    }
+function setScoreFilters(typeValue, subjectValue) {
+  currentSelectedType = typeValue;
+  
+  // Manage tab button visual state highlights
+  document.querySelectorAll('#page-scores .tabs .tab-btn').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.textContent.includes('SimCAT') && typeValue === 'SimCAT') btn.classList.add('active');
+    if (btn.textContent.includes('Benchmarking') && typeValue === 'Benchmarking') btn.classList.add('active');
   });
+
+  renderScores();
 }
 
-function renderSectionBars() {
-  const container = document.getElementById('section-bars');
-  if (!allScores.length) { container.innerHTML = '<div class="empty"><p>No scores yet</p></div>'; return; }
-  const avgV = Math.round(allScores.reduce((s,r)=>s+Number(r['VARC Score']),0)/allScores.length);
-  const avgD = Math.round(allScores.reduce((s,r)=>s+Number(r['DILR Score']),0)/allScores.length);
-  const avgQ = Math.round(allScores.reduce((s,r)=>s+Number(r['QA Score']),0)/allScores.length);
-  const maxS = 100;
-  container.innerHTML = [
-    {label:'VARC',val:avgV,color:'#2B4EFF'},
-    {label:'DILR',val:avgD,color:'#5B2D8E'},
-    {label:'Quant (QA)',val:avgQ,color:'#0F7B5A'},
-  ].map(s=>`
-    <div class="prog-row">
-      <div class="prog-label"><span>${s.label}</span><span>${s.val} / ${maxS} avg</span></div>
-      <div class="prog-track"><div class="prog-fill" style="width:${Math.round(s.val/maxS*100)}%;background:${s.color}"></div></div>
-    </div>`).join('');
-}
+/**
+ * Multi-Tab Split Analytics Processor Engine
+ */
+function renderScores() {
+  const ctx = document.getElementById('scoreChart')?.getContext('2d');
+  if (!ctx) return;
 
+  const subjectBars = document.getElementById('subject-bars-container');
+  const listContainer = document.getElementById('score-list');
+
+  // ══════════════════════════════════════════════════════
+  // PIPELINE A: SIMCAT PERFORMANCE HANDLER
+  // ══════════════════════════════════════════════════════
+  if (currentSelectedType === 'SimCAT') {
+    const data = window.rawSimCATs || [];
+    let totalAccuracy = 0, peakPercentile = 0, count = data.length;
+    let totalVarcPct = 0, totalDilrPct = 0, totalQaPct = 0;
+
+    data.forEach(r => {
+      totalAccuracy += parseFloat(r['Overall Acc']) || 0;
+      const ovPct = parseFloat(r['Overall Pct']) || 0;
+      if (ovPct > peakPercentile) peakPercentile = ovPct;
+      totalVarcPct += parseFloat(r['VARC Pct']) || 0;
+      totalDilrPct += parseFloat(r['DILR Pct']) || 0;
+      totalQaPct += parseFloat(r['QA Pct']) || 0;
+    });
+
+    // Update Summary Cards
+    document.getElementById('an-accuracy').textContent = count ? Math.round(totalAccuracy / count) + '%' : '0%';
+    document.getElementById('an-peak-pct').textContent = peakPercentile ? peakPercentile.toFixed(2) : '0.00';
+    const avgSectionPct = count ? Math.round((totalVarcPct + totalDilrPct + totalQaPct) / (count * 3)) : 0;
+    document.getElementById('an-efficiency').textContent = avgSectionPct + '%ile Avg';
+
+    // Render Line Chart Trend
+    if (scoreChartInstance) scoreChartInstance.destroy();
+    const timeline = [...data].sort((a,b) => new Date(a.Date) - new Date(b.Date));
+    scoreChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: timeline.map(r => r['Test Name']),
+        datasets: [{ label: 'Overall SimCAT Score', data: timeline.map(r => parseFloat(r['Total Score']) || 0), borderColor: '#2B4EFF', backgroundColor: 'rgba(43, 78, 255, 0.05)', fill: true, tension: 0.35 }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    });
+
+    // Draw Subject Bars
+    const avgVarc = count ? Math.round(totalVarcPct / count) : 0;
+    const avgDilr = count ? Math.round(totalDilrPct / count) : 0;
+    const avgQa = count ? Math.round(totalQaPct / count) : 0;
+    subjectBars.innerHTML = `
+      <div class="prog-row"><div class="prog-label"><span>Verbal Ability (VARC)</span><span>${avgVarc}%ile Avg</span></div><div class="prog-track"><div class="prog-fill" style="width: ${avgVarc}%; background: var(--amber);"></div></div></div>
+      <div class="prog-row"><div class="prog-label"><span>Data Interpretation & LR</span><span>${avgDilr}%ile Avg</span></div><div class="prog-track"><div class="prog-fill" style="width: ${avgDilr}%; background: var(--purple);"></div></div></div>
+      <div class="prog-row"><div class="prog-label"><span>Quantitative Aptitude (QA)</span><span>${avgQa}%ile Avg</span></div><div class="prog-track"><div class="prog-fill" style="width: ${avgQa}%; background: var(--green);"></div></div></div>`;
+
+    // History Table List Output
+    if (data.length === 0) { listContainer.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text3);">No SimCAT logs recorded.</div>`; return; }
+    listContainer.innerHTML = data.map(r => `
+      <div class="score-row" style="padding: 12px 0;">
+        <div class="score-test">
+          <div style="font-weight:600; color:var(--text);">${r['Test Name']}</div>
+          <div style="font-size:11px; color:var(--text3); margin-top:2px;">Date Logged: ${r.Date || '---'}</div>
+          <div style="display:flex; gap:12px; margin-top:4px; font-size:12px; color:var(--text2);">
+            <span>QA: <b>${r['QA Score']}</b> (${r['QA Pct']}%ile)</span> | <span>DILR: <b>${r['DILR Score']}</b> (${r['DILR Pct']}%ile)</span> | <span>VARC: <b>${r['VARC Score']}</b> (${r['VARC Pct']}%ile)</span>
+          </div>
+        </div>
+        <div class="score-pills">
+          <span class="score-pill pill-t">Total: ${r['Total Score']}</span>
+          <span class="score-pill pill-q" style="background:var(--accent-light); color:var(--accent);">${r['Overall Pct']}%ile</span>
+        </div>
+      </div>`).join('');
+
+  // ══════════════════════════════════════════════════════
+  // PIPELINE B: BENCHMARKING PERFORMANCE HANDLER
+  // ══════════════════════════════════════════════════════
+  } else if (currentSelectedType === 'Benchmarking') {
+    const data = window.rawBenchmarks || [];
+    let totalAccuracy = 0, peakPercentile = 0, count = data.length, totalScore = 0, totalMax = 0;
+    let subGroup = { 'QA': { obs:0, max:0 }, 'DILR': { obs:0, max:0 }, 'VARC': { obs:0, max:0 } };
+
+    data.forEach(r => {
+      totalAccuracy += parseFloat(r['Accuracy']) || 0;
+      const p = parseFloat(r['Percentile']) || 0;
+      if (p > peakPercentile) peakPercentile = p;
+      
+      const obs = parseFloat(r['Score Obtained']) || 0;
+      const max = parseFloat(r['Max Score']) || 100;
+      totalScore += obs; totalMax += max;
+
+      const subKey = (r['Subject'] || '').toUpperCase().trim();
+      if (subGroup[subKey]) { subGroup[subKey].obs += obs; subGroup[subKey].max += max; }
+    });
+
+    // Update Summary Cards
+    document.getElementById('an-accuracy').textContent = count ? Math.round(totalAccuracy / count) + '%' : '0%';
+    document.getElementById('an-peak-pct').textContent = peakPercentile ? peakPercentile.toFixed(2) : '0.00';
+    document.getElementById('an-efficiency').textContent = totalMax ? Math.round((totalScore / totalMax) * 100) + '%' : '0%';
+
+    // Render Line Chart Trend
+    if (scoreChartInstance) scoreChartInstance.destroy();
+    const timeline = [...data].sort((a,b) => new Date(a.Date) - new Date(b.Date));
+    scoreChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: timeline.map(r => r['Test Name']),
+        datasets: [{ label: 'Benchmark Score', data: timeline.map(r => parseFloat(r['Score Obtained']) || 0), borderColor: '#0F7B5A', backgroundColor: 'rgba(15, 123, 90, 0.05)', fill: true, tension: 0.35 }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    });
+
+    // Draw Subject Bars from Benchmark Data tracking points
+    const vPct = subGroup['VARC'].max ? Math.round((subGroup['VARC'].obs / subGroup['VARC'].max) * 100) : 0;
+    const dPct = subGroup['DILR'].max ? Math.round((subGroup['DILR'].obs / subGroup['DILR'].max) * 100) : 0;
+    const qPct = subGroup['QA'].max ? Math.round((subGroup['QA'].obs / subGroup['QA'].max) * 100) : 0;
+    
+    subjectBars.innerHTML = `
+      <div class="prog-row"><div class="prog-label"><span>Verbal Ability (VARC)</span><span>${vPct}% Accuracy Index</span></div><div class="prog-track"><div class="prog-fill" style="width: ${vPct}%; background: var(--amber);"></div></div></div>
+      <div class="prog-row"><div class="prog-label"><span>Data Interpretation & LR</span><span>${dPct}% Accuracy Index</span></div><div class="prog-track"><div class="prog-fill" style="width: ${dPct}%; background: var(--purple);"></div></div></div>
+      <div class="prog-row"><div class="prog-label"><span>Quantitative Aptitude (QA)</span><span>${qPct}% Accuracy Index</span></div><div class="prog-track"><div class="prog-fill" style="width: ${qPct}%; background: var(--green);"></div></div></div>`;
+
+    // History Table List Output
+    if (data.length === 0) { listContainer.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text3);">No Benchmarking records found.</div>`; return; }
+    listContainer.innerHTML = data.map(r => `
+      <div class="score-row" style="padding: 12px 0;">
+        <div class="score-test">
+          <div style="font-weight:600; color:var(--text);">${r['Test Name']}</div>
+          <div style="font-size:11px; color:var(--text3); margin-top:2px;">Section: <span class="badge badge-blue" style="font-size:9px; padding:1px 6px;">${r.Subject}</span> &middot; Date: ${r.Date || '---'}</div>
+        </div>
+        <div class="score-pills">
+          <span class="score-pill pill-t">Score: ${r['Score Obtained']} / ${r['Max Score']}</span>
+          <span class="score-pill pill-q" style="background:var(--green-light); color:var(--green);">${r['Percentile']}%ile</span>
+        </div>
+      </div>`).join('');
+  }
+}
 function renderScoreList() {
   const list = document.getElementById('score-list');
   if (!allScores.length) { list.innerHTML = '<div class="empty"><p>No test results yet</p></div>'; return; }
