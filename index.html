@@ -1281,6 +1281,9 @@ function setScoreFilters(typeValue, subjectValue) {
 /**
  * Multi-Tab Split Analytics Processor Engine
  */
+/**
+ * Core Dynamic Analytics Processing Engine
+ */
 function renderScores() {
   const ctx = document.getElementById('scoreChart')?.getContext('2d');
   if (!ctx) return;
@@ -1288,32 +1291,35 @@ function renderScores() {
   const subjectBars = document.getElementById('subject-bars-container');
   const listContainer = document.getElementById('score-list');
 
+  // Safeguard: Ensure global arrays exist as arrays even if completely empty
+  const rawSimCATs = window.rawSimCATs || [];
+  const rawBenchmarks = window.rawBenchmarks || [];
+
   // ══════════════════════════════════════════════════════
-  // PIPELINE A: SIMCAT PERFORMANCE HANDLER
+  // PIPELINE A: SIMCAT VIEW HANDLER
   // ══════════════════════════════════════════════════════
   if (currentSelectedType === 'SimCAT') {
-    const data = window.rawSimCATs || [];
-    let totalAccuracy = 0, peakPercentile = 0, count = data.length;
+    let totalAccuracy = 0, peakPercentile = 0, count = rawSimCATs.length;
     let totalVarcPct = 0, totalDilrPct = 0, totalQaPct = 0;
 
-    data.forEach(r => {
-      totalAccuracy += parseFloat(r['Overall Acc']) || 0;
-      const ovPct = parseFloat(r['Overall Pct']) || 0;
+    rawSimCATs.forEach(r => {
+      totalAccuracy += parseFloat(r['Overall Acc']) || parseFloat(r['Accuracy']) || 0;
+      const ovPct = parseFloat(r['Overall Pct']) || parseFloat(r['Percentile']) || 0;
       if (ovPct > peakPercentile) peakPercentile = ovPct;
       totalVarcPct += parseFloat(r['VARC Pct']) || 0;
       totalDilrPct += parseFloat(r['DILR Pct']) || 0;
       totalQaPct += parseFloat(r['QA Pct']) || 0;
     });
 
-    // Update Summary Cards
+    // Update Top Metric Cards
     document.getElementById('an-accuracy').textContent = count ? Math.round(totalAccuracy / count) + '%' : '0%';
     document.getElementById('an-peak-pct').textContent = peakPercentile ? peakPercentile.toFixed(2) : '0.00';
     const avgSectionPct = count ? Math.round((totalVarcPct + totalDilrPct + totalQaPct) / (count * 3)) : 0;
     document.getElementById('an-efficiency').textContent = avgSectionPct + '%ile Avg';
 
-    // Render Line Chart Trend
+    // Draw Line Chart Trend
     if (scoreChartInstance) scoreChartInstance.destroy();
-    const timeline = [...data].sort((a,b) => new Date(a.Date) - new Date(b.Date));
+    const timeline = [...rawSimCATs].sort((a,b) => new Date(a.Date) - new Date(b.Date));
     scoreChartInstance = new Chart(ctx, {
       type: 'line',
       data: {
@@ -1323,7 +1329,7 @@ function renderScores() {
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
     });
 
-    // Draw Subject Bars
+    // Draw Section Bars
     const avgVarc = count ? Math.round(totalVarcPct / count) : 0;
     const avgDilr = count ? Math.round(totalDilrPct / count) : 0;
     const avgQa = count ? Math.round(totalQaPct / count) : 0;
@@ -1332,32 +1338,31 @@ function renderScores() {
       <div class="prog-row"><div class="prog-label"><span>Data Interpretation & LR</span><span>${avgDilr}%ile Avg</span></div><div class="prog-track"><div class="prog-fill" style="width: ${avgDilr}%; background: var(--purple);"></div></div></div>
       <div class="prog-row"><div class="prog-label"><span>Quantitative Aptitude (QA)</span><span>${avgQa}%ile Avg</span></div><div class="prog-track"><div class="prog-fill" style="width: ${avgQa}%; background: var(--green);"></div></div></div>`;
 
-    // History Table List Output
-    if (data.length === 0) { listContainer.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text3);">No SimCAT logs recorded.</div>`; return; }
-    listContainer.innerHTML = data.map(r => `
+    // History Log List
+    if (rawSimCATs.length === 0) { listContainer.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text3);">No SimCAT data found for this Student ID.</div>`; return; }
+    listContainer.innerHTML = rawSimCATs.map(r => `
       <div class="score-row" style="padding: 12px 0;">
         <div class="score-test">
           <div style="font-weight:600; color:var(--text);">${r['Test Name']}</div>
-          <div style="font-size:11px; color:var(--text3); margin-top:2px;">Date Logged: ${r.Date || '---'}</div>
+          <div style="font-size:11px; color:var(--text3); margin-top:2px;">Date: ${r.Date || '---'}</div>
           <div style="display:flex; gap:12px; margin-top:4px; font-size:12px; color:var(--text2);">
-            <span>QA: <b>${r['QA Score']}</b> (${r['QA Pct']}%ile)</span> | <span>DILR: <b>${r['DILR Score']}</b> (${r['DILR Pct']}%ile)</span> | <span>VARC: <b>${r['VARC Score']}</b> (${r['VARC Pct']}%ile)</span>
+            <span>QA: <b>${r['QA Score'] || 0}</b></span> | <span>DILR: <b>${r['DILR Score'] || 0}</b></span> | <span>VARC: <b>${r['VARC Score'] || 0}</b></span>
           </div>
         </div>
         <div class="score-pills">
-          <span class="score-pill pill-t">Total: ${r['Total Score']}</span>
-          <span class="score-pill pill-q" style="background:var(--accent-light); color:var(--accent);">${r['Overall Pct']}%ile</span>
+          <span class="score-pill pill-t">Total: ${r['Total Score'] || 0}</span>
+          <span class="score-pill pill-q" style="background:var(--accent-light); color:var(--accent);">${r['Overall Pct'] || 0}%ile</span>
         </div>
       </div>`).join('');
 
   // ══════════════════════════════════════════════════════
-  // PIPELINE B: BENCHMARKING PERFORMANCE HANDLER
+  // PIPELINE B: BENCHMARKING VIEW HANDLER
   // ══════════════════════════════════════════════════════
   } else if (currentSelectedType === 'Benchmarking') {
-    const data = window.rawBenchmarks || [];
-    let totalAccuracy = 0, peakPercentile = 0, count = data.length, totalScore = 0, totalMax = 0;
+    let totalAccuracy = 0, peakPercentile = 0, count = rawBenchmarks.length, totalScore = 0, totalMax = 0;
     let subGroup = { 'QA': { obs:0, max:0 }, 'DILR': { obs:0, max:0 }, 'VARC': { obs:0, max:0 } };
 
-    data.forEach(r => {
+    rawBenchmarks.forEach(r => {
       totalAccuracy += parseFloat(r['Accuracy']) || 0;
       const p = parseFloat(r['Percentile']) || 0;
       if (p > peakPercentile) peakPercentile = p;
@@ -1370,14 +1375,14 @@ function renderScores() {
       if (subGroup[subKey]) { subGroup[subKey].obs += obs; subGroup[subKey].max += max; }
     });
 
-    // Update Summary Cards
+    // Update Top Metric Cards
     document.getElementById('an-accuracy').textContent = count ? Math.round(totalAccuracy / count) + '%' : '0%';
     document.getElementById('an-peak-pct').textContent = peakPercentile ? peakPercentile.toFixed(2) : '0.00';
     document.getElementById('an-efficiency').textContent = totalMax ? Math.round((totalScore / totalMax) * 100) + '%' : '0%';
 
-    // Render Line Chart Trend
+    // Draw Line Chart Trend
     if (scoreChartInstance) scoreChartInstance.destroy();
-    const timeline = [...data].sort((a,b) => new Date(a.Date) - new Date(b.Date));
+    const timeline = [...rawBenchmarks].sort((a,b) => new Date(a.Date) - new Date(b.Date));
     scoreChartInstance = new Chart(ctx, {
       type: 'line',
       data: {
@@ -1387,7 +1392,7 @@ function renderScores() {
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
     });
 
-    // Draw Subject Bars from Benchmark Data tracking points
+    // Draw Section Bars
     const vPct = subGroup['VARC'].max ? Math.round((subGroup['VARC'].obs / subGroup['VARC'].max) * 100) : 0;
     const dPct = subGroup['DILR'].max ? Math.round((subGroup['DILR'].obs / subGroup['DILR'].max) * 100) : 0;
     const qPct = subGroup['QA'].max ? Math.round((subGroup['QA'].obs / subGroup['QA'].max) * 100) : 0;
@@ -1397,17 +1402,17 @@ function renderScores() {
       <div class="prog-row"><div class="prog-label"><span>Data Interpretation & LR</span><span>${dPct}% Accuracy Index</span></div><div class="prog-track"><div class="prog-fill" style="width: ${dPct}%; background: var(--purple);"></div></div></div>
       <div class="prog-row"><div class="prog-label"><span>Quantitative Aptitude (QA)</span><span>${qPct}% Accuracy Index</span></div><div class="prog-track"><div class="prog-fill" style="width: ${qPct}%; background: var(--green);"></div></div></div>`;
 
-    // History Table List Output
-    if (data.length === 0) { listContainer.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text3);">No Benchmarking records found.</div>`; return; }
-    listContainer.innerHTML = data.map(r => `
+    // History Log List
+    if (rawBenchmarks.length === 0) { listContainer.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text3);">No Benchmarking data found for this Student ID.</div>`; return; }
+    listContainer.innerHTML = rawBenchmarks.map(r => `
       <div class="score-row" style="padding: 12px 0;">
         <div class="score-test">
           <div style="font-weight:600; color:var(--text);">${r['Test Name']}</div>
-          <div style="font-size:11px; color:var(--text3); margin-top:2px;">Section: <span class="badge badge-blue" style="font-size:9px; padding:1px 6px;">${r.Subject}</span> &middot; Date: ${r.Date || '---'}</div>
+          <div style="font-size:11px; color:var(--text3); margin-top:2px;">Subject Focus: <b>${r.Subject}</b> &middot; Date: ${r.Date || '---'}</div>
         </div>
         <div class="score-pills">
           <span class="score-pill pill-t">Score: ${r['Score Obtained']} / ${r['Max Score']}</span>
-          <span class="score-pill pill-q" style="background:var(--green-light); color:var(--green);">${r['Percentile']}%ile</span>
+          <span class="score-pill pill-q" style="background:var(--green-light); color:var(--green);">${r['Percentile'] || 0}%ile</span>
         </div>
       </div>`).join('');
   }
