@@ -1026,26 +1026,36 @@ async function fetchAllData() {
   const sid = currentStudent['StudentID'] || currentStudent.id;
   const batch = currentStudent['BatchID'] || currentStudent.batch;
   
-  const [att, simcatData, benchmarkData, sched, prog, announcementsData, materialsData] = await Promise.all([
+  // 1. Establish data streams across all institutional tables simultaneously
+  const [att, simcatRawText, benchmarkRawText, sched, prog, announcementsData, materialsData] = await Promise.all([
     fetchSheetData('Attendance'),
-    fetchSheetData('Scores SimCAT'),   // Pulls your new SimCAT tab
-    fetchSheetData('Scores Benchmark'), // Pulls your new Benchmark tab
+    
+    // Safely reads the text payload across Google's redirect engines to prevent network lockouts
+    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20SimCAT`).then(res => res.text()).catch(() => "[]"),
+    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20Benchmark`).then(res => res.text()).catch(() => "[]"),
+    
     fetchSheetData('Schedule'),
     fetchSheetData('Learning Flow'),
     fetchSheetData('Announcements'),
     fetchSheetData('Material')
   ]);
   
+  // 2. Parse text streams into valid JavaScript matrices safely
+  let simcatData = [];
+  let benchmarkData = [];
+  try { simcatData = JSON.parse(simcatRawText); } catch(e) { console.error("SimCAT parsing fallback:", e); }
+  try { benchmarkData = JSON.parse(benchmarkRawText); } catch(e) { console.error("Benchmark parsing fallback:", e); }
+
   allAttendance = att.filter(r => r['StudentID'] === sid);
   
-  // Save filtered global arrays for our analytics router to access
-  window.rawSimCATs = simcatData.filter(r => r['StudentID'] === sid);
-  window.rawBenchmarks = benchmarkData.filter(r => r['StudentID'] === sid);
+  // 3. Mount structured data points cleanly into global display frames
+  window.rawSimCATs = Array.isArray(simcatData) ? simcatData.filter(r => r['StudentID'] == sid) : [];
+  window.rawBenchmarks = Array.isArray(benchmarkData) ? benchmarkData.filter(r => r['StudentID'] == sid) : [];
   
   allSchedule = sched.filter(r => r['BatchID'] === batch);
   allProgress = prog.filter(r => r['StudentID'] === sid);
   
-  // Announcements Engine Layer
+  // Announcements Frame Processing
   const todayMidnight = new Date(); todayMidnight.setHours(0,0,0,0);
   window.myAnnouncements = announcementsData.filter(r => {
     const isTargeted = r['Target Batch'] === 'ALL' || r['Target Batch'] === batch;
