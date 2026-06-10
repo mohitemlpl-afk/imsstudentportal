@@ -36,9 +36,6 @@
 }
 html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
 
-/* ─── CONFIG (edit these) ──────────────────────────────── */
-/* Replace with your real values after Google Cloud setup  */
-
 /* ─── SCROLLBAR ────────────────────────────────────────── */
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -214,12 +211,12 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
   grid-template-columns: repeat(7, 1fr);
   gap: 3px;
   margin-bottom: 4px;
-  max-width: 340px; /* Limits the maximum width of the calendar */
+  max-width: 340px;
   margin-left: auto;
   margin-right: auto;
 }
 .cal-day-label {
-  font-size: 10px; /* Slightly smaller day text */
+  font-size: 10px;
   font-weight: 600;
   color: var(--text3);
   text-align: center;
@@ -230,22 +227,22 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
-  max-width: 340px; /* Keeps the grid perfectly aligned and compact */
+  max-width: 340px;
   margin-left: auto;
   margin-right: auto;
 }
 .cal-cell {
-  width: 32px;      /* Fixed compact width */
-  height: 32px;     /* Fixed compact height */
+  width: 32px;
+  height: 32px;
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;  /* Clean, crisp small number sizing */
+  font-size: 11px;
   font-weight: 500;
   cursor: default;
   transition: transform .1s;
-  margin: 0 auto;   /* Centers cells inside grid tracks */
+  margin: 0 auto;
 }
 .cal-cell:hover { transform: scale(1.15); }
 .cal-present{background:var(--green-light);color:var(--green)}
@@ -260,6 +257,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .att-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
 .att-row:last-child{border-bottom:none}
 .att-date{font-size:13px;font-weight:500;color:var(--text);width:100px;flex-shrink:0}
+.att-subject覆{font-size:13px;color:var(--text2);flex:1}
 .att-subject{font-size:13px;color:var(--text2);flex:1}
 .att-status{font-size:12px;padding:3px 10px;border-radius:20px;font-weight:500;flex-shrink:0}
 .status-present{background:var(--green-light);color:var(--green)}
@@ -334,10 +332,10 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .month-nav {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Spreads buttons neatly across the narrow width */
+  justify-content: space-between;
   gap: 12px;
   margin-bottom: 12px;
-  max-width: 340px; /* Matches the grid perfectly */
+  max-width: 340px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -373,7 +371,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
   .info-grid{grid-template-columns:1fr}
   .info-row:nth-child(odd){padding-right:0;border-right:none}
   .info-row:nth-child(even){padding-left:0}
-  .info-row:nth-last-child(-n+2){border-bottom:1px solid var(--border)}
+  .info-row:nth-last-child(-n+2){border-bottom:none}
   .info-row:last-child{border-bottom:none}
 }
 @media(min-width:769px){
@@ -389,12 +387,8 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════════
-     LOGIN SCREEN
-══════════════════════════════════════════════════════ -->
 <div id="login-screen">
   <div class="login-card">
-    
     <div style="margin-bottom: 24px; display: flex; align-items: center; justify-content: center;">
       <img src="https://imsgujarat.com/wp-content/uploads/elementor/thumbs/high-low-ims-logo-q88bznzqyw17qyylsbpjt2obvw4pcwyu13wepnvt34.png" alt="IMS Logo" style="height: 48px; width: auto; object-fit: contain; display: block;">
     </div>
@@ -421,13 +415,8 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     APP SHELL
-══════════════════════════════════════════════════════ -->
 <div id="app">
-  <!-- Top Nav -->
   <nav class="topnav">
-    <!-- Company Logo Integration -->
     <div class="topnav-logo" style="display: flex; align-items: center; height: 100%;">
       <img src="https://imsgujarat.com/wp-content/uploads/elementor/thumbs/high-low-ims-logo-q88bznzqyw17qyylsbpjt2obvw4pcwyu13wepnvt34.png" alt="Company Logo" style="height: 36px; width: auto; object-fit: contain; display: block;">
     </div>
@@ -442,9 +431,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
     </div>
   </nav>
 
-  <!-- App Body -->
   <div class="app-body">
-    <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-label">Main</div>
       <button class="nav-item active" onclick="showPage('profile',this)">
@@ -459,7 +446,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
         <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Mock Scores
       </button>
-      <!-- 👇 ADD THIS BUTTON INSIDE THE SIDEBAR BLOCK (Around Line 160) 👇 -->
       <button class="nav-item" onclick="showPage('records',this)">
         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         My Records
@@ -478,10 +464,8 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
       </button>
     </aside>
 
-    <!-- Main Content -->
     <main class="main-content">
 
-      <!-- ── PROFILE PAGE ── -->
       <div id="page-profile" class="page active">
         <div class="page-header">
           <h2 class="page-title">My Profile</h2>
@@ -510,7 +494,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
           </div>
         </div>
         
-        <!-- ── DYNAMIC SYSTEM ANNOUNCEMENT BOARD CENTER ── -->
         <div id="announcement-board-container" style="display: none; margin-bottom: 24px;">
           <div class="card" style="border-left: 4px solid var(--accent); padding: 20px;">
             <div class="card-title" style="margin-bottom: 12px;">
@@ -564,8 +547,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
         </div>
       </div>
       
-
-      <!-- ── ATTENDANCE PAGE ── -->
       <div id="page-attendance" class="page">
         <div class="page-header">
           <h2 class="page-title">Attendance</h2>
@@ -622,9 +603,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
         </div>
       </div>
 
-      <!-- ── SCORES PAGE ── -->
-    <!-- ── SCORES PAGE (Cleaned Analytics Workspace Only) ── -->
-     <div id="page-scores" class="page">
+      <div id="page-scores" class="page">
         <div class="page-header">
           <h2 class="page-title">Advanced Performance Analytics</h2>
           <p class="page-sub">Comprehensive multi-test diagnostic matrix and topic proficiency tracks</p>
@@ -652,20 +631,20 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
             <div class="stat-sub stat-neutral">Score vs Max ratio</div>
           </div>
         </div>
-        
-        <!-- Interactive Chart & Historical Lists Canvas Element Area -->
+
         <div class="card" style="margin-bottom: 24px;">
           <div class="chart-wrap">
             <canvas id="scoreChart"></canvas>
           </div>
+          <div id="subject-bars-container" style="margin-top: 20px;"></div>
         </div>
+
         <div class="card">
           <div class="card-title"><span class="card-title-text">Evaluation Tracking Logs</span></div>
           <div class="score-list" id="score-list"></div>
         </div>
       </div>
 
-      <!-- ── NEW: MY RECORDS PAGE MODULE (Forms Data Collection Center) ── -->
       <div id="page-records" class="page">
         <div class="page-header">
           <h2 class="page-title">My Official Institutional Records</h2>
@@ -673,7 +652,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
         </div>
 
         <div class="two-col">
-          <!-- Form 1: Update Real Scores -->
           <div class="card">
             <div class="card-title">
               <span class="card-title-text">
@@ -704,7 +682,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
             </div>
           </div>
 
-          <!-- Form 2: Log College Calls & Conversions -->
           <div class="card" style="margin-bottom:0">
             <div class="card-title">
               <span class="card-title-text">
@@ -736,8 +713,8 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
           </div>
         </div>
       </div>
-      <!-- ── SCHEDULE PAGE ── -->
-   <div id="page-schedule" class="page" style="display: none;">
+
+      <div id="page-schedule" class="page" style="display: none;">
         <div class="page-header">
           <h2 class="page-title">Schedule</h2>
           <p class="page-sub">Upcoming classes for your batch</p>
@@ -753,14 +730,12 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
         </div>
       </div>
       
-<!-- ── STUDY MATERIAL VAULT PAGE ── -->
       <div id="page-material" class="page">
         <div class="page-header">
           <h2 class="page-title">Learning Resources Vault</h2>
           <p class="page-sub">Download class handouts, assignments, and prep material</p>
         </div>
         
-        <!-- Filter Bar -->
         <div class="tabs">
           <button class="tab-btn active" onclick="filterMaterial('all', this)">All Materials</button>
           <button class="tab-btn" onclick="filterMaterial('QA', this)">Quant (QA)</button>
@@ -768,11 +743,9 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
           <button class="tab-btn" onclick="filterMaterial('DILR', this)">DILR Matrix</button>
         </div>
         
-        <!-- Resources Grid Receiver -->
         <div id="material-grid-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;"></div>
       </div>
       
-      <!-- ── LEARNING FLOW PAGE ── -->
       <div id="page-progress" class="page">
         <div class="page-header">
           <h2 class="page-title">Learning Flow</h2>
@@ -810,7 +783,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
     </main>
   </div>
 
-  <!-- Bottom Nav (mobile) -->
   <nav class="bottomnav">
     <div class="bottomnav-items">
       <button class="bnav-item active" onclick="showPage('profile',this,'bnav')">
@@ -825,7 +797,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
         <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Scores
       </button>
-      <!-- 👇 ADD THIS BUTTON INSIDE THE BOTTOMNAV BLOCK (Around Line 305) 👇 -->
       <button class="bnav-item" onclick="showPage('records',this,'bnav')">
         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         Records
@@ -838,40 +809,31 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
         <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-4"/></svg>
         Progress
       </button>
-      <button class="bnav-item" onclick="showPage('material',this,'bnav')"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5V3.5A2.5 2.5 0 0 1 6.5 1H20v21H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>Material</button>
+      <button class="bnav-item" onclick="showPage('material',this,'bnav')">
+        <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5V3.5A2.5 2.5 0 0 1 6.5 1H20v21H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>
+        Material
+      </button>
     </div>
   </nav>
 </div>
 
 <script>
 /* ═══════════════════════════════════════════════════════════
-   CONFIGURATION — EDIT THESE VALUES
-   ═══════════════════════════════════════════════════════════
-   Step 1: Create a project at console.cloud.google.com
-   Step 2: Enable Google Sheets API + Google OAuth 2.0
-   Step 3: Replace the values below with your real credentials
-   Full setup guide: see comments in the SETUP GUIDE section
+   CONFIGURATION 
 ═══════════════════════════════════════════════════════════ */
 const CONFIG = {
-  /* Your Google OAuth 2.0 Client ID from Google Cloud Console */
   GOOGLE_CLIENT_ID: '546265155462-daji3rvlhjehu8eipb9pkl07efk1jt6e.apps.googleusercontent.com',
-
-  /* Your Google Sheets API Key from Google Cloud Console */
   SHEETS_API_KEY: 'AIzaSyBy55WhovpXDWRa5O3hiuWsHbvTUtiVpI0',
-
-  /* The ID of your Google Sheet (from the URL: /spreadsheets/d/SHEET_ID/edit) */
   SPREADSHEET_ID: '1s-uywnbanv9mBZO34mNuwZzllemnnHfMkuVPFAPvQn0',
-
-  /* Name of your institute shown in the app */
   INSTITUTE_NAME: 'IMS Gujarat',
-
-  /* Set to true once you have filled in real credentials above */
   CONFIGURED: true
 };
 
+// 1. Replace this with the exact Web App URL you copied from your Apps Script Deployment
+const APPS_SCRIPT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwU7ZVPoNKcmnM-y3uh2c3ViNe9fYl5UODVeYPF1rJ5T1qCHxizzk-O9HHDBoq4AuFh/exec";
+
 /* ═══════════════════════════════════════════════════════════
-   DEMO DATA — shown when CONFIGURED = false
-   (Replace with real Sheets data once configured)
+   DEMO DATA
 ═══════════════════════════════════════════════════════════ */
 const DEMO = {
   student: {
@@ -922,7 +884,7 @@ const DEMO = {
     {date:'2025-05-09',time:'9:00 AM',subject:'VARC',topic:'Parajumbles & Odd Sentences',room:'Room 2',faculty:'Prof. Iyer'},
     {date:'2025-05-10',time:'10:00 AM',subject:'QA',topic:'Mock Test #13 — Full Length',room:'Lab 1',faculty:'All Faculty'},
     {date:'2025-05-12',time:'9:00 AM',subject:'QA',topic:'Arithmetic — Percentages',room:'Room 3',faculty:'Prof. Sharma'},
-    {date:'2025-05-13',time:'9:00 AM',subject:'DILR',topic:'Bar Graphs & Line Charts',room:'Lab 1',faculty:'Prof. Mehta'},
+    {date:'2025-05-13',time:'9:00 AM',subject:'DILR',topic:'Bar Graphs & Line Charts',room:'Lab 1',faculty(--faculty);',faculty:'Prof. Mehta'},
   ],
   progress: [
     {subject:'QA',topic:'Number System',status:'Done',date:'2025-02-10'},
@@ -930,7 +892,7 @@ const DEMO = {
     {subject:'QA',topic:'Arithmetic — Basics',status:'Done',date:'2025-03-15'},
     {subject:'QA',topic:'Geometry & Mensuration',status:'In Progress',date:''},
     {subject:'QA',topic:'Modern Math',status:'Not Started',date:''},
-    {subject:'VARC',topic:'Vocabulary & Word Usage',status:'Done',date:'2025-02-20'},
+    {subject(--subject);',topic:'Vocabulary & Word Usage',status:'Done',date:'2025-02-20'},
     {subject:'VARC',topic:'Para-jumbles',status:'Done',date:'2025-03-10'},
     {subject:'VARC',topic:'Reading Comprehension',status:'In Progress',date:''},
     {subject:'VARC',topic:'Summary & Inference',status:'Not Started',date:''},
@@ -950,7 +912,7 @@ let allAttendance = [];
 let allScores = [];
 let allSchedule = [];
 let allProgress = [];
-let calMonth = 3; // April = 3 (0-indexed)
+let calMonth = 3; 
 let calYear = 2025;
 let scoreChartInstance = null;
 let scheduleFilter = 'all';
@@ -963,18 +925,14 @@ window.onload = async () => {
     document.getElementById('setup-notice').style.display = 'block';
   }
   
-  // Check if a valid student token already exists in the local session profile
   const saved = sessionStorage.getItem('sp_student');
   if (saved) {
     currentStudent = JSON.parse(saved);
-    
-    // Core Fix: Re-download fresh spreadsheet records right before drawing components
     try {
       await fetchAllData(); 
       loadApp();
     } catch (err) {
-      console.error("Automated background lifecycle refresh fault:", err);
-      // Fallback fallback load if API network drops momentarily
+      console.error("Lifecycle refresh fault:", err);
       loadApp();
     }
   }
@@ -988,9 +946,7 @@ function loginWithGoogle() {
     alert('Google login requires setup.\n\nPlease configure your Google Client ID in the CONFIG section.');
     return;
   }
-  
   try {
-    // Initializes the global Google OAuth instance directly from the head script
     google.accounts.id.initialize({
       client_id: CONFIG.GOOGLE_CLIENT_ID,
       callback: handleGoogleCredential
@@ -998,15 +954,13 @@ function loginWithGoogle() {
     google.accounts.id.prompt();
   } catch (err) {
     console.error("Google SDK Initialization Fault:", err);
-    alert("Google Sign-In is still initializing. Please wait 2 seconds and try again.");
+    alert("Google Sign-In is initializing. Please try again.");
   }
 }
 
 async function handleGoogleCredential(response) {
-  /* Decode JWT to get user email */
   const payload = JSON.parse(atob(response.credential.split('.')[1]));
   const email = payload.email;
-  /* Now fetch student data from Sheets by matching email */
   await fetchStudentByEmail(email);
 }
 
@@ -1052,30 +1006,23 @@ async function fetchAllData() {
   const sid = currentStudent['StudentID'] || currentStudent.id;
   const batch = currentStudent['BatchID'] || currentStudent.batch;
   
-  // 1. Establish data streams across all institutional tables simultaneously
-  // 1. Stream standard tracking rows alongside raw text score sheets simultaneously
   const [att, simcatRawText, benchmarkRawText, sched, prog, announcementsData, materialsData] = await Promise.all([
     fetchSheetData('Attendance'),
-    
-    // 👇 FIX: Appending cache-busting text protocols forces Google to bypass the stream block
-    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20SimCAT`, { method: 'GET', mode: 'cors' }).then(res => res.text()).catch(() => "[]"),
-    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20Benchmark`, { method: 'GET', mode: 'cors' }).then(res => res.text()).catch(() => "[]"),
-    
+    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20SimCAT`).then(res => res.text()).catch(() => "[]"),
+    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20Benchmark`).then(res => res.text()).catch(() => "[]"),
     fetchSheetData('Schedule'),
     fetchSheetData('Learning Flow'),
     fetchSheetData('Announcements'),
     fetchSheetData('Material')
   ]);
   
-  // 2. Safely parse the raw text streams into arrays manually
   let simcatData = [];
   let benchmarkData = [];
-  try { simcatData = JSON.parse(simcatRawText); } catch(e) { console.error("SimCAT format conversion dropped:", e); }
-  try { benchmarkData = JSON.parse(benchmarkRawText); } catch(e) { console.error("Benchmark format conversion dropped:", e); }
+  try { simcatData = JSON.parse(simcatRawText); } catch(e) { console.error("SimCAT format mapping error:", e); }
+  try { benchmarkData = JSON.parse(benchmarkRawText); } catch(e) { console.error("Benchmark format mapping error:", e); }
 
   allAttendance = att.filter(r => r['StudentID'] === sid);
   
-  // 3. Loose matching strings to prevent text-vs-number mismatches
   window.rawSimCATs = Array.isArray(simcatData) ? simcatData.filter(r => {
     return String(r['StudentID'] || '').trim().toLowerCase() === String(sid || '').trim().toLowerCase();
   }) : [];
@@ -1087,7 +1034,6 @@ async function fetchAllData() {
   allSchedule = sched.filter(r => r['BatchID'] === batch);
   allProgress = prog.filter(r => r['StudentID'] === sid);
   
-  // Announcements Frame Processing
   const todayMidnight = new Date(); todayMidnight.setHours(0,0,0,0);
   window.myAnnouncements = announcementsData.filter(r => {
     const isTargeted = r['Target Batch'] === 'ALL' || r['Target Batch'] === batch;
@@ -1152,34 +1098,25 @@ function renderAll() {
   renderProgress();
   fetchAllOfficialExamSubTabs();
   renderAnnouncements();
-  renderMaterialsEngine('all'); // <-- Line added to draw materials on load
+  renderMaterialsEngine('all'); 
 }
 
 /* ═══════════════════════════════════════════════════════════
    NAVIGATION
 ═══════════════════════════════════════════════════════════ */
 function showPage(pageId, element, navType = 'side') {
-  // Hide all system page wrappers completely
   const pages = document.querySelectorAll('.page');
   pages.forEach(p => {
     p.classList.remove('active');
-    p.style.display = 'none'; // Forces every page container closed
+    p.style.display = 'none'; 
   });
   
-  // Activate and reveal the target selected page view panel
   const targetPage = document.getElementById('page-' + pageId);
   if (targetPage) {
     targetPage.classList.add('active');
-    targetPage.style.display = 'block'; // Forces ONLY the clicked page layout open
+    targetPage.style.display = 'block'; 
   }
   
-  // Toggle navigation active link highlight styles across both menus
-  const navItems = document.querySelectorAll('.nav-item, .bnav-item');
-  navItems.forEach(item => item.classList.remove('active'));
-  if (element) element.classList.add('active');
-}
-  
-  // Toggle sidebar active highlights
   const navItems = document.querySelectorAll('.nav-item, .bnav-item');
   navItems.forEach(item => item.classList.remove('active'));
   if (element) element.classList.add('active');
@@ -1206,18 +1143,15 @@ function renderProfile() {
   document.getElementById('d-enrolled').textContent = s.enrolled || s['Enrollment Date'];
   document.getElementById('d-exam').textContent = s.exam || s['Target Exam'];
 
-  // ─── DYNAMIC PERMANENT QR CODE CONFIGURATION ───
   const uniqueID = s.id || s['StudentID'] || 'UNKNOWN';
   const qrImageElement = document.getElementById('profile-qr-code');
   const qrSubtextElement = document.getElementById('profile-qr-subtext');
   
   if (qrImageElement && uniqueID !== 'UNKNOWN') {
-    // Encodes the student's ID securely into a high-density, sharp 200x200 canvas graphic
     qrImageElement.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(uniqueID)}&color=1a1814&bgcolor=ffffff&qzone=1`;
     qrSubtextElement.textContent = `ID: ${uniqueID}`;
   }
   
-  /* Stats */
   const present = allAttendance.filter(r => r['Status']==='Present').length;
   const total = allAttendance.filter(r => r['Status']!=='').length;
   const attPct = total ? Math.round(present/total*100) : 0;
@@ -1255,10 +1189,9 @@ function renderCalendar() {
   document.getElementById('month-label').textContent = monthNames[calMonth] + ' ' + calYear;
 
   const firstDay = new Date(calYear, calMonth, 1).getDay();
-  const offset = (firstDay + 6) % 7; // Monday-first
+  const offset = (firstDay + 6) % 7; 
   const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
 
-  /* Build map from date string to status */
   const statusMap = {};
   allAttendance.forEach(r => {
     if (r['Date']) statusMap[r['Date']] = r['Status'];
@@ -1312,27 +1245,18 @@ function renderAttList() {
 /* ═══════════════════════════════════════════════════════════
    SCORES
 ═══════════════════════════════════════════════════════════ */
-let currentSelectedType = 'SimCAT'; // Default to SimCAT view on page load
+let currentSelectedType = 'SimCAT'; 
 
 function setScoreFilters(typeValue, subjectValue) {
   currentSelectedType = typeValue;
-  
-  // Manage tab button visual state highlights
   document.querySelectorAll('#page-scores .tabs .tab-btn').forEach(btn => {
     btn.classList.remove('active');
     if (btn.textContent.includes('SimCAT') && typeValue === 'SimCAT') btn.classList.add('active');
     if (btn.textContent.includes('Benchmarking') && typeValue === 'Benchmarking') btn.classList.add('active');
   });
-
   renderScores();
 }
 
-/**
- * Multi-Tab Split Analytics Processor Engine
- */
-/**
- * Core Dynamic Analytics Processing Engine
- */
 function renderScores() {
   const ctx = document.getElementById('scoreChart')?.getContext('2d');
   if (!ctx) return;
@@ -1340,13 +1264,9 @@ function renderScores() {
   const subjectBars = document.getElementById('subject-bars-container');
   const listContainer = document.getElementById('score-list');
 
-  // Safeguard: Ensure global arrays exist as arrays even if completely empty
   const rawSimCATs = window.rawSimCATs || [];
   const rawBenchmarks = window.rawBenchmarks || [];
 
-  // ══════════════════════════════════════════════════════
-  // PIPELINE A: SIMCAT VIEW HANDLER
-  // ══════════════════════════════════════════════════════
   if (currentSelectedType === 'SimCAT') {
     let totalAccuracy = 0, peakPercentile = 0, count = rawSimCATs.length;
     let totalVarcPct = 0, totalDilrPct = 0, totalQaPct = 0;
@@ -1360,13 +1280,11 @@ function renderScores() {
       totalQaPct += parseFloat(r['QA Pct']) || 0;
     });
 
-    // Update Top Metric Cards
     document.getElementById('an-accuracy').textContent = count ? Math.round(totalAccuracy / count) + '%' : '0%';
     document.getElementById('an-peak-pct').textContent = peakPercentile ? peakPercentile.toFixed(2) : '0.00';
     const avgSectionPct = count ? Math.round((totalVarcPct + totalDilrPct + totalQaPct) / (count * 3)) : 0;
     document.getElementById('an-efficiency').textContent = avgSectionPct + '%ile Avg';
 
-    // Draw Line Chart Trend
     if (scoreChartInstance) scoreChartInstance.destroy();
     const timeline = [...rawSimCATs].sort((a,b) => new Date(a.Date) - new Date(b.Date));
     scoreChartInstance = new Chart(ctx, {
@@ -1378,7 +1296,6 @@ function renderScores() {
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
     });
 
-    // Draw Section Bars
     const avgVarc = count ? Math.round(totalVarcPct / count) : 0;
     const avgDilr = count ? Math.round(totalDilrPct / count) : 0;
     const avgQa = count ? Math.round(totalQaPct / count) : 0;
@@ -1387,7 +1304,6 @@ function renderScores() {
       <div class="prog-row"><div class="prog-label"><span>Data Interpretation & LR</span><span>${avgDilr}%ile Avg</span></div><div class="prog-track"><div class="prog-fill" style="width: ${avgDilr}%; background: var(--purple);"></div></div></div>
       <div class="prog-row"><div class="prog-label"><span>Quantitative Aptitude (QA)</span><span>${avgQa}%ile Avg</span></div><div class="prog-track"><div class="prog-fill" style="width: ${avgQa}%; background: var(--green);"></div></div></div>`;
 
-    // History Log List
     if (rawSimCATs.length === 0) { listContainer.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text3);">No SimCAT data found for this Student ID.</div>`; return; }
     listContainer.innerHTML = rawSimCATs.map(r => `
       <div class="score-row" style="padding: 12px 0;">
@@ -1404,9 +1320,6 @@ function renderScores() {
         </div>
       </div>`).join('');
 
-  // ══════════════════════════════════════════════════════
-  // PIPELINE B: BENCHMARKING VIEW HANDLER
-  // ══════════════════════════════════════════════════════
   } else if (currentSelectedType === 'Benchmarking') {
     let totalAccuracy = 0, peakPercentile = 0, count = rawBenchmarks.length, totalScore = 0, totalMax = 0;
     let subGroup = { 'QA': { obs:0, max:0 }, 'DILR': { obs:0, max:0 }, 'VARC': { obs:0, max:0 } };
@@ -1424,12 +1337,10 @@ function renderScores() {
       if (subGroup[subKey]) { subGroup[subKey].obs += obs; subGroup[subKey].max += max; }
     });
 
-    // Update Top Metric Cards
     document.getElementById('an-accuracy').textContent = count ? Math.round(totalAccuracy / count) + '%' : '0%';
     document.getElementById('an-peak-pct').textContent = peakPercentile ? peakPercentile.toFixed(2) : '0.00';
     document.getElementById('an-efficiency').textContent = totalMax ? Math.round((totalScore / totalMax) * 100) + '%' : '0%';
 
-    // Draw Line Chart Trend
     if (scoreChartInstance) scoreChartInstance.destroy();
     const timeline = [...rawBenchmarks].sort((a,b) => new Date(a.Date) - new Date(b.Date));
     scoreChartInstance = new Chart(ctx, {
@@ -1441,7 +1352,6 @@ function renderScores() {
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
     });
 
-    // Draw Section Bars
     const vPct = subGroup['VARC'].max ? Math.round((subGroup['VARC'].obs / subGroup['VARC'].max) * 100) : 0;
     const dPct = subGroup['DILR'].max ? Math.round((subGroup['DILR'].obs / subGroup['DILR'].max) * 100) : 0;
     const qPct = subGroup['QA'].max ? Math.round((subGroup['QA'].obs / subGroup['QA'].max) * 100) : 0;
@@ -1451,7 +1361,6 @@ function renderScores() {
       <div class="prog-row"><div class="prog-label"><span>Data Interpretation & LR</span><span>${dPct}% Accuracy Index</span></div><div class="prog-track"><div class="prog-fill" style="width: ${dPct}%; background: var(--purple);"></div></div></div>
       <div class="prog-row"><div class="prog-label"><span>Quantitative Aptitude (QA)</span><span>${qPct}% Accuracy Index</span></div><div class="prog-track"><div class="prog-fill" style="width: ${qPct}%; background: var(--green);"></div></div></div>`;
 
-    // History Log List
     if (rawBenchmarks.length === 0) { listContainer.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text3);">No Benchmarking data found for this Student ID.</div>`; return; }
     listContainer.innerHTML = rawBenchmarks.map(r => `
       <div class="score-row" style="padding: 12px 0;">
@@ -1466,6 +1375,7 @@ function renderScores() {
       </div>`).join('');
   }
 }
+
 function renderScoreList() {
   const list = document.getElementById('score-list');
   if (!allScores.length) { list.innerHTML = '<div class="empty"><p>No test results yet</p></div>'; return; }
@@ -1488,36 +1398,26 @@ function renderScoreList() {
 ═══════════════════════════════════════════════════════════ */
 function renderSchedule() {
   const list = document.getElementById('schedule-list');
-  
-  // Create a clean baseline timestamp for today at midnight
   const todayMidnight = new Date();
   todayMidnight.setHours(0, 0, 0, 0);
 
-  // Helper function to safely parse variations of date formats (DD/MM/YYYY or YYYY-MM-DD)
   function parseSheetDate(dateStr) {
-    if (!dateStr) return new Date(0); // Return baseline epoch if empty
-    
-    // If format is DD/MM/YYYY (uses slashes)
+    if (!dateStr) return new Date(0);
     if (dateStr.includes('/')) {
       const parts = dateStr.split('/');
-      // Handle DD/MM/YYYY structure securely
       if (parts[0].length <= 2) {
         return new Date(parts[2], parts[1] - 1, parts[0]);
       }
     }
-    // Fallback default parser for YYYY-MM-DD standard formats
     return new Date(dateStr);
   }
 
-  // Filter out expired past classes and sort in true chronological sequence
   let data = [...allSchedule].filter(r => {
     const classDate = parseSheetDate(r['Date']);
     return classDate >= todayMidnight;
   }).sort((a, b) => {
     const dateA = parseSheetDate(a['Date']);
     const dateB = parseSheetDate(b['Date']);
-    
-    // Sort primarily by Date, and secondary by Time if dates match
     if (dateA - dateB !== 0) return dateA - dateB;
     return a['Time'].localeCompare(b['Time']);
   });
@@ -1525,14 +1425,8 @@ function renderSchedule() {
 
   if (!data.length) { list.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><p>No upcoming classes</p></div>'; return; }
 
-  const subColors = {QA:'var(--green)',VARC:'var(--accent)',DILR:'var(--purple)'};
-  const subBg = {QA:'var(--green-light)',VARC:'var(--accent-light)',DILR:'var(--purple-light)'};
-
   list.innerHTML = data.map(r => {
-    // Check if a valid join link exists for this specific row
     const joinUrl = r['Join Link'] ? r['Join Link'].trim() : '';
-    
-    // Generate a clean, responsive action button if the URL is active
     const actionButtonHtml = joinUrl 
       ? `<a href="${joinUrl}" target="_blank" class="demo-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-size: 11px; padding: 5px 12px; width: auto; background: var(--accent); margin-top: 8px;">
            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="stroke:#fff;"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
@@ -1563,7 +1457,7 @@ function renderSchedule() {
 
 function filterSchedule(filter, btn) {
   scheduleFilter = filter;
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('#page-schedule .tabs .tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderSchedule();
 }
@@ -1579,7 +1473,6 @@ function renderProgress() {
   document.getElementById('prog-active').textContent = active;
   document.getElementById('prog-pending').textContent = pending;
 
-  /* Overall bars by subject */
   const subjects = [...new Set(allProgress.map(r=>r['Subject']))];
   const barsEl = document.getElementById('overall-prog-bars');
   barsEl.innerHTML = subjects.map(sub=>{
@@ -1593,7 +1486,6 @@ function renderProgress() {
     </div>`;
   }).join('');
 
-  /* Flow sections per subject */
   const flowEl = document.getElementById('flow-sections');
   flowEl.innerHTML = subjects.map(sub=>{
     const items = allProgress.filter(r=>r['Subject']===sub);
@@ -1609,7 +1501,7 @@ function renderProgress() {
             ?`<span style="font-size:11px;background:var(--green-light);color:var(--green);padding:1px 8px;border-radius:10px;margin-left:8px;font-weight:500">Done</span>`
             :r['Status']==='In Progress'
             ?`<span style="font-size:11px;background:var(--accent-light);color:var(--accent);padding:1px 8px;border-radius:10px;margin-left:8px;font-weight:500">In progress</span>`
-            :`<span style="font-size:11px;background:var(--surface2);color:var(--text3);padding:1px 8px;border-radius:10px;margin-left:8px;font-weight:500">Upcoming</span>`;
+            :Reflect?`<span style="font-size:11px;background:var(--surface2);color:var(--text3);padding:1px 8px;border-radius:10px;margin-left:8px;font-weight:500">Upcoming</span>` : '';
           return `<div class="flow-item ${cls}">
             <div class="flow-dot-col">
               <div class="flow-dot"></div>
@@ -1636,6 +1528,7 @@ function fmtDate(str) {
     return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
   } catch(e) { return str; }
 }
+
 function fmtDateShort(str) {
   if (!str) return '';
   try {
@@ -1643,24 +1536,16 @@ function fmtDateShort(str) {
     return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
   } catch(e) { return str; }
 }
+
 // ===========================================================================
 // TWO-WAY DATA SYNCHRONIZATION (BACKEND BRIDGE)
 // ===========================================================================
-
-// 1. Replace this with the exact Web App URL you copied from your Apps Script Deployment
-const APPS_SCRIPT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwU7ZVPoNKcmnM-y3uh2c3ViNe9fYl5UODVeYPF1rJ5T1qCHxizzk-O9HHDBoq4AuFh/exec";
-
-/**
- * Sends Student Data (Scores or College Calls) back to Google Sheets
- */
 async function sendDataToGoogleSheet(payload) {
-  if (!APPS_SCRIPT_WEBAPP_URL || APPS_SCRIPT_WEBAPP_URL.includes("YOUR_DEPLOYED")) {
+  if (!APPS_SCRIPT_WEBAPP_URL) {
     alert("System Administration Error: Backend Web App URL is not configured yet.");
     return false;
   }
-
   try {
-    // We use fetch with 'no-cors' mode because Google Apps Script redirects requests
     await fetch(APPS_SCRIPT_WEBAPP_URL, {
       method: "POST",
       mode: "no-cors",
@@ -1675,13 +1560,9 @@ async function sendDataToGoogleSheet(payload) {
   }
 }
 
-/**
- * Form Submission handler for Student Self-Reported Scores (Supports editing/overwriting)
- */
 async function handleScoreSubmission(event) {
   event.preventDefault();
   const submitBtn = document.getElementById('score-submit-btn');
-  
   submitBtn.disabled = true;
   submitBtn.textContent = "Syncing with Sheet...";
 
@@ -1696,21 +1577,14 @@ async function handleScoreSubmission(event) {
     percentile: document.getElementById('form-score-pct').value
   };
 
-  // Run the background sync
   const success = await sendDataToGoogleSheet(payload);
-  
   if (success) {
     alert("Database Synced! Your scores have been successfully logged/updated.");
-    document.getElementById('score-status-hint').innerHTML = "🟢 <b>Last updated:</b> Just now. You can change these inputs and submit again anytime to correct mistakes.";
-    document.getElementById('score-status-hint').style.color = "var(--green)";
   }
-  
   submitBtn.disabled = false;
   submitBtn.textContent = "Overwrite / Save Changes";
 }
-/**
- * Form Submission handler for College Calls and Converts
- */
+
 async function handleCallSubmission(event) {
   event.preventDefault();
   const submitBtn = event.target.querySelector('button');
@@ -1733,12 +1607,9 @@ async function handleCallSubmission(event) {
   submitBtn.disabled = false;
   submitBtn.textContent = "Log Entry";
 }
-  // Global memory state mapping configurations
+
 let studentLoadedOfficialScores = {};
 
-/**
- * Requirement #2: Custom Form Formats per Exam
- */
 function switchExamFormFields(exam) {
   const container = document.getElementById('dynamic-fields-container');
   const fileInput = document.getElementById('form-proof-file');
@@ -1746,13 +1617,11 @@ function switchExamFormFields(exam) {
   const lockNotice = document.getElementById('exam-lock-notice');
   const proofDisplay = document.getElementById('existing-proof-link-display');
   
-  // Clear file input states safely
-  fileInput.value = "";
+  if(fileInput) fileInput.value = "";
   
   const savedData = studentLoadedOfficialScores[exam];
   const isLocked = savedData && savedData.lockStatus === "LOCKED";
   
-  // Render Administrative Lock States (Requirement #5)
   if (isLocked) {
     lockNotice.style.display = "block";
     lockNotice.style.background = "var(--red-light)";
@@ -1771,14 +1640,12 @@ function switchExamFormFields(exam) {
     submitBtn.textContent = savedData ? "Update Matrix Records" : "Save Exam Profile Records";
   }
 
-  // Handle proof links
   if (savedData && savedData.proofUrl) {
     proofDisplay.innerHTML = `📄 <a href="${savedData.proofUrl}" target="_blank" style="color:var(--accent); font-weight:500;">View Uploaded Document Proof</a>`;
   } else {
     proofDisplay.innerHTML = "";
   }
 
-  // Inject Custom Sub-Fields Structuring Layout Models
   let html = "";
   if (exam === "CAT") {
     html = `
@@ -1787,7 +1654,7 @@ function switchExamFormFields(exam) {
         <div><label style="font-size:11px;color:var(--text2);">DILR Raw</label><input type="number" id="inp-dilr" value="${savedData?.dilr||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
         <div><label style="font-size:11px;color:var(--text2);">Quant Raw</label><input type="number" id="inp-qa" value="${savedData?.qa||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
       </div>
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top:10px;">
         <div><label style="font-size:11px;color:var(--text2);">Total Aggregate Score</label><input type="number" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
         <div><label style="font-size:11px;color:var(--text2);">Overall Percentile</label><input type="text" id="inp-pct" value="${savedData?.percentile||''}" placeholder="e.g. 99.81" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
       </div>`;
@@ -1798,7 +1665,7 @@ function switchExamFormFields(exam) {
         <div><label style="font-size:11px;color:var(--text2);">Quant Skills</label><input type="number" id="inp-quant" value="${savedData?.quant||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
         <div><label style="font-size:11px;color:var(--text2);">Logical Reasoning</label><input type="number" id="inp-logic" value="${savedData?.logic||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
       </div>
-      <div><label style="font-size:11px;color:var(--text2);">Total Scaled Score</label><input type="number" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;width:50%;"></div>`;
+      <div style="margin-top:10px;"><label style="font-size:11px;color:var(--text2);">Total Scaled Score</label><input type="number" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;width:50%;"></div>`;
   } else if (exam === "XAT") {
     html = `
       <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
@@ -1818,14 +1685,11 @@ function switchExamFormFields(exam) {
         <div><label style="font-size:11px;color:var(--text2);">Analytical Reasoning</label><input type="number" step="0.01" id="inp-reasoning" value="${savedData?.reasoning||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
         <div><label style="font-size:11px;color:var(--text2);">Quantitative</label><input type="number" step="0.01" id="inp-quant" value="${savedData?.quant||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;"></div>
       </div>
-      <div><label style="font-size:11px;color:var(--text2);">Total Score</label><input type="number" step="0.01" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;width:50%;"></div>`;
+      <div style="margin-top:10px;"><label style="font-size:11px;color:var(--text2);">Total Score</label><input type="number" step="0.01" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;width:50%;"></div>`;
   }
   container.innerHTML = html;
 }
 
-/**
- * Requirement #3: Converts File uploads to Base64 data blocks 
- */
 async function processOfficialScoreFormSubmit(event) {
   event.preventDefault();
   const exam = document.getElementById('master-exam-selector').value;
@@ -1835,7 +1699,6 @@ async function processOfficialScoreFormSubmit(event) {
   let fileData = null;
   let fileName = null;
   
-  // Require file upload for new entries
   if (!studentLoadedOfficialScores[exam] && fileInput.files.length === 0) {
     alert("Authentication Requirement: Please upload a verification image/PDF proof of your scorecard.");
     return;
@@ -1846,14 +1709,14 @@ async function processOfficialScoreFormSubmit(event) {
   
   if (fileInput.files.length > 0) {
     const file = fileInput.files[0];
-    
-    // 1 MB Size Limit Configuration (1 * 1024 * 1024 bytes)
     const MAX_FILE_SIZE_BYTES = 1048576; 
     
     if (file.size > MAX_FILE_SIZE_BYTES) {
-      alert("❌ File Too Large!\n\nTo ensure system stability, scorecard proofs are limited to a maximum of 1 MB.\n\nPlease upload a compressed PDF or a lower-resolution screenshot instead.");
-      fileInput.value = ""; // Clear out the oversized file
-      return; // Stop the submission completely
+      alert("❌ File Too Large!\n\nScorecard proofs are limited to a maximum of 1 MB.\nPlease upload a compressed file asset.");
+      fileInput.value = "";
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Save Exam Profile Records";
+      return;
     }
     
     fileName = file.name;
@@ -1864,7 +1727,6 @@ async function processOfficialScoreFormSubmit(event) {
     });
   }
   
-  // Package sub-metrics dynamically based on exam selection
   let scoresPayload = {};
   if (exam === "CAT") {
     scoresPayload = { varc: document.getElementById('inp-varc').value, dilr: document.getElementById('inp-dilr').value, qa: document.getElementById('inp-qa').value, total: document.getElementById('inp-total').value, percentile: document.getElementById('inp-pct').value };
@@ -1886,26 +1748,20 @@ async function processOfficialScoreFormSubmit(event) {
     existingProofUrl: studentLoadedOfficialScores[exam]?.proofUrl || ""
   };
   
-  // Send data to Apps Script via the sendDataToGoogleSheet function you already have
   const success = await sendDataToGoogleSheet(masterPayload);
   if (success) {
     alert(`${exam} Score matrix successfully synced!`);
-    // Hot-update local memory state cache
     studentLoadedOfficialScores[exam] = {
       ...scoresPayload,
       proofUrl: fileData ? "Calculating..." : studentLoadedOfficialScores[exam]?.proofUrl,
       lockStatus: "OPEN"
     };
-    // Re-fetch everything cleanly to ensure perfect rendering update
     await fetchAllOfficialExamSubTabs();
   }
   submitBtn.disabled = false;
   switchExamFormFields(exam);
 }
 
-/**
- * Requirement #5: Pulls down logged scores and renders lock controls on load
- */
 async function fetchAllOfficialExamSubTabs() {
   const sid = currentStudent['StudentID'] || currentStudent.id;
   try {
@@ -1925,44 +1781,31 @@ async function fetchAllOfficialExamSubTabs() {
     const mySnap = snap.find(r => r['StudentID'] == sid);
     if (mySnap) studentLoadedOfficialScores["SNAP"] = { english: mySnap['General English'], reasoning: mySnap['Analytical Reasoning'], quant: mySnap['Quantitative'], total: mySnap['Total Score'], proofUrl: mySnap['Proof Link'], lockStatus: mySnap['Lock Status'] };
     
-    // Default system initialization view display
     switchExamFormFields(document.getElementById('master-exam-selector').value);
   } catch(e) {
     console.error("Historical score mapping fault:", e);
   }
 }
-  /**
- * Processes and renders live institutional broadcasts based on operational urgency matrices
- */
+
 function renderAnnouncements() {
   const container = document.getElementById('announcement-board-container');
   const feed = document.getElementById('announcements-feed');
   const notices = window.myAnnouncements || [];
   
   if (!container || !feed) return;
-  
-  if (notices.length === 0) {
-    container.style.display = 'none';
-    return;
-  }
+  if (notices.length === 0) { container.style.display = 'none'; return; }
   
   container.style.display = 'block';
   feed.innerHTML = notices.map(r => {
-    // Dynamically choose colors based on the Type tag configuration
     let bg = "var(--surface2)";
     let border = "var(--border)";
     let textColor = "var(--text)";
     let label = r['Type'] || "NOTICE";
     
-    if (r['Type'] === "CRITICAL") {
-      bg = "var(--red-light)"; border = "var(--red)"; textColor = "var(--red)";
-    } else if (r['Type'] === "REGISTRATION") {
-      bg = "var(--amber-light)"; border = "var(--amber)"; textColor = "var(--amber)";
-    } else if (r['Type'] === "MATERIAL") {
-      bg = "var(--purple-light)"; border = "var(--purple)"; textColor = "var(--purple)";
-    }
+    if (r['Type'] === "CRITICAL") { bg = "var(--red-light)"; border = "var(--red)"; textColor = "var(--red)"; }
+    else if (r['Type'] === "REGISTRATION") { bg = "var(--amber-light)"; border = "var(--amber)"; textColor = "var(--amber)"; }
+    else if (r['Type'] === "MATERIAL") { bg = "var(--purple-light)"; border = "var(--purple)"; textColor = "var(--purple)"; }
     
-    // Check if an action button target link is specified
     const actionBtnHtml = r['Action Link'] 
       ? `<a href="${r['Action Link']}" target="_blank" class="demo-btn" style="text-decoration:none; display:inline-block; width:auto; font-size:12px; padding:6px 14px; margin-top:8px; text-align:center; background:${border}">Action Required &rarr;</a>`
       : '';
@@ -1976,39 +1819,27 @@ function renderAnnouncements() {
         <div style="font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px;">${r['Title']}</div>
         <div style="font-size: 13px; color: var(--text2); line-height: 1.5;">${r['Description']}</div>
         ${actionBtnHtml}
-      </div>
-    `;
+      </div>`;
   }).join('');
 }
-  let currentMaterialFilter = 'all';
 
-/**
- * Builds high-density downloadable file resource asset cards dynamically
- */
+let currentMaterialFilter = 'all';
+
 function renderMaterialsEngine(filterValue) {
   const container = document.getElementById('material-grid-container');
   const materials = window.myMaterials || [];
-  
   if (!container) return;
   
-  // Filter content arrays by subject category selections
   let targetData = [...materials];
-  if (filterValue !== 'all') {
-    targetData = targetData.filter(r => r['Subject'] === filterValue);
-  }
+  if (filterValue !== 'all') { targetData = targetData.filter(r => r['Subject'] === filterValue); }
   
   if (targetData.length === 0) {
-    container.innerHTML = `
-      <div class="card" style="grid-column: 1 / -1; text-align: center; color: var(--text3); padding: 40px 20px;">
-        📂 No study handouts uploaded yet for this subject category matrix.
-      </div>`;
+    container.innerHTML = `<div class="card" style="grid-column: 1 / -1; text-align: center; color: var(--text3); padding: 40px 20px;">📂 No study handouts uploaded yet for this subject category matrix.</div>`;
     return;
   }
   
   container.innerHTML = targetData.map(r => {
-    // Dynamic badge coloring based on subject context tag properties
-    let tagColor = "var(--accent)";
-    let tagBg = "var(--accent-light)";
+    let tagColor = "var(--accent)"; let tagBg = "var(--accent-light)";
     if (r['Subject'] === 'QA') { tagColor = "var(--green)"; tagBg = "var(--green-light)"; }
     if (r['Subject'] === 'DILR') { tagColor = "var(--purple)"; tagBg = "var(--purple-light)"; }
     if (r['Subject'] === 'VARC') { tagColor = "var(--amber)"; tagBg = "var(--amber-light)"; }
@@ -2021,9 +1852,8 @@ function renderMaterialsEngine(filterValue) {
             <span style="font-size: 11px; color: var(--text3); font-weight: 500;">${r['Type'] || 'Resource'}</span>
           </div>
           <h4 style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; line-height: 1.4;">${r['Title']}</h4>
-          <p style="font-size: 13px; color: var(--text2); margin-bottom: 16px; line-height: 1.5;">${r['Description'] || 'No lecture brief descriptions recorded.'}</p>
+          <p style="font-size: 13px; color: var(--text2); margin-bottom: 16px; line-height: 1.5;">${r['Description'] || 'No lecture descriptions recorded.'}</p>
         </div>
-        
         <div style="display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 12px; margin-top: auto;">
           <span style="font-size: 11px; color: var(--text3);">Added: ${r['Uploaded Date'] || '---'}</span>
           <a href="${r['Download Link']}" target="_blank" class="demo-btn" style="text-decoration:none; text-align:center; font-size:12px; padding:6px 12px; width:auto; display:inline-flex; align-items:center; gap:6px;">
@@ -2031,20 +1861,14 @@ function renderMaterialsEngine(filterValue) {
             Download
           </a>
         </div>
-      </div>
-    `;
+      </div>`;
   }).join('');
 }
 
-/**
- * Handles tab clicks inside the Study Material module dashboard view tabs
- */
 function filterMaterial(subject, buttonElement) {
-  // Toggle the visual active tracking selectors
   const sectionTabs = buttonElement.parentElement.querySelectorAll('.tab-btn');
   sectionTabs.forEach(btn => btn.classList.remove('active'));
   buttonElement.classList.add('active');
-  
   currentMaterialFilter = subject;
   renderMaterialsEngine(subject);
 }
