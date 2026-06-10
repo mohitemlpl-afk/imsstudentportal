@@ -829,7 +829,6 @@ const CONFIG = {
   CONFIGURED: true
 };
 
-// 1. Replace this with the exact Web App URL you copied from your Apps Script Deployment
 const APPS_SCRIPT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwU7ZVPoNKcmnM-y3uh2c3ViNe9fYl5UODVeYPF1rJ5T1qCHxizzk-O9HHDBoq4AuFh/exec";
 
 /* ═══════════════════════════════════════════════════════════
@@ -892,7 +891,7 @@ const DEMO = {
     {subject:'QA',topic:'Arithmetic — Basics',status:'Done',date:'2025-03-15'},
     {subject:'QA',topic:'Geometry & Mensuration',status:'In Progress',date:''},
     {subject:'QA',topic:'Modern Math',status:'Not Started',date:''},
-    {subject(--subject);',topic:'Vocabulary & Word Usage',status:'Done',date:'2025-02-20'},
+    {subject:'VARC',topic:'Vocabulary & Word Usage',status:'Done',date:'2025-02-20'},
     {subject:'VARC',topic:'Para-jumbles',status:'Done',date:'2025-03-10'},
     {subject:'VARC',topic:'Reading Comprehension',status:'In Progress',date:''},
     {subject:'VARC',topic:'Summary & Inference',status:'Not Started',date:''},
@@ -1006,14 +1005,18 @@ async function fetchAllData() {
   const sid = currentStudent['StudentID'] || currentStudent.id;
   const batch = currentStudent['BatchID'] || currentStudent.batch;
   
-  const [att, simcatRawText, benchmarkRawText, sched, prog, announcementsData, materialsData] = await Promise.all([
+  const [att, simcatRawText, benchmarkRawText, sched, prog, announcementsData, materialsData, catRows, nmatRows, xatRows, snapRows] = await Promise.all([
     fetchSheetData('Attendance'),
     fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20SimCAT`).then(res => res.text()).catch(() => "[]"),
     fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20Benchmark`).then(res => res.text()).catch(() => "[]"),
     fetchSheetData('Schedule'),
     fetchSheetData('Learning Flow'),
     fetchSheetData('Announcements'),
-    fetchSheetData('Material')
+    fetchSheetData('Material'),
+    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20CAT`).then(res => res.json()).catch(() => []),
+    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20NMAT`).then(res => res.json()).catch(() => []),
+    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20XAT`).then(res => res.json()).catch(() => []),
+    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20SNAP`).then(res => res.json()).catch(() => [])
   ]);
   
   let simcatData = [];
@@ -1034,6 +1037,20 @@ async function fetchAllData() {
   allSchedule = sched.filter(r => r['BatchID'] === batch);
   allProgress = prog.filter(r => r['StudentID'] === sid);
   
+  studentLoadedOfficialScores = {};
+  
+  const myCat = Array.isArray(catRows) ? catRows.find(r => String(r['StudentID'] || '').trim() == String(sid).trim()) : null;
+  if (myCat) studentLoadedOfficialScores["CAT"] = { varc: myCat['VARC Raw'], dilr: myCat['DILR Raw'], qa: myCat['QA Raw'], total: myCat['Total Raw'], percentile: myCat['Percentile'], proofUrl: myCat['Proof Link'], lockStatus: myCat['Lock Status'] };
+  
+  const myNmat = Array.isArray(nmatRows) ? nmatRows.find(r => String(r['StudentID'] || '').trim() == String(sid).trim()) : null;
+  if (myNmat) studentLoadedOfficialScores["NMAT"] = { lang: myNmat['Language Skills'], quant: myNmat['Quantitative Skills'], logic: myNmat['Logical Reasoning'], total: myNmat['Total Scaled'], proofUrl: myNmat['Proof Link'], lockStatus: myNmat['Lock Status'] };
+  
+  const myXat = Array.isArray(xatRows) ? xatRows.find(r => String(r['StudentID'] || '').trim() == String(sid).trim()) : null;
+  if (myXat) studentLoadedOfficialScores["XAT"] = { valr: myXat['VALR'], dm: myXat['DM'], qadi: myXat['QA DI'], gk: myXat['GK'], total: myXat['Total Score'], percentile: myXat['Percentile'], proofUrl: myXat['Proof Link'], lockStatus: myXat['Lock Status'] };
+  
+  const mySnap = Array.isArray(snapRows) ? snapRows.find(r => String(r['StudentID'] || '').trim() == String(sid).trim()) : null;
+  if (mySnap) studentLoadedOfficialScores["SNAP"] = { english: mySnap['General English'], reasoning: mySnap['Analytical Reasoning'], quant: mySnap['Quantitative'], total: mySnap['Total Score'], proofUrl: mySnap['Proof Link'], lockStatus: mySnap['Lock Status'] };
+
   const todayMidnight = new Date(); todayMidnight.setHours(0,0,0,0);
   window.myAnnouncements = announcementsData.filter(r => {
     const isTargeted = r['Target Batch'] === 'ALL' || r['Target Batch'] === batch;
@@ -1099,6 +1116,9 @@ function renderAll() {
   fetchAllOfficialExamSubTabs();
   renderAnnouncements();
   renderMaterialsEngine('all'); 
+  
+  const selectorEl = document.getElementById('master-exam-selector');
+  if (selectorEl) { switchExamFormFields(selectorEl.value); }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1115,6 +1135,11 @@ function showPage(pageId, element, navType = 'side') {
   if (targetPage) {
     targetPage.classList.add('active');
     targetPage.style.display = 'block'; 
+  }
+  
+  if (pageId === 'records') {
+    const selectorEl = document.getElementById('master-exam-selector');
+    if (selectorEl) { switchExamFormFields(selectorEl.value); }
   }
   
   const navItems = document.querySelectorAll('.nav-item, .bnav-item');
@@ -1214,7 +1239,6 @@ function renderCalendar() {
     else if (isWeekend) cell.className = 'cal-cell cal-holiday';
     else cell.className = 'cal-cell cal-holiday';
     cell.textContent = d;
-    if (status) cell.title = status;
     grid.appendChild(cell);
   }
 }
@@ -1497,7 +1521,7 @@ function renderProgress() {
       <div>
         ${items.map((r,i)=>{
           const cls = r['Status']==='Done'?'flow-done':r['Status']==='In Progress'?'flow-active':'flow-pending';
-const tag = r['Status']==='Done'
+          const tag = r['Status']==='Done'
             ?`<span style="font-size:11px;background:var(--green-light);color:var(--green);padding:1px 8px;border-radius:10px;margin-left:8px;font-weight:500">Done</span>`
             :r['Status']==='In Progress'
             ?`<span style="font-size:11px;background:var(--accent-light);color:var(--accent);padding:1px 8px;border-radius:10px;margin-left:8px;font-weight:500">In progress</span>`
@@ -1785,6 +1809,71 @@ async function fetchAllOfficialExamSubTabs() {
   } catch(e) {
     console.error("Historical score mapping fault:", e);
   }
+}
+
+async function fetchAllData() {
+  const sid = currentStudent['StudentID'] || currentStudent.id;
+  const batch = currentStudent['BatchID'] || currentStudent.batch;
+  
+  const [att, simcatRawText, benchmarkRawText, sched, prog, announcementsData, materialsData, catRows, nmatRows, xatRows, snapRows] = await Promise.all([
+    fetchSheetData('Attendance'),
+    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20SimCAT`).then(res => res.text()).catch(() => "[]"),
+    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20Benchmark`).then(res => res.text()).catch(() => "[]"),
+    fetchSheetData('Schedule'),
+    fetchSheetData('Learning Flow'),
+    fetchSheetData('Announcements'),
+    fetchSheetData('Material'),
+    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20CAT`).then(res => res.json()).catch(() => []),
+    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20NMAT`).then(res => res.json()).catch(() => []),
+    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20XAT`).then(res => res.json()).catch(() => []),
+    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20SNAP`).then(res => res.json()).catch(() => [])
+  ]);
+  
+  let simcatData = [];
+  let benchmarkData = [];
+  try { simcatData = JSON.parse(simcatRawText); } catch(e) { console.error("SimCAT format mapping error:", e); }
+  try { benchmarkData = JSON.parse(benchmarkRawText); } catch(e) { console.error("Benchmark format mapping error:", e); }
+
+  allAttendance = att.filter(r => r['StudentID'] === sid);
+  
+  window.rawSimCATs = Array.isArray(simcatData) ? simcatData.filter(r => {
+    return String(r['StudentID'] || '').trim().toLowerCase() === String(sid || '').trim().toLowerCase();
+  }) : [];
+
+  window.rawBenchmarks = Array.isArray(benchmarkData) ? benchmarkData.filter(r => {
+    return String(r['StudentID'] || '').trim().toLowerCase() === String(sid || '').trim().toLowerCase();
+  }) : [];
+  
+  allSchedule = sched.filter(r => r['BatchID'] === batch);
+  allProgress = prog.filter(r => r['StudentID'] === sid);
+  
+  studentLoadedOfficialScores = {};
+  
+  const myCat = Array.isArray(catRows) ? catRows.find(r => String(r['StudentID'] || '').trim() == String(sid).trim()) : null;
+  if (myCat) studentLoadedOfficialScores["CAT"] = { varc: myCat['VARC Raw'], dilr: myCat['DILR Raw'], qa: myCat['QA Raw'], total: myCat['Total Raw'], percentile: myCat['Percentile'], proofUrl: myCat['Proof Link'], lockStatus: myCat['Lock Status'] };
+  
+  const myNmat = Array.isArray(nmatRows) ? nmatRows.find(r => String(r['StudentID'] || '').trim() == String(sid).trim()) : null;
+  if (myNmat) studentLoadedOfficialScores["NMAT"] = { lang: myNmat['Language Skills'], quant: myNmat['Quantitative Skills'], logic: myNmat['Logical Reasoning'], total: myNmat['Total Scaled'], proofUrl: myNmat['Proof Link'], lockStatus: myNmat['Lock Status'] };
+  
+  const myXat = Array.isArray(xatRows) ? xatRows.find(r => String(r['StudentID'] || '').trim() == String(sid).trim()) : null;
+  if (myXat) studentLoadedOfficialScores["XAT"] = { valr: myXat['VALR'], dm: myXat['DM'], qadi: myXat['QA DI'], gk: myXat['GK'], total: myXat['Total Score'], percentile: myXat['Percentile'], proofUrl: myXat['Proof Link'], lockStatus: myXat['Lock Status'] };
+  
+  const mySnap = Array.isArray(snapRows) ? snapRows.find(r => String(r['StudentID'] || '').trim() == String(sid).trim()) : null;
+  if (mySnap) studentLoadedOfficialScores["SNAP"] = { english: mySnap['General English'], reasoning: mySnap['Analytical Reasoning'], quant: mySnap['Quantitative'], total: mySnap['Total Score'], proofUrl: mySnap['Proof Link'], lockStatus: mySnap['Lock Status'] };
+
+  const todayMidnight = new Date(); todayMidnight.setHours(0,0,0,0);
+  window.myAnnouncements = announcementsData.filter(r => {
+    const isTargeted = r['Target Batch'] === 'ALL' || r['Target Batch'] === batch;
+    let isNotExpired = true;
+    if (r['Expiry Date']) {
+      const expParts = r['Expiry Date'].includes('/') ? r['Expiry Date'].split('/') : null;
+      const expiry = expParts ? new Date(expParts[2], expParts[1] - 1, expParts[0]) : new Date(r['Expiry Date']);
+      isNotExpired = expiry >= todayMidnight;
+    }
+    return isTargeted && isNotExpired;
+  });
+
+  window.myMaterials = materialsData.filter(r => r['Target Batch'] === 'ALL' || r['Target Batch'] === batch);
 }
 
 function renderAnnouncements() {
