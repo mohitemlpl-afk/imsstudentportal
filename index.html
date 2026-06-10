@@ -1037,11 +1037,9 @@ async function fetchAllData() {
     fetchSheetData('Material')
   ]);
   
-  // 2. Parse text streams into valid JavaScript matrices safely
-  let simcatData = [];
-  let benchmarkData = [];
-  try { simcatData = JSON.parse(simcatRawText); } catch(e) { console.error("SimCAT parsing fallback:", e); }
-  try { benchmarkData = JSON.parse(benchmarkRawText); } catch(e) { console.error("Benchmark parsing fallback:", e); }
+  // Parse data (fetchSheetData already returns arrays, not strings)
+let simcatData = Array.isArray(simcatRawText) ? simcatRawText : [];
+let benchmarkData = Array.isArray(benchmarkRawText) ? benchmarkRawText : [];
 
   allAttendance = att.filter(r => r['StudentID'] === sid);
   
