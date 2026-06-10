@@ -1029,11 +1029,8 @@ async function fetchAllData() {
   // 1. Establish data streams across all institutional tables simultaneously
   const [att, simcatRawText, benchmarkRawText, sched, prog, announcementsData, materialsData] = await Promise.all([
     fetchSheetData('Attendance'),
-    
-    // Safely reads the text payload across Google's redirect engines to prevent network lockouts
-    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20SimCAT`).then(res => res.text()).catch(() => "[]"),
-    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20Benchmark`).then(res => res.text()).catch(() => "[]"),
-    
+    fetchSheetData('Scores SimCAT'),
+    fetchSheetData('Scores Benchmark'),
     fetchSheetData('Schedule'),
     fetchSheetData('Learning Flow'),
     fetchSheetData('Announcements'),
