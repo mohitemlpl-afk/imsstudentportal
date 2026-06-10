@@ -459,6 +459,11 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
         <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Mock Scores
       </button>
+      <!-- 👇 ADD THIS BUTTON INSIDE THE SIDEBAR BLOCK (Around Line 160) 👇 -->
+      <button class="nav-item" onclick="showPage('records',this)">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        My Records
+      </button>
       <button class="nav-item" onclick="showPage('schedule',this)">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         Schedule
@@ -618,6 +623,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
       </div>
 
       <!-- ── SCORES PAGE ── -->
+    <!-- ── SCORES PAGE (Cleaned Analytics Workspace Only) ── -->
      <div id="page-scores" class="page">
         <div class="page-header">
           <h2 class="page-title">Advanced Performance Analytics</h2>
@@ -646,75 +652,90 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
             <div class="stat-sub stat-neutral">Score vs Max ratio</div>
           </div>
         </div>
-          <!-- ── STUDENT TWO-WAY UPDATE HUB ── -->
-<div class="two-col" style="margin-top: 24px;">
-  
-<!-- Form 1: Update Real Scores -->
-  <div class="card" style="margin-top: 24px;">
-  <div class="card-title">
-    <span class="card-title-text">
-      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      Official Entrance Exam Records Portal
-    </span>
-  </div>
-  
-  <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 24px;">
-    <div style="border-right: 1px solid var(--border); padding-right: 20px;">
-      <label style="font-size: 12px; font-weight: 600; color: var(--text2); display:block; margin-bottom:6px;">Select Entrance Examination</label>
-      <select id="master-exam-selector" onchange="switchExamFormFields(this.value)" style="width:100%; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border); font-family:var(--font); font-weight:500;">
-        <option value="CAT">Common Admission Test (CAT)</option>
-        <option value="NMAT">NMAT by GMAC</option>
-        <option value="XAT">Xavier Aptitude Test (XAT)</option>
-        <option value="SNAP">Symbiosis National Aptitude Test (SNAP)</option>
-      </select>
-      
-      <div id="exam-lock-notice" style="margin-top: 16px; padding: 10px; border-radius: 6px; font-size: 12px; display: none;"></div>
-    </div>
-    
-    <form id="master-score-form" onsubmit="processOfficialScoreFormSubmit(event)" style="display: flex; flex-direction: column; gap: 14px;">
-      <div id="dynamic-fields-container"></div>
-      
-      <div style="background: var(--bg); padding: 12px; border-radius: var(--radius-sm); border: 1px dashed var(--border);">
-        <label style="font-size: 12px; font-weight:600; color:var(--text); display:block; margin-bottom:4px;">Upload Scorecard Verification Proof (PDF / Image)</label>
-        <input type="file" id="form-proof-file" accept="image/*,application/pdf" style="font-size:12px; color:var(--text2);">
-        <div id="existing-proof-link-display" style="margin-top:6px; font-size:12px;"></div>
+        
+        <!-- Interactive Chart & Historical Lists Canvas Element Area -->
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="chart-wrap">
+            <canvas id="scoreChart"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="card-title-text">Evaluation Tracking Logs</span></div>
+          <div class="score-list" id="score-list"></div>
+        </div>
       </div>
-      
-      <button type="submit" id="master-score-submit-btn" class="demo-btn">Save Exam Profile Records</button>
-    </form>
-  </div>
-</div>
-  <!-- Form 2: Log College Calls & Conversions -->
-  <div class="card" style="margin-bottom:0">
-    <div class="card-title">
-      <span class="card-title-text">
-        <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-        College Application Tracker
-      </span>
-    </div>
-    <form onsubmit="handleCallSubmission(event)" style="display: flex; flex-direction: column; gap: 12px;">
-      <div>
-        <label style="font-size: 12px; font-weight: 600; color: var(--text2);">Institute Name</label>
-        <input type="text" id="form-coll-name" placeholder="e.g. IIM Ahmedabad, FMS Delhi" required style="width:100%; padding:8px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font);">
+
+      <!-- ── NEW: MY RECORDS PAGE MODULE (Forms Data Collection Center) ── -->
+      <div id="page-records" class="page">
+        <div class="page-header">
+          <h2 class="page-title">My Official Institutional Records</h2>
+          <p class="page-sub">Update entrance test matrix verifications, validation proofs, and current college call stage tracking metrics</p>
+        </div>
+
+        <div class="two-col">
+          <!-- Form 1: Update Real Scores -->
+          <div class="card">
+            <div class="card-title">
+              <span class="card-title-text">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Official Entrance Exam Records Portal
+              </span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+              <div>
+                <label style="font-size: 12px; font-weight: 600; color: var(--text2); display:block; margin-bottom:6px;">Select Entrance Examination</label>
+                <select id="master-exam-selector" onchange="switchExamFormFields(this.value)" style="width:100%; padding:10px; border-radius:var(--radius-sm); border:1px solid var(--border); font-family:var(--font); font-weight:500;">
+                  <option value="CAT">Common Admission Test (CAT)</option>
+                  <option value="NMAT">NMAT by GMAC</option>
+                  <option value="XAT">Xavier Aptitude Test (XAT)</option>
+                  <option value="SNAP">Symbiosis National Aptitude Test (SNAP)</option>
+                </select>
+                <div id="exam-lock-notice" style="margin-top: 12px; padding: 10px; border-radius: 6px; font-size: 11px; display: none;"></div>
+              </div>
+              <form id="master-score-form" onsubmit="processOfficialScoreFormSubmit(event)" style="display: flex; flex-direction: column; gap: 14px;">
+                <div id="dynamic-fields-container"></div>
+                <div style="background: var(--bg); padding: 12px; border-radius: var(--radius-sm); border: 1px dashed var(--border);">
+                  <label style="font-size: 12px; font-weight:600; color:var(--text); display:block; margin-bottom:4px;">Upload Scorecard Verification Proof (PDF / Image)</label>
+                  <input type="file" id="form-proof-file" accept="image/*,application/pdf" style="font-size:12px; color:var(--text2);">
+                  <div id="existing-proof-link-display" style="margin-top:6px; font-size:12px;"></div>
+                </div>
+                <button type="submit" id="master-score-submit-btn" class="demo-btn">Save Exam Profile Records</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Form 2: Log College Calls & Conversions -->
+          <div class="card" style="margin-bottom:0">
+            <div class="card-title">
+              <span class="card-title-text">
+                <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+                College Application Tracker
+              </span>
+            </div>
+            <form onsubmit="handleCallSubmission(event)" style="display: flex; flex-direction: column; gap: 12px;">
+              <div>
+                <label style="font-size: 12px; font-weight: 600; color: var(--text2);">Institute Name</label>
+                <input type="text" id="form-coll-name" placeholder="e.g. IIM Ahmedabad, FMS Delhi" required style="width:100%; padding:8px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font);">
+              </div>
+              <div>
+                <label style="font-size: 12px; font-weight: 600; color: var(--text2);">Current Status (Stage)</label>
+                <select id="form-coll-stage" required style="width:100%; padding:8px; border-radius:var(--radius-sm); border:1px solid var(--border); font-family:var(--font);">
+                  <option value="Applied">Form Filled / Applied</option>
+                  <option value="Call Received">Shortlisted (Interview Call Received)</option>
+                  <option value="Waitlisted">Waitlisted</option>
+                  <option value="Converted">Converted (Admission Offered 🎉)</option>
+                  <option value="Regret">Regret / Rejected</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 12px; font-weight: 600; color: var(--text2);">Interview Experience / Notes</label>
+                <textarea id="form-coll-notes" placeholder="Add details about composite scores, interview slots, or deadlines..." style="width:100%; padding:8px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font); height: 80px; resize: none;"></textarea>
+              </div>
+              <button type="submit" class="demo-btn" style="background: var(--purple);">Log Entry</button>
+            </form>
+          </div>
+        </div>
       </div>
-      <div>
-        <label style="font-size: 12px; font-weight: 600; color: var(--text2);">Current Status (Stage)</label>
-        <select id="form-coll-stage" required style="width:100%; padding:8px; border-radius:var(--radius-sm); border:1px solid var(--border); font-family:var(--font);">
-          <option value="Applied">Form Filled / Applied</option>
-          <option value="Call Received">Shortlisted (Interview Call Received)</option>
-          <option value="Waitlisted">Waitlisted</option>
-          <option value="Converted">Converted (Admission Offered 🎉)</option>
-          <option value="Regret">Regret / Rejected</option>
-        </select>
-      </div>
-      <div>
-        <label style="font-size: 12px; font-weight: 600; color: var(--text2);">Interview Experience / Notes</label>
-        <textarea id="form-coll-notes" placeholder="Add details about composite scores, interview slots, or deadlines..." style="width:100%; padding:8px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font); height: 60px; resize: none;"></textarea>
-      </div>
-      <button type="submit" class="demo-btn" style="background: var(--purple);">Log Entry</button>
-    </form>
-  </div>
-</div></div>
       <!-- ── SCHEDULE PAGE ── -->
    <div id="page-schedule" class="page" style="display: none;">
         <div class="page-header">
@@ -803,6 +824,11 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
       <button class="bnav-item" onclick="showPage('scores',this,'bnav')">
         <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Scores
+      </button>
+      <!-- 👇 ADD THIS BUTTON INSIDE THE BOTTOMNAV BLOCK (Around Line 305) 👇 -->
+      <button class="bnav-item" onclick="showPage('records',this,'bnav')">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Records
       </button>
       <button class="bnav-item" onclick="showPage('schedule',this,'bnav')">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -1137,15 +1163,21 @@ function showPage(pageId, element, navType = 'side') {
   const pages = document.querySelectorAll('.page');
   pages.forEach(p => {
     p.classList.remove('active');
-    p.style.display = 'none'; // Forces every page closed
+    p.style.display = 'none'; // Forces every page container closed
   });
   
   // Activate and reveal the target selected page view panel
   const targetPage = document.getElementById('page-' + pageId);
   if (targetPage) {
     targetPage.classList.add('active');
-    targetPage.style.display = 'block'; // Forces ONLY the clicked page open
+    targetPage.style.display = 'block'; // Forces ONLY the clicked page layout open
   }
+  
+  // Toggle navigation active link highlight styles across both menus
+  const navItems = document.querySelectorAll('.nav-item, .bnav-item');
+  navItems.forEach(item => item.classList.remove('active'));
+  if (element) element.classList.add('active');
+}
   
   // Toggle sidebar active highlights
   const navItems = document.querySelectorAll('.nav-item, .bnav-item');
