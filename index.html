@@ -1497,11 +1497,11 @@ function renderProgress() {
       <div>
         ${items.map((r,i)=>{
           const cls = r['Status']==='Done'?'flow-done':r['Status']==='In Progress'?'flow-active':'flow-pending';
-          const tag = r['Status']==='Done'
+const tag = r['Status']==='Done'
             ?`<span style="font-size:11px;background:var(--green-light);color:var(--green);padding:1px 8px;border-radius:10px;margin-left:8px;font-weight:500">Done</span>`
             :r['Status']==='In Progress'
             ?`<span style="font-size:11px;background:var(--accent-light);color:var(--accent);padding:1px 8px;border-radius:10px;margin-left:8px;font-weight:500">In progress</span>`
-            :Reflect?`<span style="font-size:11px;background:var(--surface2);color:var(--text3);padding:1px 8px;border-radius:10px;margin-left:8px;font-weight:500">Upcoming</span>` : '';
+            :`<span style="font-size:11px;background:var(--surface2);color:var(--text3);padding:1px 8px;border-radius:10px;margin-left:8px;font-weight:500">Upcoming</span>`;
           return `<div class="flow-item ${cls}">
             <div class="flow-dot-col">
               <div class="flow-dot"></div>
