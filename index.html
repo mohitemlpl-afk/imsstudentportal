@@ -1044,8 +1044,18 @@ let benchmarkData = Array.isArray(benchmarkRawText) ? benchmarkRawText : [];
   allAttendance = att.filter(r => r['StudentID'] === sid);
   
   // 3. Mount structured data points cleanly into global display frames
-  window.rawSimCATs = Array.isArray(simcatData) ? simcatData.filter(r => r['StudentID'] == sid) : [];
-  window.rawBenchmarks = Array.isArray(benchmarkData) ? benchmarkData.filter(r => r['StudentID'] == sid) : [];
+ // 👇 Copy and replace these two matching lines inside your fetchAllData function:
+  window.rawSimCATs = Array.isArray(simcatData) ? simcatData.filter(r => {
+    const rowId = String(r['StudentID'] || '').trim().toLowerCase();
+    const searchId = String(sid || '').trim().toLowerCase();
+    return rowId === searchId && rowId !== '';
+  }) : [];
+
+  window.rawBenchmarks = Array.isArray(benchmarkData) ? benchmarkData.filter(r => {
+    const rowId = String(r['StudentID'] || '').trim().toLowerCase();
+    const searchId = String(sid || '').trim().toLowerCase();
+    return rowId === searchId && rowId !== '';
+  }) : [];
   
   allSchedule = sched.filter(r => r['BatchID'] === batch);
   allProgress = prog.filter(r => r['StudentID'] === sid);
