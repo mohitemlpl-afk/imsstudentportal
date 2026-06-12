@@ -971,7 +971,31 @@ async function handleGoogleCredential(response) {
   const email = payload.email;
   await fetchStudentByEmail(email);
 }
+/* ═══════════════════════════════════════════════════════════
+   GOOGLE IDENTITY AUTHENTICATION ENGINE
+═══════════════════════════════════════════════════════════ */
+function loginWithGoogle() {
+  if (!CONFIG.CONFIGURED || CONFIG.GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID_HERE') {
+    alert('Google login requires setup.\n\nPlease configure your Google Client ID in the CONFIG section.');
+    return;
+  }
+  try {
+    google.accounts.id.initialize({
+      client_id: CONFIG.GOOGLE_CLIENT_ID,
+      callback: handleGoogleCredential
+    });
+    google.accounts.id.prompt();
+  } catch (err) {
+    console.error("Google SDK Initialization Fault:", err);
+    alert("Google Sign-In is initializing. Please try again.");
+  }
+}
 
+async function handleGoogleCredential(response) {
+  const payload = JSON.parse(atob(response.credential.split('.')[1]));
+  const email = payload.email;
+  await fetchStudentByEmail(email);
+}
 /* ═══════════════════════════════════════════════════════════
    GOOGLE SHEETS API CALLS
 ═══════════════════════════════════════════════════════════ */
