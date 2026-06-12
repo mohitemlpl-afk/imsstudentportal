@@ -396,7 +396,7 @@ async function handleGoogleCredential(response) {
   try {
     const payload = JSON.parse(atob(response.credential.split('.')[1]));
     if (payload && payload.email) {
-      await fetchStudentByEmail(payload.email);
+      await fetchStudentByEmail(payload.email); // 👈 It calls this function!
     }
   } catch (e) {
     console.error("Token decoding fault:", e);
