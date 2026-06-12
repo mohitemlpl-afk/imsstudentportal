@@ -977,22 +977,44 @@ async function handleGoogleCredential(response) {
 ═══════════════════════════════════════════════════════════ */
 async function fetchStudentByEmail(email) {
   try {
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${CONFIG.SPREADSHEET_ID}/values/Students?key=${CONFIG.SHEETS_API_KEY}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    const rows = data.values || [];
-    const headers = rows[0];
-    const emailIdx = headers.indexOf('Email');
-    const match = rows.slice(1).find(r => r[emailIdx] === email);
-    if (!match) { alert('Student not found. Please contact your admin.'); return; }
-    currentStudent = {};
-    headers.forEach((h, i) => currentStudent[h] = match[i] || '');
+    // 1. Run a strict check against your admin-managed Supabase registry
+    const { data: studentProfile, error } = await supabase
+      .from('students')
+      .select('*')
+      .eq('email', email)
+      .single();
+
+    // 2. Security Gatekeeper: If email doesn't exist in Supabase, block access immediately
+    if (error || !studentProfile) {
+      alert("⚠️ Access Denied:\n\nThis email address is not registered in our system.\n\nStudents cannot self-register. Please reach out to your IMS center administrator to activate your account profile.");
+      
+      // Force clear any active Google sign-in prompts
+      if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+        google.accounts.id.disableAutoSelect();
+      }
+      return;
+    }
+
+    // 3. Match found! Set session variables securely with your database column names
+    currentStudent = {
+      id: studentProfile.id,           // Locked IMS Student ID
+      name: studentProfile.name,
+      email: studentProfile.email,
+      phone: studentProfile.phone,
+      batch: studentProfile.batch,     // Locked Batch ID (e.g., CAT-2025-A)
+      target_exam: studentProfile.target_exam
+    };
+
+    // Save it to session storage just like your old app did
     sessionStorage.setItem('sp_student', JSON.stringify(currentStudent));
+
+    // 4. Fire off your existing data pull pathways and load the dashboard interface
     await fetchAllData();
     loadApp();
-  } catch(e) {
-    alert('Error connecting to data. Check your Sheets API key and Sheet ID.');
-    console.error(e);
+
+  } catch (err) {
+    console.error("Master Registry Validation Exception:", err);
+    alert("An error occurred during account validation. Please reload and try again.");
   }
 }
 
