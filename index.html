@@ -977,38 +977,41 @@ async function handleGoogleCredential(response) {
 ═══════════════════════════════════════════════════════════ */
 async function fetchStudentByEmail(email) {
   try {
-    // 1. Run a strict check against your admin-managed Supabase registry
+    // 1. Fetch your pre-existing profile row from Supabase
     const { data: studentProfile, error } = await supabase
       .from('students')
       .select('*')
       .eq('email', email)
       .single();
 
-    // 2. Security Gatekeeper: If email doesn't exist in Supabase, block access immediately
     if (error || !studentProfile) {
-      alert("⚠️ Access Denied:\n\nThis email address is not registered in our system.\n\nStudents cannot self-register. Please reach out to your IMS center administrator to activate your account profile.");
-      
-      // Force clear any active Google sign-in prompts
-      if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-        google.accounts.id.disableAutoSelect();
-      }
+      alert("⚠️ Access Denied:\n\nThis email address is not registered in our system.\n\nPlease contact your IMS center administrator.");
       return;
     }
 
-    // 3. Match found! Set session variables securely with your database column names
+    // 2. Map the data to currentStudent, providing BOTH styles of names 
+    // This safely satisfies whatever naming convention your frontend views use!
     currentStudent = {
-      id: studentProfile.id,           // Locked IMS Student ID
+      id: studentProfile.id,
       name: studentProfile.name,
       email: studentProfile.email,
       phone: studentProfile.phone,
-      batch: studentProfile.batch,     // Locked Batch ID (e.g., CAT-2025-A)
-      target_exam: studentProfile.target_exam
+      batch: studentProfile.batch,
+      target_exam: studentProfile.target_exam,
+      
+      // Fallback mappings to perfectly match legacy spreadsheet headers
+      "Student ID": studentProfile.id,
+      "IMS Pin": studentProfile.id,
+      "Name": studentProfile.name,
+      "Email": studentProfile.email,
+      "Batch": studentProfile.batch,
+      "Target Exam": studentProfile.target_exam
     };
 
-    // Save it to session storage just like your old app did
+    // Save it to session storage just like the old layout did
     sessionStorage.setItem('sp_student', JSON.stringify(currentStudent));
 
-    // 4. Fire off your existing data pull pathways and load the dashboard interface
+    // 3. Fire your initialization routines
     await fetchAllData();
     loadApp();
 
