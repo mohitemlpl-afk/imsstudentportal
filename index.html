@@ -976,8 +976,9 @@ async function handleGoogleCredential(response) {
    GOOGLE SHEETS API CALLS
 ═══════════════════════════════════════════════════════════ */
 async function fetchStudentByEmail(email) {
+  console.log("🚀 Login process initiated for email:", email);
   try {
-    // 1. Fetch your pre-existing profile row from Supabase
+    // 1. Check Supabase Master Registry
     const { data: studentProfile, error } = await supabase
       .from('students')
       .select('*')
@@ -985,38 +986,55 @@ async function fetchStudentByEmail(email) {
       .single();
 
     if (error || !studentProfile) {
-      alert("⚠️ Access Denied:\n\nThis email address is not registered in our system.\n\nPlease contact your IMS center administrator.");
+      console.warn("⚠️ Email not found in Supabase master registry.");
+      alert("⚠️ Access Denied:\n\nThis email address is not registered in our system.\n\nPlease contact your center administrator.");
       return;
     }
 
-    // 2. Map the data to currentStudent, providing BOTH styles of names 
-    // This safely satisfies whatever naming convention your frontend views use!
+    console.log("✅ Student profile matched in database:", studentProfile);
+
+    // 2. Structural Property Naming Bridge
     currentStudent = {
       id: studentProfile.id,
       name: studentProfile.name,
       email: studentProfile.email,
       phone: studentProfile.phone,
-      batch: studentProfile.batch,
-      target_exam: studentProfile.target_exam,
+      batch: studentProfile.batch || 'UNASSIGNED',
+      target_exam: studentProfile.target_exam || 'CAT',
       
-      // Fallback mappings to perfectly match legacy spreadsheet headers
+      // Legacy header mappings
       "Student ID": studentProfile.id,
       "IMS Pin": studentProfile.id,
       "Name": studentProfile.name,
       "Email": studentProfile.email,
-      "Batch": studentProfile.batch,
-      "Target Exam": studentProfile.target_exam
+      "Batch": studentProfile.batch || 'UNASSIGNED',
+      "Target Exam": studentProfile.target_exam || 'CAT'
     };
 
-    // Save it to session storage just like the old layout did
     sessionStorage.setItem('sp_student', JSON.stringify(currentStudent));
 
-    // 3. Fire your initialization routines
-    await fetchAllData();
-    loadApp();
+    // 3. Fail-Safe Loading Chain: Prevents secondary script crashes from freezing the UI
+    try {
+      console.log("🔄 Pulling ecosystem tables via fetchAllData()...");
+      await fetchAllData();
+    } catch (dataError) {
+      console.error("❌ Secondary data load failed, bypassing to prevent freeze:", dataError);
+    }
+
+    try {
+      console.log("🏁 Triggering app rendering layout via loadApp()...");
+      loadApp();
+    } catch (uiError) {
+      console.error("❌ UI rendering sequence failed:", uiError);
+      
+      // Emergency Manual Display: Forces layout swap if your loadApp() function is stuck
+      document.getElementById('login-screen').classList.add('hidden');
+      const mainDash = document.getElementById('main-dashboard') || document.getElementById('dashboard-view') || document.body;
+      if (mainDash) mainDash.classList.remove('hidden');
+    }
 
   } catch (err) {
-    console.error("Master Registry Validation Exception:", err);
+    console.error("💥 Critical Authentication Loop Exception:", err);
     alert("An error occurred during account validation. Please reload and try again.");
   }
 }
