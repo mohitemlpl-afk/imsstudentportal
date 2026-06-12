@@ -52,11 +52,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
   padding:48px 44px;max-width:440px;width:100%;text-align:center;
   box-shadow:var(--shadow);
 }
-.login-logo{
-  width:56px;height:56px;border-radius:14px;background:var(--accent);
-  display:flex;align-items:center;justify-content:center;margin:0 auto 24px;
-}
-.login-logo svg{width:28px;height:28px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .login-title{font-family:var(--font-display);font-size:26px;color:var(--text);margin-bottom:6px}
 .login-sub{font-size:14px;color:var(--text2);margin-bottom:32px;line-height:1.5}
 .google-btn{
@@ -69,14 +64,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .google-btn:hover{background:var(--surface2);border-color:#ccc}
 .google-btn svg{width:20px;height:20px;flex-shrink:0}
 .login-note{font-size:12px;color:var(--text3);margin-top:20px;line-height:1.5}
-
-/* ─── SETUP NOTICE ─────────────────────────────────────── */
-#setup-notice{
-  background:var(--amber-light);border:1px solid #E8B84B;border-radius:var(--radius-sm);
-  padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--amber);
-  display:none;text-align:left;line-height:1.6;
-}
-#setup-notice b{font-weight:600}
 
 /* ─── APP SHELL ────────────────────────────────────────── */
 #app{display:none;min-height:100vh;flex-direction:column}
@@ -263,7 +250,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .score-test{font-size:13px;font-weight:500;color:var(--text);flex:1}
 .score-date{font-size:12px;color:var(--text3);width:90px;flex-shrink:0}
 .score-pills{display:flex;gap:6px;flex-shrink:0}
-.score-pill font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600}
+.score-pill{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600}
 .pill-v{background:#EEF1FF;color:#2B4EFF}
 .pill-d{background:var(--purple-light);color:var(--purple)}
 .pill-q{background:var(--green-light);color:var(--green)}
@@ -378,13 +365,52 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 </head>
 <body>
 
+<!-- ⚡ ISOLATED LOG-IN BUTTON INTERFACE ENGINE CONTAINER ⚡ -->
+<script>
+const CONFIG = {
+  GOOGLE_CLIENT_ID: '546265155462-daji3rvlhjehu8eipb9pkl07efk1jt6e.apps.googleusercontent.com',
+  SHEETS_API_KEY: 'AIzaSyBy55WhovpXDWRa5O3hiuWsHbvTUtiVpI0',
+  SPREADSHEET_ID: '1s-uywnbanv9mBZO34mNuwZzllemnnHfMkuVPFAPvQn0',
+  INSTITUTE_NAME: 'IMS Gujarat',
+  CONFIGURED: true
+};
+
+function loginWithGoogle() {
+  if (!CONFIG.CONFIGURED || CONFIG.GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID_HERE') {
+    alert('Google login setup configuration fault.');
+    return;
+  }
+  try {
+    google.accounts.id.initialize({
+      client_id: CONFIG.GOOGLE_CLIENT_ID,
+      callback: handleGoogleCredential
+    });
+    google.accounts.id.prompt();
+  } catch (err) {
+    console.error("Google Client SDK Connection Exception:", err);
+    alert("Google framework initializing. Click again in a moment.");
+  }
+}
+
+async function handleGoogleCredential(response) {
+  try {
+    const payload = JSON.parse(atob(response.credential.split('.')[1]));
+    if (payload && payload.email) {
+      await fetchStudentByEmail(payload.email);
+    }
+  } catch (e) {
+    console.error("Token decoding fault:", e);
+  }
+}
+</script>
+
 <div id="login-screen">
   <div class="login-card">
     <div style="margin-bottom: 24px; display: flex; align-items: center; justify-content: center;">
       <img src="https://imsgujarat.com/wp-content/uploads/elementor/thumbs/high-low-ims-logo-q88bznzqyw17qyylsbpjt2obvw4pcwyu13wepnvt34.png" alt="IMS Logo" style="height: 48px; width: auto; object-fit: contain; display: block;">
     </div>
     <h1 class="login-title" style="margin-top: 8px;">IMS Student Portal</h1>
-    <p class="login-sub">Sign in to access the Portal</p>
+    <p class="login-sub">Sign in to view your attendance, scores, schedule and learning progress</p>
 
     <button class="google-btn" onclick="loginWithGoogle()" id="google-login-btn">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -395,7 +421,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
       </svg>
       Continue with Google
     </button>
-
     <p class="login-note">Students sign in using the email registered with your institute. Contact your admin if you have trouble logging in.</p>
   </div>
 </div>
@@ -407,10 +432,10 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
     </div>
     <div class="topnav-spacer"></div>
     <div class="topnav-user">
-      <div class="topnav-avatar" id="nav-avatar">AR</div>
+      <div class="topnav-avatar" id="nav-avatar">ST</div>
       <div>
-        <div class="topnav-name" id="nav-name">Mohit Sharma</div>
-        <div class="topnav-batch" id="nav-batch">CAT 2025 · Batch A</div>
+        <div class="topnav-name" id="nav-name">---</div>
+        <div class="topnav-batch" id="nav-batch">---</div>
       </div>
       <button class="logout-btn" onclick="logout()">Sign out</button>
     </div>
@@ -461,7 +486,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
             <div class="profile-avatar" id="profile-avatar">ST</div>
             <div>
               <div class="profile-name" id="profile-name">Student Workspace</div>
-              <div class="profile-meta" id="profile-meta">Metadata profile row</div>
+              <div class="profile-meta" id="profile-meta">Verifying data access hooks...</div>
               <div class="profile-badges">
                 <span class="badge badge-green">Active Student</span>
                 <span class="badge badge-blue" id="profile-exam-badge">IMS Matrix</span>
@@ -494,22 +519,22 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
           <div class="stat-card">
             <div class="stat-label">Attendance</div>
             <div class="stat-val" id="stat-att">0%</div>
-            <div class="stat-sub stat-neutral" id="stat-att-sub">Loading status...</div>
+            <div class="stat-sub stat-neutral" id="stat-att-sub">Establishing link...</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Mock avg score</div>
             <div class="stat-val" id="stat-score">0</div>
-            <div class="stat-sub stat-neutral" id="stat-score-sub">Database synchronized</div>
+            <div class="stat-sub stat-neutral" id="stat-score-sub">Awaiting verification</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Topics done</div>
             <div class="stat-val" id="stat-topics">0/0</div>
-            <div class="stat-sub stat-neutral">Syllabus tracking</div>
+            <div class="stat-sub stat-neutral">Syllabus matrix</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Tests taken</div>
             <div class="stat-val" id="stat-tests">0</div>
-            <div class="stat-sub stat-neutral">Active evaluation logs</div>
+            <div class="stat-sub stat-neutral">Active profile tracking</div>
           </div>
         </div>
 
@@ -768,31 +793,31 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 
   <nav class="bottomnav">
     <div class="bottomnav-items">
-      <button class="bnav-item active" onclick="showPage('profile',this,'bnav')">
+      <button class="bnav-item active" onclick="showPage('profile',this)">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         Profile
       </button>
-      <button class="bnav-item" onclick="showPage('attendance',this,'bnav')">
+      <button class="bnav-item" onclick="showPage('attendance',this)">
         <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
         Attendance
       </button>
-      <button class="bnav-item" onclick="showPage('scores',this,'bnav')">
+      <button class="bnav-item" onclick="showPage('scores',this)">
         <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Scores
       </button>
-      <button class="bnav-item" onclick="showPage('records',this,'bnav')">
+      <button class="bnav-item" onclick="showPage('records',this)">
         <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         Records
       </button>
-      <button class="bnav-item" onclick="showPage('schedule',this,'bnav')">
+      <button class="bnav-item" onclick="showPage('schedule',this)">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         Schedule
       </button>
-      <button class="bnav-item" onclick="showPage('progress',this,'bnav')">
+      <button class="bnav-item" onclick="showPage('progress',this)">
         <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-4"/></svg>
         Progress
       </button>
-      <button class="bnav-item" onclick="showPage('material',this,'bnav')">
+      <button class="bnav-item" onclick="showPage('material',this)">
         <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5V3.5A2.5 2.5 0 0 1 6.5 1H20v21H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>
         Material
       </button>
@@ -802,18 +827,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 
 <script>
 /* ═══════════════════════════════════════════════════════════
-   CONFIGURATION 
-═══════════════════════════════════════════════════════════ */
-const CONFIG = {
-  GOOGLE_CLIENT_ID: '546265155462-daji3rvlhjehu8eipb9pkl07efk1jt6e.apps.googleusercontent.com',
-  SHEETS_API_KEY: 'AIzaSyBy55WhovpXDWRa5O3hiuWsHbvTUtiVpI0',
-  SPREADSHEET_ID: '1s-uywnbanv9mBZO34mNuwZzllemnnHfMkuVPFAPvQn0',
-  INSTITUTE_NAME: 'IMS Gujarat',
-  CONFIGURED: true
-};
-
-/* ═══════════════════════════════════════════════════════════
-   SUPABASE LIVE DATA CONNECTION CONFIGURATION
+   MAIN APPLICATION STATE & SUPABASE CORE CONNECTIONS
 ═══════════════════════════════════════════════════════════ */
 const SUPABASE_URL = "https://ofhcxvekfplhgzpxutce.supabase.co/rest/v1/";      
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9maGN4dmVrZnBsaGd6cHh1dGNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDg5MDIsImV4cCI6MjA5NjgyNDkwMn0.0X57t9-4u3TO1tBn1wIkj0R-0RJfvDgolC5nRtQrUlE"; 
@@ -821,9 +835,6 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const APPS_SCRIPT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwU7ZVPoNKcmnM-y3uh2c3ViNe9fYl5UODVeYPF1rJ5T1qCHxizzk-O9HHDBoq4AuFh/exec";
 
-/* ═══════════════════════════════════════════════════════════
-   STATE
-═══════════════════════════════════════════════════════════ */
 let currentStudent = null;
 let allAttendance = [];
 let allScores = [];
@@ -833,93 +844,82 @@ let calMonth = 5; // June
 let calYear = 2026;
 let scoreChartInstance = null;
 let scheduleFilter = 'all';
-let studentLoadedOfficialScores = {};
-let currentSelectedType = 'SimCAT'; 
-let currentMaterialFilter = 'all';
 
 /* ═══════════════════════════════════════════════════════════
-   INIT
+   LIFECYCLE INITIALIZATION
 ═══════════════════════════════════════════════════════════ */
 window.onload = async () => {
   const saved = sessionStorage.getItem('sp_student');
   if (saved) {
     currentStudent = JSON.parse(saved);
     try {
-      await fetchAllData(); 
       loadApp();
     } catch (err) {
-      console.error("Lifecycle refresh fault:", err);
+      console.error("Initialization failure:", err);
       loadApp();
     }
   }
 };
 
 /* ═══════════════════════════════════════════════════════════
-   MASTER SECURE REGISTRY LOGIN GATEKEEPER
+   AUTHENTICATION ENTRY CHECK (SUPABASE IDENTITY GATEKEEPER)
 ═══════════════════════════════════════════════════════════ */
 async function fetchStudentByEmail(email) {
-  console.log("🚀 Secure Master Registry Check for:", email);
   try {
-    // 1. Direct query to your active Supabase master registry table
     const { data: studentProfile, error } = await supabase
       .from('students')
       .select('*')
       .eq('email', email)
       .single();
 
-    // 2. Clear Gatekeeper Check
     if (error || !studentProfile) {
-      alert("⚠️ Access Denied:\n\nThis email address is not registered in our master database.\n\nPlease contact your IMS center administrator.");
+      alert("⚠️ Access Denied:\n\nThis email address is not registered in our master database.\n\nPlease reach out to your administrator to activate your profile.");
+      if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+        google.accounts.id.disableAutoSelect();
+      }
       return;
     }
 
-    // 3. Construct currentStudent object securely from Supabase columns
     currentStudent = {
       id: studentProfile.id,
       name: studentProfile.name,
       email: studentProfile.email,
       phone: studentProfile.phone,
-      batch: studentProfile.batch || 'CAT-2025-A',
+      batch: studentProfile.batch || 'UNASSIGNED',
       target_exam: studentProfile.target_exam || 'CAT',
       
-      // Legacy header backups to guarantee UI stability
       "Student ID": studentProfile.id,
       "IMS Pin": studentProfile.id,
       "Name": studentProfile.name,
       "Email": studentProfile.email,
-      "Batch": studentProfile.batch || 'CAT-2025-A',
+      "Batch": studentProfile.batch || 'UNASSIGNED',
       "Target Exam": studentProfile.target_exam || 'CAT'
     };
 
     sessionStorage.setItem('sp_student', JSON.stringify(currentStudent));
 
-    // 4. ⚡ INSTANT BYPASS FORCE: Swap screens BEFORE loading any sheets!
-    console.log("🔓 Profile verified. Swapping display frames instantly.");
+    // Force swap the UI layout framework immediately before fetching large datasets
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').classList.add('visible');
-    
-    // Render standard layout boundaries immediately
     renderProfile();
 
-    // 5. Run the background sheet sync silently so a sheets crash never stalls the login
     setTimeout(async () => {
       try {
-        console.log("🔄 Running background data tables sync...");
         await fetchAllData();
-        renderAll(); 
-      } catch (sheetErr) {
-        console.error("⚠️ Background Google Sheets sync paused due to mismatched columns:", sheetErr);
+        renderAll();
+      } catch (dataError) {
+        console.error("Background loading paused due to mismatch metrics:", dataError);
       }
-    }, 100);
+    }, 50);
 
   } catch (err) {
-    console.error("💥 Core Authentication Loop Crash:", err);
-    alert("System check interrupted. Please clear cache and try again.");
+    console.error("Authentication Loop Exception:", err);
+    alert("An error occurred during account validation. Please reload and try again.");
   }
 }
 
 /* ═══════════════════════════════════════════════════════════
-   DATA SEPARATION CORE PIPELINE
+   DATA PROCESSING PIPELINES
 ═══════════════════════════════════════════════════════════ */
 async function fetchSheetData(sheetName) {
   try {
@@ -935,7 +935,6 @@ async function fetchSheetData(sheetName) {
       return obj;
     });
   } catch (e) {
-    console.error(`Error reading layout row indices for sheet: ${sheetName}`, e);
     return [];
   }
 }
@@ -1002,7 +1001,7 @@ async function fetchAllData() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   APP CONTROLLER RENDERERS
+   RENDERING INTERFACE PIPELINES
 ═══════════════════════════════════════════════════════════ */
 function loadApp() {
   document.getElementById('login-screen').style.display = 'none';
@@ -1050,9 +1049,6 @@ function showPage(pageId, element) {
   if (element) element.classList.add('active');
 }
 
-/* ═══════════════════════════════════════════════════════════
-   PROFILE RENDERING ENGINE
-═══════════════════════════════════════════════════════════ */
 function renderProfile() {
   const s = currentStudent;
   if (!s) return;
@@ -1100,9 +1096,6 @@ function renderProfile() {
   document.getElementById('stat-topics').textContent = done + '/' + allProgress.length;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   ATTENDANCE RENDERING ENGINE
-═══════════════════════════════════════════════════════════ */
 function renderAttendance() {
   const present = allAttendance.filter(r=>r['Status']==='Present').length;
   const absent = allAttendance.filter(r=>r['Status']==='Absent').length;
@@ -1153,8 +1146,7 @@ function renderCalendar() {
 }
 
 function prevMonth() { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(); }
-defineMonthNext = function() { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); }
-function nextMonth() { defineMonthNext(); }
+function nextMonth() { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); }
 
 function renderAttList() {
   const list = document.getElementById('att-list');
@@ -1169,19 +1161,6 @@ function renderAttList() {
       <span class="att-status ${cls}">${r['Status']}</span>
     </div>`;
   }).join('');
-}
-
-/* ═══════════════════════════════════════════════════════════
-   PERFORMANCE TRACKER ENGINE
-═══════════════════════════════════════════════════════════ */
-function setScoreFilters(typeValue, subjectValue) {
-  currentSelectedType = typeValue;
-  document.querySelectorAll('#page-scores .tabs .tab-btn').forEach(btn => {
-    btn.classList.remove('active');
-    if (btn.textContent.includes('SimCAT') && typeValue === 'SimCAT') btn.classList.add('active');
-    if (btn.textContent.includes('Benchmarking') && typeValue === 'Benchmarking') btn.classList.add('active');
-  });
-  renderScores();
 }
 
 function renderScores() {
@@ -1303,9 +1282,6 @@ function renderScores() {
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   LECTURE SCHEDULE FILTER ENGINE
-═══════════════════════════════════════════════════════════ */
 function renderSchedule() {
   const list = document.getElementById('schedule-list');
   if(!list) return;
@@ -1352,9 +1328,6 @@ function filterSchedule(filter, btn) {
   renderSchedule();
 }
 
-/* ═══════════════════════════════════════════════════════════
-   SYLLABUS PROGRESS TRACKER
-═══════════════════════════════════════════════════════════ */
 function renderProgress() {
   const barsEl = document.getElementById('overall-prog-bars');
   const flowEl = document.getElementById('flow-sections');
@@ -1391,7 +1364,7 @@ function renderProgress() {
           return `<div class="flow-item ${cls}">
             <div class="flow-dot-col"><div class="flow-dot"></div>${i<items.length-1?'<div class="flow-connector"></div>':''}</div>
             <div class="flow-content">
-              <div class="flow-name" style="font-weight:500;">${r['Topic Name']} <span style="font-size:10px; opacity:0.7;">[${r['Status']}]</span></div>
+              <div class="flow-name" style="font-weight:500;">${r['Topic Name']}</div>
               <div class="flow-meta">${r['Completion Date']?'Completed '+r['Completion Date']:'—'}</div>
             </div>
           </div>`;
@@ -1401,9 +1374,6 @@ function renderProgress() {
   }).join('');
 }
 
-/* ═══════════════════════════════════════════════════════════
-   ANNOUNCEMENTS & RESOURCE VAULTS
-═══════════════════════════════════════════════════════════ */
 function renderAnnouncements() {
   const container = document.getElementById('announcement-board-container');
   const feed = document.getElementById('announcements-feed');
@@ -1439,7 +1409,7 @@ function renderMaterialsEngine(filterValue) {
   if (filterValue !== 'all') targetData = targetData.filter(r => r['Subject'] === filterValue);
   
   if (targetData.length === 0) {
-    container.innerHTML = `<div class="card" style="grid-column:1/-1;text-align:center;color:var(--text3);padding:4px;">📂 No study handouts recorded here yet.</div>`;
+    container.innerHTML = `<div class="card" style="grid-column:1/-1;text-align:center;color:var(--text3);padding:40px;">📂 No study handouts recorded here yet.</div>`;
     return;
   }
   
@@ -1473,10 +1443,10 @@ function filterMaterial(subject, buttonElement) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   TWO-WAY TRANSACTION PIPELINE (WEBHOOK BRIDGE)
+   TWO-WAY TRANSACTION PIPELINES
 ═══════════════════════════════════════════════════════════ */
 async function sendDataToGoogleSheet(payload) {
-  if (!APPS_SCRIPT_WEBAPP_URL) { alert("System Error: Web App Endpoint not targeted."); return false; }
+  if (!APPS_SCRIPT_WEBAPP_URL) { return false; }
   try {
     await fetch(APPS_SCRIPT_WEBAPP_URL, {
       method: "POST",
@@ -1486,7 +1456,6 @@ async function sendDataToGoogleSheet(payload) {
     });
     return true;
   } catch (error) {
-    console.error("Data synchronization failed:", error);
     return false;
   }
 }
@@ -1629,7 +1598,7 @@ async function processOfficialScoreFormSubmit(event) {
   
   const success = await sendDataToGoogleSheet(masterPayload);
   if (success) {
-    alert(`🎉 ${exam} Score matrix successfully synchronized with the backend storage vault!`);
+    alert(`🎉 ${exam} Score matrix successfully synchronized!`);
     studentLoadedOfficialScores[exam] = { ...scoresPayload, proofUrl: fileData ? "Processing..." : studentLoadedOfficialScores[exam]?.proofUrl, lockStatus: "OPEN" };
     await fetchAllOfficialExamSubTabs();
   }
@@ -1660,43 +1629,16 @@ async function fetchAllOfficialExamSubTabs() {
     const currentSelector = document.getElementById('master-exam-selector');
     if (currentSelector) switchExamFormFields(currentSelector.value);
   } catch(e) {
-    console.error("Historical records compilation fault:", e);
+    console.error("Records compilation fault:", e);
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   UTILITIES & GLOBAL SYSTEM FORMATTERS
-═══════════════════════════════════════════════════════════ */
 function fmtDate(str) {
   if (!str) return '—';
   try {
     const d = new Date(str);
     return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
   } catch(e) { return str; }
-}
-
-/* ═══════════════════════════════════════════════════════════
-   GOOGLE OAUTH IDENTITY ENGINE ENTRY ALLOCATION
-═══════════════════════════════════════════════════════════ */
-function loginWithGoogle() {
-  if (!CONFIG.CONFIGURED || CONFIG.GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID_HERE') {
-    alert('Google sign-in client validation fault. Contact portal admin.');
-    return;
-  }
-  try {
-    google.accounts.id.initialize({
-      client_id: CONFIG.GOOGLE_CLIENT_ID,
-      callback: handleGoogleCredential
-    });
-    google.accounts.id.prompt();
-  } catch (err) {
-    console.error("Google Client SDK Connection Exception:", err);
-  }
-}
-
-async function handleGoogleCredential(response) {
-  const payload = JSON.parse(atob(response.credential.split('.')[1]));
-  await fetchStudentByEmail(payload.email);
 }
 </script>
 </body>
