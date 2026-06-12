@@ -6,6 +6,7 @@
 <title>IMS Student Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* ─── RESET & BASE ─────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -828,6 +829,14 @@ const CONFIG = {
   INSTITUTE_NAME: 'IMS Gujarat',
   CONFIGURED: true
 };
+  /* ═══════════════════════════════════════════════════════════
+   SUPABASE LIVE DATA CONNECTION CONFIGURATION
+═══════════════════════════════════════════════════════════ */
+const SUPABASE_URL = "https://ofhcxvekfplhgzpxutce.supabase.co/rest/v1/";      // ◄— Paste your API URL link inside these quotes
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9maGN4dmVrZnBsaGd6cHh1dGNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDg5MDIsImV4cCI6MjA5NjgyNDkwMn0.0X57t9-4u3TO1tBn1wIkj0R-0RJfvDgolC5nRtQrUlE"; // ◄— Paste your Anon / Public Key token inside these quotes
+
+// Instantiates your direct cloud database channel instance globally
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const APPS_SCRIPT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwU7ZVPoNKcmnM-y3uh2c3ViNe9fYl5UODVeYPF1rJ5T1qCHxizzk-O9HHDBoq4AuFh/exec";
 
@@ -1005,52 +1014,51 @@ async function fetchAllData() {
   const sid = currentStudent['StudentID'] || currentStudent.id;
   const batch = currentStudent['BatchID'] || currentStudent.batch;
   
-  const [att, simcatRawText, benchmarkRawText, sched, prog, announcementsData, materialsData, catRows, nmatRows, xatRows, snapRows] = await Promise.all([
+  // 1. Fetch standard tracking rows from your active Google Sheets API fallback layer
+  const [att, sched, prog, announcementsData, materialsData] = await Promise.all([
     fetchSheetData('Attendance'),
-    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20SimCAT`).then(res => res.text()).catch(() => "[]"),
-    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20Benchmark`).then(res => res.text()).catch(() => "[]"),
     fetchSheetData('Schedule'),
     fetchSheetData('Learning Flow'),
     fetchSheetData('Announcements'),
-    fetchSheetData('Material'),
-    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20CAT`).then(res => res.json()).catch(() => []),
-    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20NMAT`).then(res => res.json()).catch(() => []),
-    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20XAT`).then(res => res.json()).catch(() => []),
-    fetch(`${APPS_SCRIPT_WEBAPP_URL}?sheetName=Scores%20SNAP`).then(res => res.json()).catch(() => [])
+    fetchSheetData('Material')
   ]);
   
-  let simcatData = [];
-  let benchmarkData = [];
-  try { simcatData = JSON.parse(simcatRawText); } catch(e) { console.error("SimCAT format mapping error:", e); }
-  try { benchmarkData = JSON.parse(benchmarkRawText); } catch(e) { console.error("Benchmark format mapping error:", e); }
-
   allAttendance = att.filter(r => r['StudentID'] === sid);
-  
-  window.rawSimCATs = Array.isArray(simcatData) ? simcatData.filter(r => {
-    return String(r['StudentID'] || '').trim().toLowerCase() === String(sid || '').trim().toLowerCase();
-  }) : [];
-
-  window.rawBenchmarks = Array.isArray(benchmarkData) ? benchmarkData.filter(r => {
-    return String(r['StudentID'] || '').trim().toLowerCase() === String(sid || '').trim().toLowerCase();
-  }) : [];
-  
   allSchedule = sched.filter(r => r['BatchID'] === batch);
   allProgress = prog.filter(r => r['StudentID'] === sid);
-  
-  studentLoadedOfficialScores = {};
-  
-  const myCat = Array.isArray(catRows) ? catRows.find(r => String(r['StudentID'] || '').trim() == String(sid).trim()) : null;
-  if (myCat) studentLoadedOfficialScores["CAT"] = { varc: myCat['VARC Raw'], dilr: myCat['DILR Raw'], qa: myCat['QA Raw'], total: myCat['Total Raw'], percentile: myCat['Percentile'], proofUrl: myCat['Proof Link'], lockStatus: myCat['Lock Status'] };
-  
-  const myNmat = Array.isArray(nmatRows) ? nmatRows.find(r => String(r['StudentID'] || '').trim() == String(sid).trim()) : null;
-  if (myNmat) studentLoadedOfficialScores["NMAT"] = { lang: myNmat['Language Skills'], quant: myNmat['Quantitative Skills'], logic: myNmat['Logical Reasoning'], total: myNmat['Total Scaled'], proofUrl: myNmat['Proof Link'], lockStatus: myNmat['Lock Status'] };
-  
-  const myXat = Array.isArray(xatRows) ? xatRows.find(r => String(r['StudentID'] || '').trim() == String(sid).trim()) : null;
-  if (myXat) studentLoadedOfficialScores["XAT"] = { valr: myXat['VALR'], dm: myXat['DM'], qadi: myXat['QA DI'], gk: myXat['GK'], total: myXat['Total Score'], percentile: myXat['Percentile'], proofUrl: myXat['Proof Link'], lockStatus: myXat['Lock Status'] };
-  
-  const mySnap = Array.isArray(snapRows) ? snapRows.find(r => String(r['StudentID'] || '').trim() == String(sid).trim()) : null;
-  if (mySnap) studentLoadedOfficialScores["SNAP"] = { english: mySnap['General English'], reasoning: mySnap['Analytical Reasoning'], quant: mySnap['Quantitative'], total: mySnap['Total Score'], proofUrl: mySnap['Proof Link'], lockStatus: mySnap['Lock Status'] };
 
+  // 2. ⚡ LIVE SUPABASE QUERY: Fetching your marks with instant server-side row sorting
+  const [simcatResponse, benchmarkResponse] = await Promise.all([
+    supabase.from('scores_simcat').select('*').eq('student_id', sid),
+    supabase.from('scores_benchmark').select('*').eq('student_id', sid)
+  ]);
+
+  // 3. Map your Postgres table data keys cleanly to your existing chart formats
+  window.rawSimCATs = (simcatResponse.data || []).map(r => ({
+    'Test Name': r.test_name,
+    'Date': r.test_date,
+    'QA Score': r.qa_score,
+    'DILR Score': r.dilr_score,
+    'VARC Score': r.varc_score,
+    'Total Score': r.total_score,
+    'Overall Pct': r.overall_percentile,
+    'VARC Pct': r.varc_percentile,
+    'DILR Pct': r.dilr_percentile,
+    'QA Pct': r.qa_percentile,
+    'Overall Acc': r.overall_accuracy
+  }));
+
+  window.rawBenchmarks = (benchmarkResponse.data || []).map(r => ({
+    'Test Name': r.test_name,
+    'Date': r.test_date,
+    'Subject': r.subject_focus,
+    'Score Obtained': r.score_obtained,
+    'Max Score': r.max_score,
+    'Percentile': r.percentile,
+    'Accuracy': r.accuracy
+  }));
+  
+  // 4. Announcements Frame Processing
   const todayMidnight = new Date(); todayMidnight.setHours(0,0,0,0);
   window.myAnnouncements = announcementsData.filter(r => {
     const isTargeted = r['Target Batch'] === 'ALL' || r['Target Batch'] === batch;
