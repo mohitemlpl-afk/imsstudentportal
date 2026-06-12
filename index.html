@@ -858,50 +858,63 @@ window.onload = async () => {
    MASTER SECURE REGISTRY LOGIN GATEKEEPER
 ═══════════════════════════════════════════════════════════ */
 async function fetchStudentByEmail(email) {
+  console.log("🚀 Secure Master Registry Check for:", email);
   try {
+    // 1. Direct query to your active Supabase master registry table
     const { data: studentProfile, error } = await supabase
       .from('students')
       .select('*')
       .eq('email', email)
       .single();
 
+    // 2. Clear Gatekeeper Check
     if (error || !studentProfile) {
-      alert("⚠️ Access Denied:\n\nThis email address is not registered in our system.\n\nStudents cannot self-register. Please reach out to your IMS center administrator to activate your account profile.");
-      if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-        google.accounts.id.disableAutoSelect();
-      }
+      alert("⚠️ Access Denied:\n\nThis email address is not registered in our master database.\n\nPlease contact your IMS center administrator.");
       return;
     }
 
+    // 3. Construct currentStudent object securely from Supabase columns
     currentStudent = {
       id: studentProfile.id,
       name: studentProfile.name,
       email: studentProfile.email,
       phone: studentProfile.phone,
-      batch: studentProfile.batch || 'UNASSIGNED',
+      batch: studentProfile.batch || 'CAT-2025-A',
       target_exam: studentProfile.target_exam || 'CAT',
       
+      // Legacy header backups to guarantee UI stability
       "Student ID": studentProfile.id,
       "IMS Pin": studentProfile.id,
       "Name": studentProfile.name,
       "Email": studentProfile.email,
-      "Batch": studentProfile.batch || 'UNASSIGNED',
+      "Batch": studentProfile.batch || 'CAT-2025-A',
       "Target Exam": studentProfile.target_exam || 'CAT'
     };
 
     sessionStorage.setItem('sp_student', JSON.stringify(currentStudent));
 
-    try {
-      await fetchAllData();
-    } catch (dataError) {
-      console.error("Secondary data load failed, bypassing:", dataError);
-    }
+    // 4. ⚡ INSTANT BYPASS FORCE: Swap screens BEFORE loading any sheets!
+    console.log("🔓 Profile verified. Swapping display frames instantly.");
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    
+    // Render standard layout boundaries immediately
+    renderProfile();
 
-    loadApp();
+    // 5. Run the background sheet sync silently so a sheets crash never stalls the login
+    setTimeout(async () => {
+      try {
+        console.log("🔄 Running background data tables sync...");
+        await fetchAllData();
+        renderAll(); 
+      } catch (sheetErr) {
+        console.error("⚠️ Background Google Sheets sync paused due to mismatched columns:", sheetErr);
+      }
+    }, 100);
 
   } catch (err) {
-    console.error("Critical Authentication Loop Exception:", err);
-    alert("An error occurred during account validation. Please reload and try again.");
+    console.error("💥 Core Authentication Loop Crash:", err);
+    alert("System check interrupted. Please clear cache and try again.");
   }
 }
 
