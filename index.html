@@ -352,57 +352,10 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
   .info-row:nth-last-child(-n+2){border-bottom:none}
   .info-row:last-child{border-bottom:none}
 }
-@media(min-width:769px){
-  .topnav .logout-btn-mobile{display:none}
-}
-
-/* ─── PAGE TRANSITIONS ─────────────────────────────────── */
-.page{display:none}
-.page.active{display:block;animation:fadeUp .2s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-
-<!-- ⚡ ISOLATED LOG-IN BUTTON INTERFACE ENGINE CONTAINER ⚡ -->
-<script>
-const CONFIG = {
-  GOOGLE_CLIENT_ID: '546265155462-daji3rvlhjehu8eipb9pkl07efk1jt6e.apps.googleusercontent.com',
-  SHEETS_API_KEY: 'AIzaSyBy55WhovpXDWRa5O3hiuWsHbvTUtiVpI0',
-  SPREADSHEET_ID: '1s-uywnbanv9mBZO34mNuwZzllemnnHfMkuVPFAPvQn0',
-  INSTITUTE_NAME: 'IMS Gujarat',
-  CONFIGURED: true
-};
-
-function loginWithGoogle() {
-  if (!CONFIG.CONFIGURED || CONFIG.GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID_HERE') {
-    alert('Google login setup configuration fault.');
-    return;
-  }
-  try {
-    google.accounts.id.initialize({
-      client_id: CONFIG.GOOGLE_CLIENT_ID,
-      callback: handleGoogleCredential
-    });
-    google.accounts.id.prompt();
-  } catch (err) {
-    console.error("Google Client SDK Connection Exception:", err);
-    alert("Google framework initializing. Click again in a moment.");
-  }
-}
-
-async function handleGoogleCredential(response) {
-  try {
-    const payload = JSON.parse(atob(response.credential.split('.')[1]));
-    if (payload && payload.email) {
-      await fetchStudentByEmail(payload.email); // 👈 It calls this function!
-    }
-  } catch (e) {
-    console.error("Token decoding fault:", e);
-  }
-}
-</script>
 
 <div id="login-screen">
   <div class="login-card">
@@ -466,11 +419,11 @@ async function handleGoogleCredential(response) {
       </button>
       <button class="nav-item" onclick="showPage('progress',this)">
         <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 16l4-4 4 4 4-4"/></svg>
-        Learning Flow
+        Progress
       </button>
       <button class="nav-item" onclick="showPage('material',this)">
         <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5V3.5A2.5 2.5 0 0 1 6.5 1H20v21H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>
-        Study Material
+        Material
       </button>
     </aside>
 
@@ -486,7 +439,7 @@ async function handleGoogleCredential(response) {
             <div class="profile-avatar" id="profile-avatar">ST</div>
             <div>
               <div class="profile-name" id="profile-name">Student Workspace</div>
-              <div class="profile-meta" id="profile-meta">Verifying data access hooks...</div>
+              <div class="profile-meta" id="profile-meta">Synchronizing authentication logs...</div>
               <div class="profile-badges">
                 <span class="badge badge-green">Active Student</span>
                 <span class="badge badge-blue" id="profile-exam-badge">IMS Matrix</span>
@@ -519,22 +472,22 @@ async function handleGoogleCredential(response) {
           <div class="stat-card">
             <div class="stat-label">Attendance</div>
             <div class="stat-val" id="stat-att">0%</div>
-            <div class="stat-sub stat-neutral" id="stat-att-sub">Establishing link...</div>
+            <div class="stat-sub stat-neutral" id="stat-att-sub">Establishing framework link...</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Mock avg score</div>
             <div class="stat-val" id="stat-score">0</div>
-            <div class="stat-sub stat-neutral" id="stat-score-sub">Awaiting verification</div>
+            <div class="stat-sub stat-neutral" id="stat-score-sub">Awaiting credential confirmation</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Topics done</div>
             <div class="stat-val" id="stat-topics">0/0</div>
-            <div class="stat-sub stat-neutral">Syllabus matrix</div>
+            <div class="stat-sub stat-neutral">Syllabus analysis</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Tests taken</div>
             <div class="stat-val" id="stat-tests">0</div>
-            <div class="stat-sub stat-neutral">Active profile tracking</div>
+            <div class="stat-sub stat-neutral">Active engine tracking</div>
           </div>
         </div>
 
@@ -827,8 +780,16 @@ async function handleGoogleCredential(response) {
 
 <script>
 /* ═══════════════════════════════════════════════════════════
-   MAIN APPLICATION STATE & SUPABASE CORE CONNECTIONS
+   GLOBAL ENVIRONMENT SETUPS
 ═══════════════════════════════════════════════════════════ */
+const CONFIG = {
+  GOOGLE_CLIENT_ID: '546265155462-daji3rvlhjehu8eipb9pkl07efk1jt6e.apps.googleusercontent.com',
+  SHEETS_API_KEY: 'AIzaSyBy55WhovpXDWRa5O3hiuWsHbvTUtiVpI0',
+  SPREADSHEET_ID: '1s-uywnbanv9mBZO34mNuwZzllemnnHfMkuVPFAPvQn0',
+  INSTITUTE_NAME: 'IMS Gujarat',
+  CONFIGURED: true
+};
+
 const SUPABASE_URL = "https://ofhcxvekfplhgzpxutce.supabase.co/rest/v1/";      
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9maGN4dmVrZnBsaGd6cHh1dGNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDg5MDIsImV4cCI6MjA5NjgyNDkwMn0.0X57t9-4u3TO1tBn1wIkj0R-0RJfvDgolC5nRtQrUlE"; 
 
@@ -844,25 +805,42 @@ let calMonth = 5; // June
 let calYear = 2026;
 let scoreChartInstance = null;
 let scheduleFilter = 'all';
+let studentLoadedOfficialScores = {};
+let currentSelectedType = 'SimCAT'; 
+let currentMaterialFilter = 'all';
 
 /* ═══════════════════════════════════════════════════════════
-   LIFECYCLE INITIALIZATION
+   GOOGLE SECURITY ENGINE HANDSHAKES
 ═══════════════════════════════════════════════════════════ */
-window.onload = async () => {
-  const saved = sessionStorage.getItem('sp_student');
-  if (saved) {
-    currentStudent = JSON.parse(saved);
-    try {
-      loadApp();
-    } catch (err) {
-      console.error("Initialization failure:", err);
-      loadApp();
-    }
+function loginWithGoogle() {
+  if (!CONFIG.CONFIGURED || CONFIG.GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID_HERE') {
+    alert('Google login configuration fault.');
+    return;
   }
-};
+  try {
+    google.accounts.id.initialize({
+      client_id: CONFIG.GOOGLE_CLIENT_ID,
+      callback: handleGoogleCredential
+    });
+    google.accounts.id.prompt();
+  } catch (err) {
+    console.error("Google Client SDK Exception:", err);
+  }
+}
+
+async function handleGoogleCredential(response) {
+  try {
+    const payload = JSON.parse(atob(response.credential.split('.')[1]));
+    if (payload && payload.email) {
+      await fetchStudentByEmail(payload.email);
+    }
+  } catch (e) {
+    console.error("Token translation fault:", e);
+  }
+}
 
 /* ═══════════════════════════════════════════════════════════
-   AUTHENTICATION ENTRY CHECK (SUPABASE IDENTITY GATEKEEPER)
+   PORTAL REGISTRY FRAMEWORKS (SUPABASE ENGINE CORE)
 ═══════════════════════════════════════════════════════════ */
 async function fetchStudentByEmail(email) {
   try {
@@ -873,7 +851,7 @@ async function fetchStudentByEmail(email) {
       .single();
 
     if (error || !studentProfile) {
-      alert("⚠️ Access Denied:\n\nThis email address is not registered in our master database.\n\nPlease reach out to your administrator to activate your profile.");
+      alert("⚠️ Access Denied:\n\nThis email address is not registered in our master database.\n\nPlease contact your IMS administrator to activate your profile account.");
       if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
         google.accounts.id.disableAutoSelect();
       }
@@ -898,7 +876,7 @@ async function fetchStudentByEmail(email) {
 
     sessionStorage.setItem('sp_student', JSON.stringify(currentStudent));
 
-    // Force swap the UI layout framework immediately before fetching large datasets
+    // Force unlock display layers immediately on a profile match
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').classList.add('visible');
     renderProfile();
@@ -908,18 +886,17 @@ async function fetchStudentByEmail(email) {
         await fetchAllData();
         renderAll();
       } catch (dataError) {
-        console.error("Background loading paused due to mismatch metrics:", dataError);
+        console.error("Secondary async payload download omitted:", dataError);
       }
     }, 50);
 
   } catch (err) {
-    console.error("Authentication Loop Exception:", err);
-    alert("An error occurred during account validation. Please reload and try again.");
+    console.error("Authentication Core Fault:", err);
   }
 }
 
 /* ═══════════════════════════════════════════════════════════
-   DATA PROCESSING PIPELINES
+   DATA GATHERING CHANNELS
 ═══════════════════════════════════════════════════════════ */
 async function fetchSheetData(sheetName) {
   try {
@@ -1001,7 +978,7 @@ async function fetchAllData() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   RENDERING INTERFACE PIPELINES
+   UI PIPELINE CONTROLLERS
 ═══════════════════════════════════════════════════════════ */
 function loadApp() {
   document.getElementById('login-screen').style.display = 'none';
@@ -1049,6 +1026,9 @@ function showPage(pageId, element) {
   if (element) element.classList.add('active');
 }
 
+/* ═══════════════════════════════════════════════════════════
+   LAYOUT VIEW ENGINE COMPILERS
+═══════════════════════════════════════════════════════════ */
 function renderProfile() {
   const s = currentStudent;
   if (!s) return;
@@ -1443,7 +1423,7 @@ function filterMaterial(subject, buttonElement) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   TWO-WAY TRANSACTION PIPELINES
+   TWO-WAY ACTION HANDLERS
 ═══════════════════════════════════════════════════════════ */
 async function sendDataToGoogleSheet(payload) {
   if (!APPS_SCRIPT_WEBAPP_URL) { return false; }
@@ -1557,7 +1537,7 @@ async function processOfficialScoreFormSubmit(event) {
   let fileData = null; let fileName = null;
   
   if (!studentLoadedOfficialScores[exam] && fileInput.files.length === 0) {
-    alert("Proof Required: Please upload a verification image/PDF proof of your official scorecard.");
+    alert("Proof Required: Please upload a verification scorecard image/PDF.");
     return;
   }
   
@@ -1629,7 +1609,7 @@ async function fetchAllOfficialExamSubTabs() {
     const currentSelector = document.getElementById('master-exam-selector');
     if (currentSelector) switchExamFormFields(currentSelector.value);
   } catch(e) {
-    console.error("Records compilation fault:", e);
+    console.error("Records configuration sync fault:", e);
   }
 }
 
