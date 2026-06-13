@@ -107,7 +107,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:500}
 .main-content{flex:1;overflow-y:auto;padding:28px 32px}
 
-/* ─── GRID LAYOUT ARCHITECTURES ───────────────────────── */
+/* ─── DATA LAYOUT MATRIX GRIDS ────────────────────────── */
 .page-header{margin-bottom:28px}
 .page-title{font-family:var(--font-display);font-size:26px;color:var(--text);margin-bottom:4px}
 .page-sub{font-size:14px;color:var(--text2)}
@@ -132,7 +132,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .info-label{font-size:12px;color:var(--text3);margin-bottom:2px;font-weight:500}
 .info-val{font-size:14px;color:var(--text);font-weight:500}
 
-/* ─── ATTENDANCE GRID ELEMENTS ────────────────────────── */
+/* ─── ATTENDANCE MODULE ───────────────────────────────── */
 .att-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
 .att-stat{background:var(--surface2);border-radius:var(--radius-sm);padding:14px;text-align:center}
 .att-stat-val{font-size:24px;font-weight:600;color:var(--text);line-height:1}
@@ -152,7 +152,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .status-present{background:var(--green-light);color:var(--green)}
 .status-absent{background:var(--red-light);color:var(--red)}
 
-/* ─── ANALYTICS SCORES SECTIONS ───────────────────────── */
+/* ─── PLOTS & TIMELINES ───────────────────────────────── */
 .chart-wrap{position:relative;height:220px;margin-bottom:8px}
 .score-list{display:flex;flex-direction:column;gap:0}
 .score-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
@@ -165,8 +165,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .prog-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
 .prog-track{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
 .prog-fill{height:100%;border-radius:4px;transition:width .6s ease}
-
-/* ─── TIMELINES & VAULT COMPILERS ─────────────────────── */
 .schedule-list{display:flex;flex-direction:column;gap:0}
 .sched-item{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--border);align-items:flex-start}
 .sched-time-col{width:80px;flex-shrink:0;text-align:right}
@@ -190,25 +188,24 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .flow-pending .flow-dot{background:var(--border);border:1.5px solid var(--text3)}
 .page{display:none}
 .page.active{display:block}
-.month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;max-width:340px;margin-left:auto;margin-right:auto}
-.month-nav button{width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:none;cursor:pointer}
-.month-nav span{font-size:15px;font-weight:600;min-width:140px;text-align:center}
 .tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--surface2);padding:4px;border-radius:var(--radius-sm)}
 .tab-btn{flex:1;padding:8px;border-radius:6px;border:none;background:none;font-family:var(--font);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer}
 .tab-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,0.08)}
 .demo-btn{width:100%;padding:11px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:#fff;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer}
-.dynamic-fields-container label{font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px;margin-top:8px;}
-.dynamic-fields-container input{width:100%;padding:8px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font);}
-@media(max-width:768px){.sidebar{display:none}.bottomnav{display:block}.main-content{padding:20px 16px;padding-bottom:80px} .two-col{grid-template-columns:1fr}}
+
+/* ─── FORM FIELDS STYLING ─── */
+.dynamic-fields-container > div { margin-bottom: 12px; }
+.dynamic-fields-container label { font-size: 12px; font-weight: 600; color: var(--text2); display: block; margin-bottom: 4px; }
+.dynamic-fields-container input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font); font-size: 14px; color: var(--text); background: var(--surface); }
+.dynamic-fields-container input:disabled { background: var(--surface2); color: var(--text3); cursor: not-allowed; }
+
+@media(max-width:768px){.sidebar{display:none}.main-content{padding:20px 16px}.two-col{grid-template-columns:1fr}}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
 <script>
-/* ═══════════════════════════════════════════════════════════
-   ENVIRONMENT KEYS MATRIX SPECIFICATIONS
-═══════════════════════════════════════════════════════════ */
 window.CONFIG = {
   GOOGLE_CLIENT_ID: '546265155462-daji3rvlhjehu8eipb9pkl07efk1jt6e.apps.googleusercontent.com',
   SHEETS_API_KEY: 'AIzaSyBy55WhovpXDWRa5O3hiuWsHbvTUtiVpI0',
@@ -224,14 +221,14 @@ let currentStudent = null;
 function initSupabase() {
   if (window.supabase && !supabaseClient) {
     supabaseClient = window.supabase.createClient(window.CONFIG.SUPABASE_URL, window.CONFIG.SUPABASE_ANON_KEY);
-    console.log("🔒 Supabase Connection Instance Initialized Safely.");
+    console.log("🔒 Supabase Connected Client Array Mapped.");
   }
 }
 
 function loginWithGoogle() {
   initSupabase();
   if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
-    alert("System handshakes compiling in background. Click again in a moment.");
+    alert("System core handshakes resolving. Please click again.");
     return;
   }
   google.accounts.id.initialize({
@@ -254,7 +251,7 @@ async function handleGoogleCredential(response) {
       await querySupabaseStudent(payload.email.trim().toLowerCase());
     }
   } catch (e) {
-    alert("Authorization sequence dropped. Clear cache and restart.");
+    alert("Authorization script token translation failure. Resetting.");
   }
 }
 </script>
@@ -294,7 +291,7 @@ async function handleGoogleCredential(response) {
     </aside>
 
     <main class="main-content">
-      <!-- PAGE 1: PROFILE DASHBOARD -->
+      <!-- DASHBOARD PROFILE PANEL -->
       <div id="page-profile" class="page active">
         <div class="profile-hero">
           <div class="profile-avatar" id="profile-avatar">ST</div>
@@ -333,7 +330,7 @@ async function handleGoogleCredential(response) {
         </div>
       </div>
 
-      <!-- PAGE 2: ATTENDANCE TRACKER -->
+      <!-- ATTENDANCE PANEL -->
       <div id="page-attendance" class="page">
         <div class="att-stats">
           <div class="att-stat"><div class="att-stat-val" id="att-present-count" style="color:var(--green)">0</div><div class="att-stat-lbl">Present</div></div>
@@ -341,14 +338,14 @@ async function handleGoogleCredential(response) {
           <div class="att-stat"><div class="att-stat-val" id="att-pct" style="color:var(--accent)">0%</div><div class="att-stat-lbl">Percentage</div></div>
         </div>
         <div class="card">
-          <div class="month-nav"><button onclick="prevMonth()">&larr;</button><span id="month-label">June 2026</span><button onclick="nextMonth()">&rarr;</button></div>
+          <div class="month-nav"><button>&larr;</button><span id="month-label">June 2026</span><button>&rarr;</button></div>
           <div class="cal-header"><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div></div>
           <div class="cal-grid" id="cal-grid"></div>
         </div>
         <div class="card"><div class="att-list" id="att-list"></div></div>
       </div>
 
-      <!-- PAGE 3: PERFORMANCE CHARTS -->
+      <!-- MOCK SCORES GRAPH ANALYSIS PANEL -->
       <div id="page-scores" class="page">
         <div class="tabs">
           <button class="tab-btn active" onclick="setScoreFilters('SimCAT')">SimCAT Analysis Dashboard</button>
@@ -366,12 +363,12 @@ async function handleGoogleCredential(response) {
         <div class="card"><div class="score-list" id="score-list"></div></div>
       </div>
 
-      <!-- PAGE 4: RESTORED TWO-WAY EXAM RECORDS VERIFICATION TRANSCRIPT PANELS -->
+      <!-- MY RECORDS VERIFICATION DATA SHAPE PANELS -->
       <div id="page-records" class="page">
         <div class="two-col">
           <div class="card">
             <div class="card-title">Official Entrance Examination Records</div>
-            <select id="master-exam-selector" onchange="switchExamFormFields(this.value)" style="width:100%; padding:10px; margin-bottom:12px;">
+            <select id="master-exam-selector" onchange="switchExamFormFields(this.value)" style="width:100%; padding:10px; margin-bottom:12px; font-family:var(--font); border:1px solid var(--border); border-radius:var(--radius-sm);">
               <option value="CAT">Common Admission Test (CAT)</option>
               <option value="NMAT">NMAT by GMAC</option>
               <option value="XAT">Xavier Aptitude Test (XAT)</option>
@@ -386,19 +383,19 @@ async function handleGoogleCredential(response) {
           <div class="card">
             <div class="card-title">College Application Status Tracker</div>
             <form onsubmit="handleCallSubmission(event)">
-              <div style="margin-bottom:8px;"><label style="font-size:12px; font-weight:600;">Institute Name</label><input type="text" id="form-coll-name" placeholder="e.g. IIM Ahmedabad" required style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px;"></div>
-              <div style="margin-bottom:8px;"><label style="font-size:12px; font-weight:600;">Current Stage</label><select id="form-coll-stage" required style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px;"><option value="Applied">Form Filled / Applied</option><option value="Call Received">Shortlisted (Interview Call)</option><option value="Converted">Converted offered 🎉</option></select></div>
-              <div style="margin-bottom:12px;"><label style="font-size:12px; font-weight:600;">Interview Logs Notes</label><textarea id="form-coll-notes" style="width:100%; height:80px; resize:none; border:1px solid var(--border); border-radius:4px; padding:8px;"></textarea></div>
+              <div style="margin-bottom:12px;"><label style="font-size:12px; font-weight:600; color:var(--text2); display:block; margin-bottom:4px;">Institute Name</label><input type="text" id="form-coll-name" placeholder="e.g. IIM Ahmedabad" required style="width:100%; padding:8px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font);"></div>
+              <div style="margin-bottom:12px;"><label style="font-size:12px; font-weight:600; color:var(--text2); display:block; margin-bottom:4px;">Current Stage</label><select id="form-coll-stage" required style="width:100%; padding:8px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font);"><option value="Applied">Form Filled / Applied</option><option value="Call Received">Shortlisted (Interview Call)</option><option value="Converted">Converted offered 🎉</option></select></div>
+              <div style="margin-bottom:12px;"><label style="font-size:12px; font-weight:600; color:var(--text2); display:block; margin-bottom:4px;">Interview Logs Notes</label><textarea id="form-coll-notes" style="width:100%; height:80px; resize:none; border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px; font-family:var(--font); font-size:14px;"></textarea></div>
               <button type="submit" class="demo-btn">Log entry Tracker</button>
             </form>
           </div>
         </div>
       </div>
 
-      <!-- PAGE 5: SCHEDULES -->
+      <!-- SCHEDULE TIMELINE PANEL -->
       <div id="page-schedule" class="page"><div class="card"><div class="schedule-list" id="schedule-list"></div></div></div>
 
-      <!-- PAGE 6: LEARNING FLOW SYLLABUS TRACK TIMELINES -->
+      <!-- PROGRESS PATH TIMELINE PANEL -->
       <div id="page-progress" class="page">
         <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
           <div class="stat-card"><div class="stat-label" style="color:var(--green)">Completed</div><div class="stat-val" id="prog-done">0</div></div>
@@ -412,7 +409,7 @@ async function handleGoogleCredential(response) {
         <div id="flow-sections"></div>
       </div>
 
-      <!-- PAGE 7: STUDY MATERIALS REPOSITORY VAULTS -->
+      <!-- STUDY MATERIALS TABBED PANELS -->
       <div id="page-material" class="page">
         <div class="tabs">
           <button class="tab-btn active" onclick="filterMaterial('all', this)">All Handouts</button>
@@ -426,12 +423,23 @@ async function handleGoogleCredential(response) {
   </div>
 </div>
 
-<!-- ─── ENGINE MANAGEMENT ROUTINES CONTROLLER ─── -->
+<!-- ─── DATA SYNC OPERATIONAL CORE ENGINES ─── -->
 <script>
+let allAttendance = [];
+let allSchedule = [];
+let allScoresSimcat = [];
+let allScoresBenchmark = [];
+let allProgress = [];
+let myAnnouncements = [];
+let myMaterials = [];
+let scoreChartInstance = null;
+let currentSelectedType = 'SimCAT';
+let studentLoadedOfficialScores = {};
+
 async function querySupabaseStudent(email) {
   initSupabase();
   if (!supabaseClient) {
-    alert("Supabase driver initialization stall."); return;
+    alert("Supabase integration libraries missing configuration hooks."); return;
   }
   try {
     const targetUrl = `${window.CONFIG.SUPABASE_URL}students?email=eq.${encodeURIComponent(email)}`;
@@ -440,7 +448,7 @@ async function querySupabaseStudent(email) {
     const profiles = await response.json();
 
     if (!profiles || profiles.length === 0) {
-      alert(`⚠️ Student Authorization Access Denied:\n\nThe email "${email}" is missing from your Supabase rows.`);
+      alert(`⚠️ Access Denied:\n\nThe email "${email}" is missing from your Supabase rows.`);
       return;
     }
 
@@ -522,7 +530,7 @@ async function fetchAllData() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   INTERFACE PLOT INITIALIZATION DATA LAYOUT RE-RENDERS
+   UI LAYOUT VIEW PARSING RENDER LIFECYCLES
 ═══════════════════════════════════════════════════════════ */
 function renderAll() {
   renderProfile();
@@ -623,7 +631,7 @@ function renderScores() {
         type:'line',
         data: {
           labels: targetDataset.map(r=>r['Test Name']),
-          datasets:[{label:'Evaluation Metric Timeline', data: targetDataset.map(r=>parseFloat(r['Total Score']||r['Score Obtained']||0)), borderColor:'#2B4EFF', tension:0.3, fill:false}]
+          datasets:[{label:'Evaluation Timeline Index', data: targetDataset.map(r=>parseFloat(r['Total Score']||r['Score Obtained']||0)), borderColor:'#2B4EFF', tension:0.3, fill:false}]
         },
         options: {responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}}
       });
@@ -648,7 +656,7 @@ function renderScores() {
 
 function renderSchedule() {
   const list = document.getElementById('schedule-list'); if(!list) return;
-  if(!allSchedule.length) { list.innerHTML = '<div class="empty"><p>No upcoming live session tracks registered in spreadsheet database arrays.</p></div>'; return; }
+  if(!allSchedule.length) { list.innerHTML = '<div class="empty"><p>No live lecture sessions loaded in database configurations.</p></div>'; return; }
   list.innerHTML = allSchedule.map(r=>`
     <div class="sched-item">
       <div class="sched-time-col"><div class="sched-time">${r.Time}</div><div class="sched-date">${r.Date}</div></div>
@@ -668,12 +676,12 @@ function renderLearningFlow() {
   const subs = [...new Set(allProgress.map(r => r['Subject']))];
   bars.innerHTML = subs.map(sub => {
     const items = allProgress.filter(r => r['Subject']===sub); const d = items.filter(r => r['Status']==='Done').length; const pct = items.length ? Math.round(d/items.length*100) : 0;
-    return `<div class="prog-row"><div class="prog-label"><span>${sub} Syllabus Matrix</span><span>${d}/${items.length} Complete</span></div><div class="prog-track"><div class="prog-fill" style="width:${pct}%; background:var(--accent);"></div></div></div>`;
+    return `<div class="prog-row"><div class="prog-label"><span>${sub} Modules Matrix</span><span>${d}/${items.length} Done</span></div><div class="prog-track"><div class="prog-fill" style="width:${pct}%; background:var(--accent);"></div></div></div>`;
   }).join('');
 
   sections.innerHTML = subs.map(sub => {
     const items = allProgress.filter(r => r['Subject']===sub);
-    return `<div class="card"><div class="card-title" style="color:var(--accent); font-weight:600;">${sub} Syllabus Tracking Module</div>
+    return `<div class="card"><div class="card-title" style="color:var(--accent); font-weight:600;">${sub} Syllabus Core Timeline</div>
       ${items.map((r,i)=>`
         <div class="flow-item ${r.Status==='Done'?'flow-done':r.Status==='In Progress'?'flow-active':'flow-pending'}">
           <div class="flow-dot-col"><div class="flow-dot"></div>${i<items.length-1?'<div class="flow-connector"></div>':''}</div>
@@ -697,10 +705,10 @@ function renderAnnouncementsFeed() {
 function renderStudyMaterialsVault(filter) {
   const container = document.getElementById('material-grid-container'); if(!container) return;
   let data = [...myMaterials]; if(filter!=='all') data = data.filter(r => r['Subject']===filter);
-  if(!data.length) { container.innerHTML = '<div class="card" style="grid-column:1/-1; text-align:center; color:var(--text3); padding:40px;">📂 No resource assets registered inside spreadsheet batch formatting arrays.</div>'; return; }
+  if(!data.length) { container.innerHTML = '<div class="card" style="grid-column:1/-1; text-align:center; color:var(--text3); padding:40px;">📂 No handouts registered inside spreadsheet batch formatting arrays.</div>'; return; }
   container.innerHTML = data.map(r=>`
     <div class="card" style="margin-bottom:0; box-shadow:var(--shadow); display:flex; flex-direction:column; justify-content:space-between; padding:18px 20px;">
-      <div><span class="badge badge-blue" style="margin-bottom:8px; font-weight:600;">${r.Subject}</span><h4 style="font-size:15px; font-weight:600; line-height:1.4;">${r.Title}</h4><p style="font-size:13px; color:var(--text2); margin-top:4px; line-height:1.5;">${r.Description||'Institutional prep resource handouts.'}</p></div>
+      <div><span class="badge badge-blue" style="margin-bottom:8px; font-weight:600;">${r.Subject}</span><h4 style="font-size:15px; font-weight:600; line-height:1.4;">${r.Title}</h4><p style="font-size:13px; color:var(--text2); margin-top:4px; line-height:1.5;">${r.Description||'Lecture preparation resource handouts.'}</p></div>
       <div style="border-top:1px solid var(--border); padding-top:12px; margin-top:16px; display:flex; justify-content:space-between; align-items:center;">
         <span style="font-size:11px; color:var(--text3);">Uploaded: ${r['Uploaded Date']||'---'}</span><a href="${r['Download Link']}" target="_blank" style="font-size:12px; color:var(--accent); font-weight:600; text-decoration:none;">Download PDF &rarr;</a>
       </div>
@@ -713,7 +721,7 @@ function filterMaterial(sub, btn) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   TWO-WAY TRANSACTION CORES WRITING TO SHEETS WEBAPPS
+   TWO-WAY SPREADSHEET WRITEBACK WEBHOOK TRANSACTION MANAGERS
 ═══════════════════════════════════════════════════════════ */
 async function writeDataToCentralSheet(payload) {
   try {
@@ -725,7 +733,7 @@ async function writeDataToCentralSheet(payload) {
 async function handleCallSubmission(event) {
   event.preventDefault(); const b = event.target.querySelector('button'); b.disabled=true; b.textContent = "Writing logs...";
   const success = await writeDataToCentralSheet({ action: "logCall", studentId: currentStudent.id, collegeName: document.getElementById('form-coll-name').value, stage: document.getElementById('form-coll-stage').value, notes: document.getElementById('form-coll-notes').value });
-  if(success) { alert("College application tracker row saved successfully!"); event.target.reset(); } b.disabled=false; b.textContent = "Log Tracker Entry";
+  if(success) { alert("College Application Status Saved Successfully!"); event.target.reset(); } b.disabled=false; b.textContent = "Log Tracker Entry";
 }
 
 async function processOfficialScoreFormSubmit(event) {
@@ -746,13 +754,15 @@ async function processOfficialScoreFormSubmit(event) {
 
 function switchExamFormFields(exam) {
   const container = document.getElementById('dynamic-fields-container'); const submitBtn = document.getElementById('master-score-submit-btn'); const lockNotice = document.getElementById('exam-lock-notice'); if(!container) return;
-  const savedData = studentLoadedOfficialScores[exam]; const isLocked = savedData && savedData.lockStatus === "LOCKED";
+  const savedData = studentLoadedOfficialScores[exam]; 
+  
+  // Safe instantiation object fields configuration mapper parameters
   const currentData = savedData || { varc:'', dilr:'', qa:'', total:'', percentile:'', lang:'', quant:'', logic:'', valr:'', dm:'', qadi:'', english:'', reasoning:'', lockStatus:'' };
-   const isLocked = currentData.lockStatus === "LOCKED";
+  const isLocked = currentData.lockStatus === "LOCKED";
   
   if (isLocked) {
     lockNotice.style.display = "block"; lockNotice.style.background = "var(--red-light)"; lockNotice.style.color = "var(--red)";
-    lockNotice.innerHTML = "🔒 <b>Verification Frozen:</b> This entry has been locked by IMS Admin. Changes are disabled.";
+    lockNotice.innerHTML = "🔒 <b>Verification Frozen:</b> This entry has been validated and locked by IMS Admin. Changes are disabled.";
     submitBtn.disabled = true; submitBtn.style.background = "var(--text3)"; submitBtn.textContent = "Locked Profile Matrix";
   } else {
     lockNotice.style.display = "block"; lockNotice.style.background = "var(--green-light)"; lockNotice.style.color = "var(--green)";
@@ -792,7 +802,6 @@ window.onload = async () => {
   if (saved) { currentStudent = JSON.parse(saved); launchWorkspaceShell(); }
 };
 function logout() { sessionStorage.removeItem('sp_student'); location.reload(); }
-function prevMonth() {} function nextMonth() {}
 function fmtDate(str) { if(!str) return "—"; try { return new Date(str).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){return str;} }
 </script>
 </body>
