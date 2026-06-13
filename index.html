@@ -543,43 +543,103 @@ async function fetchSheetData(sheetName) {
   }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   DATA LOADING CHANNELS (FULLY BLIND TO MISSING TABS/ERRORS)
+═══════════════════════════════════════════════════════════ */
+async function fetchSheetData(sheetName) {
+  try {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${window.CONFIG.SPREADSHEET_ID}/values/${encodeURIComponent(sheetName)}!A:Z?key=${window.CONFIG.SHEETS_API_KEY}`;
+    const res = await fetch(url);
+    if (!res.ok) {
+      console.warn(`⚠️ Tab "${sheetName}" not found or inaccessible in Google Sheets. Skipping safely.`);
+      return [];
+    }
+    const data = await res.json();
+    const rows = data.values || [];
+    if (rows.length < 2) return [];
+    const headers = rows[0];
+    return rows.slice(1).map(r => {
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = r[i] !== undefined ? String(r[i]).trim() : '');
+      return obj;
+    });
+  } catch (e) {
+    console.warn(`⚠️ Failed to parse sheet tab "${sheetName}":`, e);
+    return [];
+  }
+}
+
 async function fetchAllData() {
   if (!currentStudent) return;
   const sid = String(currentStudent.id).trim();
   const batch = String(currentStudent.batch).trim();
 
+  console.log("🔄 Starting full asynchronous sheet synchronization matrix...");
+
+  // 1. Safe Isolated Fetches: If any tab is missing or misspelled, it won't crash the others
   const [att, sched, prog, ann, mat, cat, nmat, xat, snap] = await Promise.all([
     fetchSheetData('Attendance'),
     fetchSheetData('Schedule'),
     fetchSheetData('Learning Flow'),
     fetchSheetData('Announcements'),
     fetchSheetData('Material'),
-    fetchSheetData('Scores CAT'), fetchSheetData('Scores NMAT'), fetchSheetData('Scores XAT'), fetchSheetData('Scores SNAP')
+    fetchSheetData('Scores CAT'), 
+    fetchSheetData('Scores NMAT'), 
+    fetchSheetData('Scores XAT'), 
+    fetchSheetData('Scores SNAP')
   ]);
 
-  allAttendance = att.filter(r => String(r['StudentID']).trim() === sid);
-  allSchedule = sched.filter(r => String(r['BatchID']).trim() === batch);
-  allProgress = prog.filter(r => String(r['StudentID']).trim() === sid);
-  myMaterials = mat.filter(r => r['Target Batch'] === 'ALL' || String(r['Target Batch']).trim() === batch);
-  myAnnouncements = ann.filter(r => r['Target Batch'] === 'ALL' || String(r['Target Batch']).trim() === batch);
+  // 2. Safe Array Filtering Guardrails
+  allAttendance = Array.isArray(att) ? att.filter(r => String(r['StudentID']).trim() === sid) : [];
+  allSchedule = Array.isArray(sched) ? sched.filter(r => String(r['BatchID']).trim() === batch) : [];
+  allProgress = Array.isArray(prog) ? prog.filter(r => String(r['StudentID']).trim() === sid) : [];
+  myMaterials = Array.isArray(mat) ? mat.filter(r => r['Target Batch'] === 'ALL' || String(r['Target Batch']).trim() === batch) : [];
+  myAnnouncements = Array.isArray(ann) ? ann.filter(r => r['Target Batch'] === 'ALL' || String(r['Target Batch']).trim() === batch) : [];
 
-  if (window.supabase) {
-    try {
-      const [simcatResponse, benchmarkResponse] = await Promise.all([
-        supabase.from('scores_simcat').select('*').eq('student_id', sid),
-        supabase.from('scores_benchmark').select('*').eq('student_id', sid)
-      ]);
-      allScoresSimcat = (simcatResponse.data || []).map(r => ({ 'Test Name': r.test_name, Date: r.test_date, 'Total Score': r.total_score, 'Overall Percentile': r.overall_percentile, 'Overall Accuracy': r.overall_accuracy, 'VARC Pct': r.varc_percentile, 'DILR Pct': r.dilr_percentile, 'QA Pct': r.qa_percentile }));
-      allScoresBenchmark = (benchmarkResponse.data || []).map(r => ({ 'Test Name': r.test_name, Date: r.test_date, 'Score Obtained': r.score_obtained, MaxScore: r.max_score, Percentile: r.percentile, Accuracy: r.accuracy, Subject: r.subject_focus }));
-    } catch(sbErr) {
-      console.error(sbErr);
-    }
+  // 3. Fallback Mock Score Arrays (Bypassing Supabase entirely to rely purely on your Sheet)
+  const simcatRows = await fetchSheetData('Scores SimCAT');
+  const benchmarkRows = await fetchSheetData('Scores Benchmark');
+
+  allScoresSimcat = simcatRows.filter(r => String(r['StudentID']).trim() === sid).map(r => ({
+    'Test Name': r['Test Name'] || 'SimCAT mock',
+    Date: r['Date'] || '---',
+    'Total Score': r['Total Score'] || '0',
+    'Overall Percentile': r['Overall Percentile'] || r['Overall Pct'] || '0',
+    'Overall Accuracy': r['Overall Accuracy'] || '0%',
+    'VARC Pct': r['VARC Pct'] || '0',
+    'DILR Pct': r['DILR Pct'] || '0',
+    'QA Pct': r['QA Pct'] || '0'
+  }));
+
+  allScoresBenchmark = benchmarkRows.filter(r => String(r['StudentID']).trim() === sid).map(r => ({
+    'Test Name': r['Test Name'] || 'Benchmark Mock',
+    Date: r['Date'] || '---',
+    'Score Obtained': r['Score Obtained'] || '0',
+    MaxScore: r['Max Score'] || '100',
+    Percentile: r['Percentile'] || '0',
+    Accuracy: r['Accuracy'] || '0%',
+    Subject: r['Subject'] || 'General'
+  }));
+
+  // 4. Safe Mapping for Official Exam score tabs
+  if (Array.isArray(cat)) {
+    const mCat = cat.find(r => String(r['StudentID']).trim() == sid);
+    if(mCat) studentLoadedOfficialScores["CAT"] = { varc: mCat['VARC Raw'], dilr: mCat['DILR Raw'], qa: mCat['QA Raw'], total: mCat['Total Raw'], percentile: mCat['Percentile'], lockStatus: mCat['Lock Status'] };
   }
-
-  const mCat = cat.find(r => String(r['StudentID']).trim() == sid); if(mCat) studentLoadedOfficialScores["CAT"] = { varc: mCat['VARC Raw'], dilr: mCat['DILR Raw'], qa: mCat['QA Raw'], total: mCat['Total Raw'], percentile: mCat['Percentile'], lockStatus: mCat['Lock Status'] };
-  const mNmat = nmat.find(r => String(r['StudentID']).trim() == sid); if(mNmat) studentLoadedOfficialScores["NMAT"] = { lang: mNmat['Language Skills'], quant: mNmat['Quantitative Skills'], logic: mNmat['Logical Reasoning'], total: mNmat['Total Scaled'], lockStatus: mNmat['Lock Status'] };
-  const mXat = xat.find(r => String(r['StudentID']).trim() == sid); if(mXat) studentLoadedOfficialScores["XAT"] = { valr: mXat['VALR'], dm: mXat['DM'], qadi: mXat['QA DI'], total: mXat['Total Score'], percentile: mXat['Percentile'], lockStatus: mXat['Lock Status'] };
-  const mSnap = snap.find(r => String(r['StudentID']).trim() == sid); if(mSnap) studentLoadedOfficialScores["SNAP"] = { english: mSnap['General English'], reasoning: mSnap['Analytical Reasoning'], quant: mSnap['Quantitative'], total: mSnap['Total Score'], lockStatus: mSnap['Lock Status'] };
+  if (Array.isArray(nmat)) {
+    const mNmat = nmat.find(r => String(r['StudentID']).trim() == sid);
+    if(mNmat) studentLoadedOfficialScores["NMAT"] = { lang: mNmat['Language Skills'], quant: mNmat['Quantitative Skills'], logic: mNmat['Logical Reasoning'], total: mNmat['Total Scaled'], lockStatus: mNmat['Lock Status'] };
+  }
+  if (Array.isArray(xat)) {
+    const mXat = xat.find(r => String(r['StudentID']).trim() == sid);
+    if(mXat) studentLoadedOfficialScores["XAT"] = { valr: mXat['VALR'], dm: mXat['DM'], qadi: mXat['QA DI'], total: mXat['Total Score'], percentile: mXat['Percentile'], lockStatus: mXat['Lock Status'] };
+  }
+  if (Array.isArray(snap)) {
+    const mSnap = snap.find(r => String(r['StudentID']).trim() == sid);
+    if(mSnap) studentLoadedOfficialScores["SNAP"] = { english: mSnap['General English'], reasoning: mSnap['Analytical Reasoning'], quant: mSnap['Quantitative'], total: mSnap['Total Score'], lockStatus: mSnap['Lock Status'] };
+  }
+  
+  console.log("🚀 Single-sheet data stream sync safely completed!");
 }
 
 /* ═══════════════════════════════════════════════════════════
