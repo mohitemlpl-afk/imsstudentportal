@@ -351,6 +351,7 @@ async function handleGoogleCredential(response) {
       </div>
 
       <!-- ATTENDANCE -->
+      <!-- ATTENDANCE PANEL -->
       <div id="page-attendance" class="page">
         <div class="att-stats">
           <div class="att-stat"><div class="att-stat-val" id="att-present-count" style="color:var(--green)">0</div><div class="att-stat-lbl">Present</div></div>
@@ -358,8 +359,15 @@ async function handleGoogleCredential(response) {
           <div class="att-stat"><div class="att-stat-val" id="att-pct" style="color:var(--accent)">0%</div><div class="att-stat-lbl">Percentage</div></div>
         </div>
         <div class="card">
-          <div class="month-nav"><button>&larr;</button><span id="month-label">June 2026</span><button>&rarr;</button></div>
-          <div class="cal-header" style="display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:11px; font-weight:600; margin-bottom:8px; color:var(--text3);"><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div></div>
+          <!-- 🟢 Dynamic Action Click Events Bounded Below -->
+          <div class="month-nav">
+            <button type="button" onclick="changeCalendarMonth(-1)">&larr;</button>
+            <span id="month-label">---</span>
+            <button type="button" onclick="changeCalendarMonth(1)">&rarr;</button>
+          </div>
+          <div class="cal-header" style="display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:11px; font-weight:600; margin-bottom:8px; color:var(--text3);">
+            <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
+          </div>
           <div class="cal-grid" id="cal-grid"></div>
         </div>
         <div class="card"><div class="att-list" id="att-list"></div></div>
@@ -446,6 +454,8 @@ async function handleGoogleCredential(response) {
 <!-- ─── EXECUTION INFRASTRUCTURE ARCHITECTURE REGISTRY ─── -->
 <script>
 let allAttendance = [];
+  // 🟢 Calendar Tracking State Matrices
+let currentCalendarDate = new Date(); // Defaults dynamically to today's date context
 let allSchedule = [];
 let allScoresSimcat = [];
 let allScoresBenchmark = [];
@@ -598,34 +608,100 @@ function renderProfile() {
   document.getElementById('profile-qr-subtext').textContent = `ID: ${s.id}`;
 }
 
+// 🟢 Handle Month Navigation Actions
+function changeCalendarMonth(directionModifier) {
+  currentCalendarDate.setMonth(currentCalendarDate.getMonth() + directionModifier);
+  renderAttendanceGrid();
+}
+
+// 🟢 Fully Core Realized Calendar Matrix Engine
 function renderAttendanceGrid() {
   const present = allAttendance.filter(r => r['Status']==='Present').length;
   const total = allAttendance.length;
   const pct = total ? Math.round(present/total*100) : 0;
+  
   document.getElementById('stat-att').textContent = pct + '%';
   document.getElementById('att-present-count').textContent = present;
   document.getElementById('att-absent-count').textContent = total - present;
   document.getElementById('att-pct').textContent = pct + '%';
 
   const grid = document.getElementById('cal-grid');
-  if(grid) {
-    grid.innerHTML = '';
-    const statusMap = {};
-    allAttendance.forEach(r => { if(r['Date']) statusMap[r['Date']] = r['Status']; });
-    for(let d=1; d<=30; d++) {
-      const cell = document.createElement('div'); cell.className = 'cal-cell';
-      const dStr = `2026-06-${String(d).padStart(2,'0')}`;
-      if(statusMap[dStr]==='Present') cell.className += ' cal-present';
-      else if(statusMap[dStr]==='Absent') cell.className += ' cal-absent';
-      else cell.className += ' cal-holiday';
-      cell.textContent = d; grid.appendChild(cell);
+  const label = document.getElementById('month-label');
+  if (!grid || !label) return;
+
+  const targetYear = currentCalendarDate.getFullYear();
+  const targetMonth = currentCalendarDate.getMonth(); // 0-indexed (Jan=0, Jun=5)
+
+  // Update calendar header text panel interface string dynamically
+  label.textContent = currentCalendarDate.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+
+  grid.innerHTML = '';
+
+  // Step A: Build a look-up dictionary of student attendance rows for fast access
+  const recordMap = {};
+  allAttendance.forEach(r => {
+    if (r['Date']) {
+      // Formats sheet date strings safely to isolate date tokens cleanly
+      try {
+        const structuralDate = new Date(r['Date']);
+        const matchKey = `${structuralDate.getFullYear()}-${structuralDate.getMonth()}-${structuralDate.getDate()}`;
+        recordMap[matchKey] = r['Status'];
+      } catch(e) { console.warn("Date normalization skip:", r['Date']); }
     }
+  });
+
+  // Step B: Calculate layout parameters for target calendar matrix grid
+  const totalDaysInMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
+  
+  // Find weekday index of the first day of the month (Convert Sunday=0 to Monday=0 layout)
+  let baseFirstDayIndex = new Date(targetYear, targetMonth, 1).getDay();
+  let normalizedFirstDayOffset = baseFirstDayIndex === 0 ? 6 : baseFirstDayIndex - 1;
+
+  // Render blank padding cells for empty calendar offset margins
+  for (let p = 0; p < normalizedFirstDayOffset; p++) {
+    const spaceCell = document.createElement('div');
+    spaceCell.className = 'cal-cell';
+    spaceCell.style.opacity = '0';
+    grid.appendChild(spaceCell);
   }
+
+  // Step C: Render actual data matrix blocks
+  for (let dayCounter = 1; dayCounter <= totalDaysInMonth; dayCounter++) {
+    const dayCell = document.createElement('div');
+    dayCell.className = 'cal-cell';
+    dayCell.textContent = dayCounter;
+
+    const lookupKey = `${targetYear}-${targetMonth}-${dayCounter}`;
+    const status = recordMap[lookupKey];
+
+    if (status === 'Present') dayCell.className += ' cal-present';
+    else if (status === 'Absent') dayCell.className += ' cal-absent';
+    else dayCell.className += ' cal-holiday'; // Unmarked days display as standard rest blocks
+
+    grid.appendChild(dayCell);
+  }
+
+  // Step D: Render chronological full listing overview panel matching rows entries below
   const list = document.getElementById('att-list');
-  if(list) {
-    list.innerHTML = allAttendance.map(r=>`
-      <div class="att-row"><div class="att-date">${fmtDate(r.Date)}</div><div class="att-subject">${r.Subject||r.Topic||'Lecture'}</div><span class="att-status ${r.Status==='Present'?'status-present':'status-absent'}">${r.Status}</span></div>
-    `).join('');
+  if (list) {
+    // Show only the logs matching our currently selected calendar month scope view
+    const filteredLogs = allAttendance.filter(r => {
+      if (!r.Date) return false;
+      const d = new Date(r.Date);
+      return d.getFullYear() === targetYear && d.getMonth() === targetMonth;
+    });
+
+    if (filteredLogs.length === 0) {
+      list.innerHTML = '<div style="padding:16px; text-align:center; color:var(--text3); font-size:13px;">No session metrics captured inside this month range block.</div>';
+    } else {
+      list.innerHTML = filteredLogs.map(r => `
+        <div class="att-row">
+          <div class="att-date">${fmtDate(r.Date)}</div>
+          <div class="att-subject" style="font-weight:500;">${r.Subject || r.Topic || 'Lecture Session'}</div>
+          <span class="att-status ${r.Status==='Present'?'status-present':'status-absent'}">${r.Status}</span>
+        </div>
+      `).join('');
+    }
   }
 }
 
