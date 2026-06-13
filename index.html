@@ -735,17 +735,27 @@ function renderAnnouncementsFeed() {
   }
 
   // 🛡️ STRIP AND CONVERT ENGINE FOR GOOGLE SHEET CELL STRINGS
-  const convertTextToLiveLinks = (text) => {
-    if (!text) return '';
+  const parseRawTextUrls = (rawText) => {
+    if (!rawText) return '';
     
-    console.log("📊 RAW ANNOUNCEMENT STRING FETCHED FROM CELL:", text);
+    // 1. First, decode any hidden HTML entities or sanitization fragments leaking from the Sheet API
+    let decodedText = rawText
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&#x2F;/g, '/')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>');
+
+    // 2. High-precision loose pattern matcher to catch the URL no matter what follows it
+    const universalUrlRegex = /(https?:\/\/[^\s<]+)/gi;
     
-    // Broad regex structure matches raw web prefixes, domain clusters, and cell layouts
-    const broadUrlPattern = /(https?:\/\/[^\s"'<>\(\)]+)/gi;
-    
-    return text.replace(broadUrlPattern, function(urlMatch) {
-      let absoluteUrl = urlMatch.trim();
-      return `<a href="${absoluteUrl}" target="_blank" rel="noopener noreferrer" style="color: #2B4EFF !important; font-weight: 600 !important; text-decoration: underline !important; cursor: pointer !important; display: inline-block !important;">${absoluteUrl}</a>`;
+    return decodedText.replace(universalUrlRegex, function(matchedUrl) {
+      let cleanUrl = matchedUrl;
+      // Trim accidental punctuation marks hanging on the end of the text row string
+      if (cleanUrl.endsWith('.') || cleanUrl.endsWith(',') || cleanUrl.endsWith(')') || cleanUrl.endsWith(']')) {
+        cleanUrl = cleanUrl.slice(0, -1);
+      }
+      return `<a href="${cleanUrl}" target="_blank" rel="noopener noreferrer" style="color: #2B4EFF !important; font-weight: 600 !important; text-decoration: underline !important; cursor: pointer !important; position: relative; z-index: 9999;">${cleanUrl}</a>`;
     });
   };
 
