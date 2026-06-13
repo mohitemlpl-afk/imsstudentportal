@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>IMS Student Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<!-- Primary Visualization Engines Core CDN Scripts Stack Hooks -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -65,7 +66,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .google-btn svg{width:20px;height:20px;flex-shrink:0}
 .login-note{font-size:12px;color:var(--text3);margin-top:20px;line-height:1.5}
 
-/* ─── APP Shell Structural Layout Frameworks ──────────── */
+/* ─── APP SHELL FRAMEWORK PANELS ──────────────────────── */
 #app{display:none;min-height:100vh;flex-direction:column}
 #app.visible{display:flex}
 .topnav{
@@ -90,20 +91,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 }
 .logout-btn:hover{background:var(--surface2)}
 
-.bottomnav{
-  display:none;position:fixed;bottom:0;left:0;right:0;
-  background:var(--surface);border-top:1px solid var(--border);
-  padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100;
-}
-.bottomnav-items{display:flex;justify-content:space-around}
-.bnav-item{
-  display:flex;flex-direction:column;align-items:center;gap:3px;
-  padding:6px 12px;border-radius:var(--radius-sm);border:none;background:none;
-  font-family:var(--font);font-size:11px;color:var(--text3);cursor:pointer;
-}
-.bnav-item svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8}
-.bnav-item.active{color:var(--accent)}
-
 .app-body{display:flex;flex:1;overflow:hidden}
 .sidebar{
   width:220px;flex-shrink:0;background:var(--surface);
@@ -122,7 +109,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:500}
 .main-content{flex:1;overflow-y:auto;padding:28px 32px}
 
-/* ─── DATA COMPONENT GRIDS ────────────────────────────── */
+/* ─── DATA LAYOUTS & COMPONENT SPECTRUMS ───────────────── */
 .page-header{margin-bottom:28px}
 .page-title{font-family:var(--font-display);font-size:26px;color:var(--text);margin-bottom:4px}
 .page-sub{font-size:14px;color:var(--text2)}
@@ -137,6 +124,9 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .profile-avatar{width:72px;height:72px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:600;color:#fff;flex-shrink:0}
 .profile-name{font-family:var(--font-display);font-size:22px;color:var(--text);margin-bottom:4px}
 .profile-meta{font-size:14px;color:var(--text2);margin-bottom:8px}
+.badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:20px;font-weight:500}
+.badge-green{background:var(--green-light);color:var(--green)}
+.badge-blue{background:var(--accent-light);color:var(--accent)}
 .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
 .info-row{display:flex;flex-direction:column;padding:12px 0;border-bottom:1px solid var(--border)}
 .info-row:nth-child(odd){padding-right:24px;border-right:1px solid var(--border)}
@@ -144,7 +134,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .info-label{font-size:12px;color:var(--text3);margin-bottom:2px;font-weight:500}
 .info-val{font-size:14px;color:var(--text);font-weight:500}
 
-/* ─── ATTENDANCE CALENDAR ─────────────────────────────── */
+/* ─── ATTENDANCE COMPILER ATTRIBUTES ──────────────────── */
 .att-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
 .att-stat{background:var(--surface2);border-radius:var(--radius-sm);padding:14px;text-align:center}
 .att-stat-val{font-size:24px;font-weight:600;color:var(--text);line-height:1}
@@ -164,23 +154,19 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .status-present{background:var(--green-light);color:var(--green)}
 .status-absent{background:var(--red-light);color:var(--red)}
 
-/* ─── PERFORMANCE CHART AND LIST MATRIX ────────────────── */
+/* ─── SCORES & TIMELINES ──────────────────────────────── */
 .chart-wrap{position:relative;height:220px;margin-bottom:8px}
 .score-list{display:flex;flex-direction:column;gap:0}
 .score-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
 .score-test{font-size:13px;font-weight:500;color:var(--text);flex:1}
 .score-pills{display:flex;gap:6px;flex-shrink:0}
 .score-pill{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600}
-.pill-v{background:#EEF1FF;color:#2B4EFF}
-.pill-d{background:var(--purple-light);color(--purple)}
-.pill-q{background:var(--green-light);color:var(--green)}
 .pill-t{background:var(--surface2);color:var(--text)}
+.pill-q{background:var(--green-light);color:var(--green)}
 .prog-row{margin-bottom:14px}
 .prog-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
 .prog-track{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
 .prog-fill{height:100%;border-radius:4px;transition:width .6s ease}
-
-/* ─── SCHEDULE TIMELINES ──────────────────────────────── */
 .schedule-list{display:flex;flex-direction:column;gap:0}
 .sched-item{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--border);align-items:flex-start}
 .sched-time-col{width:80px;flex-shrink:0;text-align:right}
@@ -192,8 +178,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .sched-info{flex:1;min-width:0}
 .sched-topic{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px}
 .sched-meta{font-size:12px;color:var(--text3)}
-
-/* ─── SYLLABUS FLOW TIMELINES ─────────────────────────── */
 .flow-section{margin-bottom:24px}
 .flow-item{display:flex;gap:14px;margin-bottom:10px;align-items:flex-start}
 .flow-dot-col{display:flex;flex-direction:column;align-items:center;padding-top:4px}
@@ -204,7 +188,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .flow-done .flow-dot{background:var(--green)}
 .flow-active .flow-dot{background:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
 .flow-pending .flow-dot{background:var(--border);border:1.5px solid var(--text3)}
-
 .page{display:none}
 .page.active{display:block}
 .month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;max-width:340px;margin-left:auto;margin-right:auto}
@@ -216,10 +199,11 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .demo-btn{width:100%;padding:11px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:#fff;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer}
 @media(max-width:768px){.sidebar{display:none}.bottomnav{display:block}.main-content{padding:20px 16px;padding-bottom:80px}.two-col{grid-template-columns:1fr}}
 </style>
-<script src="https://accounts.google.com/gsi/client"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
+<!-- ⚡ LOCK INITIALIZATION ENVIRONMENT SCHEMAS ⚡ -->
 <script>
 window.CONFIG = {
   GOOGLE_CLIENT_ID: '546265155462-daji3rvlhjehu8eipb9pkl07efk1jt6e.apps.googleusercontent.com',
@@ -228,9 +212,14 @@ window.CONFIG = {
   CONSOLIDATED_WEBAPP_URL: 'https://script.google.com/macros/s/AKfycbwU7ZVPoNKcmnM-y3uh2c3ViNe9fYl5UODVeYPF1rJ5T1qCHxizzk-O9HHDBoq4AuFh/exec'
 };
 
+const SUPABASE_URL = "https://ofhcxvekfplhgzpxutce.supabase.co/rest/v1/";      
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9maGN4dmVrZnBsaGd6cHh1dGNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDg5MDIsImV4cCI6MjA5NjgyNDkwMn0.0X57t9-4u3TO1tBn1wIkj0R-0RJfvDgolC5nRtQrUlE"; 
+
+const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
 function loginWithGoogle() {
   if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
-    alert("System initializing authentication layer. Click again in 2 seconds.");
+    alert("Google client handshakes initializing. Please click again in a moment.");
     return;
   }
   try {
@@ -240,15 +229,14 @@ function loginWithGoogle() {
     });
     google.accounts.id.prompt();
   } catch (err) {
-    console.error(err);
+    console.error("Google authentication dialog block exception:", err);
   }
 }
 
 async function handleGoogleCredential(response) {
-  console.log("📨 Google authorization token received. Decoding payload...");
+  console.log("📨 Google auth string captured. Processing fail-safe decoder...");
   try {
     let email = null;
-    
     if (response && response.credential) {
       const base64Url = response.credential.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -259,22 +247,12 @@ async function handleGoogleCredential(response) {
       const payload = JSON.parse(jsonPayload);
       if (payload && payload.email) {
         email = String(payload.email).trim().toLowerCase();
-        console.log("📧 Decoded student email:", email);
       }
     }
-
-    // 🚨 ABSOLUTE EMERGENCY OVERRIDE GATE:
-    // If the browser blocks profile payloads, automatically route to your admin profile
-    if (!email) {
-      console.warn("⚠️ Profile payload undefined. Activating master administrative override.");
-      email = "montyfm92@gmail.com";
-    }
-
+    if (!email) email = "montyfm92@gmail.com";
     await fetchStudentByEmail(email);
-
   } catch (e) {
-    console.error("💥 Token translation exception handled. Forcing admin route.", e);
-    // If decoding completely chokes, push you straight through anyway
+    console.warn("💥 Token translation exception handled safely. Forcing admin route fallback.");
     await fetchStudentByEmail("montyfm92@gmail.com");
   }
 }
@@ -304,7 +282,7 @@ async function handleGoogleCredential(response) {
 
   <div class="app-body">
     <aside class="sidebar">
-      <div class="sidebar-label">Main Matrix</div>
+      <div class="sidebar-label">Portal Dashboard</div>
       <button class="nav-item active" onclick="showPage('profile',this)">My Profile</button>
       <button class="nav-item" onclick="showPage('attendance',this)">Attendance</button>
       <button class="nav-item" onclick="showPage('scores',this)">Mock Scores</button>
@@ -315,26 +293,25 @@ async function handleGoogleCredential(response) {
     </aside>
 
     <main class="main-content">
-      <!-- 1. PROFILE SECTION PAGE -->
+      <!-- PROFILE MAIN PANELS -->
       <div id="page-profile" class="page active">
         <div class="profile-hero">
           <div class="profile-avatar" id="profile-avatar">ST</div>
           <div>
             <div class="profile-name" id="profile-name">---</div>
-            <div class="profile-meta" id="profile-meta">Synchronizing institutional database channels...</div>
-            <div class="profile-badges"><span class="badge badge-green">Active Student</span><span class="badge badge-blue" id="profile-exam-badge">IMS Matrix</span></div>
+            <div class="profile-meta" id="profile-meta">Synchronizing secure row matrix endpoints...</div>
+            <span class="badge badge-green">Active Hub Link</span>
           </div>
-          <div style="background:#fff; padding:6px; border-radius:6px; margin-left:auto; border:1px solid var(--border); text-align:center;">
+          <div style="background:#fff; padding:6px; border-radius:6px; margin-left:auto; border:1px solid var(--border);">
             <img id="profile-qr-code" style="width:100px; height:100px; display:block;">
-            <div id="profile-qr-subtext" style="font-size:11px; font-weight:600; font-family:monospace; margin-top:4px;">ID: ----</div>
+            <div id="profile-qr-subtext" style="font-size:10px; text-align:center; font-family:monospace; margin-top:4px;">ID: ----</div>
           </div>
         </div>
 
-        <!-- RESTORED: DYNAMIC ANNOUNCEMENT BOARD FOR DISCOVERIES -->
         <div id="announcement-board-container" style="display: none; margin-bottom: 24px;">
-          <div class="card" style="border-left:4px solid var(--accent); padding:20px;">
+          <div class="card" style="border-left: 4px solid var(--accent); padding: 20px;">
             <div class="card-title">📢 Important Institutional Updates & Deadlines</div>
-            <div id="announcements-feed" style="display:flex; flex-direction:column; gap:12px; margin-top:12px;"></div>
+            <div id="announcements-feed" style="display: flex; flex-direction: column; gap: 12px; margin-top:10px;"></div>
           </div>
         </div>
 
@@ -345,17 +322,17 @@ async function handleGoogleCredential(response) {
         </div>
 
         <div class="card">
-          <div class="card-title">Personal Details</div>
+          <div class="card-title">Personal Registry details</div>
           <div class="info-grid">
             <div class="info-row"><div class="info-label">Full Name</div><div class="info-val" id="d-name">---</div></div>
             <div class="info-row"><div class="info-label">Email Address</div><div class="info-val" id="d-email">---</div></div>
-            <div class="info-row"><div class="info-label">Registered Phone</div><div class="info-val" id="d-phone">---</div></div>
-            <div class="info-row"><div class="info-label">Batch Assigned</div><div class="info-val" id="d-batch">---</div></div>
+            <div class="info-row"><div class="info-label">Phone</div><div class="info-val" id="d-phone">---</div></div>
+            <div class="info-row"><div class="info-label">Batch Code</div><div class="info-val" id="d-batch">---</div></div>
           </div>
         </div>
       </div>
 
-      <!-- 2. ATTENDANCE SECTION PAGE -->
+      <!-- ATTENDANCE MAIN PANELS -->
       <div id="page-attendance" class="page">
         <div class="att-stats">
           <div class="att-stat"><div class="att-stat-val" id="att-present-count" style="color:var(--green)">0</div><div class="att-stat-lbl">Present</div></div>
@@ -370,30 +347,30 @@ async function handleGoogleCredential(response) {
         <div class="card"><div class="att-list" id="att-list"></div></div>
       </div>
 
-      <!-- 3. MOCK SCORES ANALYTICS SECTIONS (LIVE SUPABASE BUILT) -->
+      <!-- PERFORMANCE SCORE PANELS -->
       <div id="page-scores" class="page">
         <div class="tabs">
           <button class="tab-btn active" onclick="setScoreFilters('SimCAT')">SimCAT Analysis Dashboard</button>
           <button class="tab-btn" onclick="setScoreFilters('Benchmarking')">Benchmarking Diagnostic Logs</button>
         </div>
-        <div class="stat-grid" style="margin-bottom:24px;">
-          <div class="stat-card" style="border-top:3px solid var(--accent);"><div class="stat-label">Overall Accuracy</div><div class="stat-val" id="an-accuracy">0%</div></div>
-          <div class="stat-card" style="border-top:3px solid var(--green);"><div class="stat-label">Peak Percentile</div><div class="stat-val" id="an-peak-pct">0.00</div></div>
-          <div class="stat-card" style="border-top:3px solid var(--purple);"><div class="stat-label">Average %ile Index</div><div class="stat-val" id="an-efficiency">0%</div></div>
+        <div class="stat-grid" style="margin-bottom: 24px;">
+          <div class="stat-card" style="border-top: 3px solid var(--accent);"><div class="stat-label">Overall Accuracy</div><div class="stat-val" id="an-accuracy">0%</div></div>
+          <div class="stat-card" style="border-top: 3px solid var(--green);"><div class="stat-label">Peak Percentile</div><div class="stat-val" id="an-peak-pct">0.00</div></div>
+          <div class="stat-card" style="border-top: 3px solid var(--purple);"><div class="stat-label">Average %ile Index</div><div class="stat-val" id="an-efficiency">0%ile</div></div>
         </div>
         <div class="card">
           <div class="chart-wrap"><canvas id="scoreChart"></canvas></div>
-          <div id="subject-bars-container" style="margin-top:20px;"></div>
+          <div id="subject-bars-container" style="margin-top: 20px;"></div>
         </div>
         <div class="card"><div class="score-list" id="score-list"></div></div>
       </div>
 
-      <!-- 4. MY RECORDS OFFICIAL EXAMINATION COMPILER SECTIONS -->
+      <!-- MY RECORDS DYNAMIC INPUT OPTIONS PANELS -->
       <div id="page-records" class="page">
         <div class="two-col">
           <div class="card">
-            <div class="card-title">Official Entrance Exam Records</div>
-            <select id="master-exam-selector" onchange="switchExamFormFields(this.value)" style="width:100%; padding:8px; margin-bottom:12px;">
+            <div class="card-title">Official Entrance Exam Records Portal</div>
+            <select id="master-exam-selector" onchange="switchExamFormFields(this.value)" style="width:100%; padding:10px; margin-bottom:12px;">
               <option value="CAT">Common Admission Test (CAT)</option>
               <option value="NMAT">NMAT by GMAC</option>
               <option value="XAT">Xavier Aptitude Test (XAT)</option>
@@ -409,18 +386,18 @@ async function handleGoogleCredential(response) {
             <div class="card-title">College Application Status Tracker</div>
             <form onsubmit="handleCallSubmission(event)">
               <div style="margin-bottom:8px;"><label style="font-size:12px; font-weight:600;">Institute Name</label><input type="text" id="form-coll-name" placeholder="e.g. IIM Ahmedabad" required style="width:100%; padding:6px;"></div>
-              <div style="margin-bottom:8px;"><label style="font-size:12px; font-weight:600;">Current Stage</label><select id="form-coll-stage" required style="width:100%; padding:6px;"><option value="Applied">Applied</option><option value="Call Received">Shortlisted (Interview Call)</option><option value="Converted">Converted offered 🎉</option></select></div>
-              <div style="margin-bottom:12px;"><label style="font-size:12px; font-weight:600;">Interview Logs</label><textarea id="form-coll-notes" style="width:100%; height:80px; resize:none;"></textarea></div>
-              <button type="submit" class="demo-btn">Log Tracker Entry</button>
+              <div style="margin-bottom:8px;"><label style="font-size:12px; font-weight:600;">Stage Status</label><select id="form-coll-stage" required style="width:100%; padding:6px;"><option value="Applied">Form Filled / Applied</option><option value="Call Received">Shortlisted (Interview Call)</option><option value="Converted">Converted offered 🎉</option></select></div>
+              <div style="margin-bottom:12px;"><label style="font-size:12px; font-weight:600;">Interview Logs Notes</label><textarea id="form-coll-notes" style="width:100%; height:60px; resize:none;"></textarea></div>
+              <button type="submit" class="demo-btn">Log entry Tracker</button>
             </form>
           </div>
         </div>
       </div>
 
-      <!-- 5. SCHEDULE GRID SECTION -->
+      <!-- SCHEDULE VIEW PANEL -->
       <div id="page-schedule" class="page"><div class="card"><div class="schedule-list" id="schedule-list"></div></div></div>
 
-      <!-- 6. RESTORED: LEARNING FLOW SYLLABUS SECTION -->
+      <!-- LEARNING FLOW SECTIONS PANELS -->
       <div id="page-progress" class="page">
         <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
           <div class="stat-card"><div class="stat-label" style="color:var(--green)">Completed</div><div class="stat-val" id="prog-done">0</div></div>
@@ -434,7 +411,7 @@ async function handleGoogleCredential(response) {
         <div id="flow-sections"></div>
       </div>
 
-      <!-- 7. RESTORED: STUDY MATERIALS RESOURCES RESOURCE VAULT -->
+      <!-- STUDY MATERIALS RESOURCE VAULT PANELS -->
       <div id="page-material" class="page">
         <div class="tabs">
           <button class="tab-btn active" onclick="filterMaterial('all', this)">All Handouts</button>
@@ -448,15 +425,8 @@ async function handleGoogleCredential(response) {
   </div>
 </div>
 
+<!-- ─── WORKSPACE RUNTIME CONTROLLER ENGINE ─── -->
 <script>
-/* ═══════════════════════════════════════════════════════════
-   GLOBAL VARIABLE INSTANTIATION MATRICES
-═══════════════════════════════════════════════════════════ */
-const SUPABASE_URL = "https://ofhcxvekfplhgzpxutce.supabase.co/rest/v1/";      
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9maGN4dmVrZnBsaGd6cHh1dGNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDg5MDIsImV4cCI6MjA5NjgyNDkwMn0.0X57t9-4u3TO1tBn1wIkj0R-0RJfvDgolC5nRtQrUlE"; 
-
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 let currentStudent = null;
 let allAttendance = [];
 let allSchedule = [];
@@ -469,9 +439,10 @@ let calMonth = 5; // June
 let calYear = 2026;
 let scoreChartInstance = null;
 let currentSelectedType = 'SimCAT';
+let studentLoadedOfficialScores = {};
 
 /* ═══════════════════════════════════════════════════════════
-   LIFECYCLE SESSION PRESERVE CONSOLE (FIXES REFRESH BOUNCE)
+   PERSISTENT SESSION CHECKER (PREVENTS REFRESH BOUNCE)
 ═══════════════════════════════════════════════════════════ */
 window.onload = async () => {
   const saved = sessionStorage.getItem('sp_student');
@@ -484,37 +455,34 @@ window.onload = async () => {
       await fetchAllData();
       renderAll();
     } catch (e) {
-      console.error("Async context processing recovery allocated:", e);
+      console.error("Refresh recovery compilation active:", e);
       renderAll();
     }
   }
 };
 
-/* ═══════════════════════════════════════════════════════════
-   CORE AUTHENTICATION ROUTINES (FAIL-SAFE WATERFALL CORES)
-═══════════════════════════════════════════════════════════ */
 async function fetchStudentByEmail(email) {
   try {
     let matchedProfile = null;
     
-    // Attempt live Master Database pull from Supabase
-    try {
-      const { data, error } = await supabase
-        .from('students')
-        .select('*')
-        .eq('email', email)
-        .single();
-      if (!error && data) matchedProfile = data;
-    } catch(dbErr) {
-      console.warn("Database lookup bypassed:", dbErr);
+    if (window.supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('students')
+          .select('*')
+          .eq('email', email)
+          .single();
+        if (!error && data) matchedProfile = data;
+      } catch(dbErr) {
+        console.warn("Database hook read bypass active:", dbErr);
+      }
     }
 
-    // High-priority administrative override assignment
     if (!matchedProfile) {
       if (email === "montyfm92@gmail.com") {
         matchedProfile = { id: "MBA-0001", name: "Mohit Sharma", email: email, phone: "9876543210", batch: "CAT-2025-A", target_exam: "CAT 2025" };
       } else {
-        matchedProfile = { id: "IMS-2002", name: "Student Profile", email: email, phone: "9876543210", batch: "CAT-2025-A", target_exam: "CAT" };
+        matchedProfile = { id: "IMS-2001", name: "Student Profile", email: email, phone: "9876543210", batch: "CAT-2025-A", target_exam: "CAT" };
       }
     }
 
@@ -536,7 +504,6 @@ async function fetchStudentByEmail(email) {
 
     sessionStorage.setItem('sp_student', JSON.stringify(currentStudent));
     
-    // Swap structural display frames instantly to bypass timing bottlenecks
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').classList.add('visible');
     renderProfile();
@@ -546,17 +513,17 @@ async function fetchStudentByEmail(email) {
         await fetchAllData();
         renderAll();
       } catch (dataError) {
-        console.error("Payload compilation deferred safely:", dataError);
+        console.error(dataError);
       }
     }, 50);
 
   } catch (err) {
-    console.error("Core login runtime exception handled:", err);
+    console.error("Auth core critical barrier context:", err);
   }
 }
 
 /* ═══════════════════════════════════════════════════════════
-   DATA SEPARATION PIPELINE LAYER (REPAIRED Pointers)
+   DATA SEPARATION NETWORKS (STABLE V4 RANGE CHANNELS)
 ═══════════════════════════════════════════════════════════ */
 async function fetchSheetData(sheetName) {
   try {
@@ -581,13 +548,13 @@ async function fetchAllData() {
   const sid = String(currentStudent.id).trim();
   const batch = String(currentStudent.batch).trim();
 
-  // Parallel asynchronous fetching directly linked to your live spreadsheet tabs range coordinates
-  const [att, sched, prog, ann, mat] = await Promise.all([
+  const [att, sched, prog, ann, mat, cat, nmat, xat, snap] = await Promise.all([
     fetchSheetData('Attendance'),
     fetchSheetData('Schedule'),
     fetchSheetData('Learning Flow'),
     fetchSheetData('Announcements'),
-    fetchSheetData('Material')
+    fetchSheetData('Material'),
+    fetchSheetData('Scores CAT'), fetchSheetData('Scores NMAT'), fetchSheetData('Scores XAT'), fetchSheetData('Scores SNAP')
   ]);
 
   allAttendance = att.filter(r => String(r['StudentID']).trim() === sid);
@@ -596,17 +563,19 @@ async function fetchAllData() {
   myMaterials = mat.filter(r => r['Target Batch'] === 'ALL' || String(r['Target Batch']).trim() === batch);
   myAnnouncements = ann.filter(r => r['Target Batch'] === 'ALL' || String(r['Target Batch']).trim() === batch);
 
-  // Secondary execution tier pulls live evaluation rows from your Supabase client endpoints
-  const [simcatResponse, benchmarkResponse, cat, nmat, xat, snap] = await Promise.all([
-    supabase.from('scores_simcat').select('*').eq('student_id', sid),
-    supabase.from('scores_benchmark').select('*').eq('student_id', sid),
-    fetchSheetData('Scores CAT'), fetchSheetData('Scores NMAT'), fetchSheetData('Scores XAT'), fetchSheetData('Scores SNAP')
-  ]);
+  if (window.supabase) {
+    try {
+      const [simcatResponse, benchmarkResponse] = await Promise.all([
+        supabase.from('scores_simcat').select('*').eq('student_id', sid),
+        supabase.from('scores_benchmark').select('*').eq('student_id', sid)
+      ]);
+      allScoresSimcat = (simcatResponse.data || []).map(r => ({ 'Test Name': r.test_name, Date: r.test_date, 'Total Score': r.total_score, 'Overall Percentile': r.overall_percentile, 'Overall Accuracy': r.overall_accuracy, 'VARC Pct': r.varc_percentile, 'DILR Pct': r.dilr_percentile, 'QA Pct': r.qa_percentile }));
+      allScoresBenchmark = (benchmarkResponse.data || []).map(r => ({ 'Test Name': r.test_name, Date: r.test_date, 'Score Obtained': r.score_obtained, MaxScore: r.max_score, Percentile: r.percentile, Accuracy: r.accuracy, Subject: r.subject_focus }));
+    } catch(sbErr) {
+      console.error(sbErr);
+    }
+  }
 
-  allScoresSimcat = (simcatResponse.data || []).map(r => ({ 'Test Name': r.test_name, Date: r.test_date, 'Total Score': r.total_score, 'Overall Percentile': r.overall_percentile, 'Overall Accuracy': r.overall_accuracy, 'VARC Pct': r.varc_percentile, 'DILR Pct': r.dilr_percentile, 'QA Pct': r.qa_percentile }));
-  allScoresBenchmark = (benchmarkResponse.data || []).map(r => ({ 'Test Name': r.test_name, Date: r.test_date, 'Score Obtained': r.score_obtained, MaxScore: r.max_score, Percentile: r.percentile, Accuracy: r.accuracy, Subject: r.subject_focus }));
-
-  // Assemble dynamic records confirmation object parameters
   const mCat = cat.find(r => String(r['StudentID']).trim() == sid); if(mCat) studentLoadedOfficialScores["CAT"] = { varc: mCat['VARC Raw'], dilr: mCat['DILR Raw'], qa: mCat['QA Raw'], total: mCat['Total Raw'], percentile: mCat['Percentile'], lockStatus: mCat['Lock Status'] };
   const mNmat = nmat.find(r => String(r['StudentID']).trim() == sid); if(mNmat) studentLoadedOfficialScores["NMAT"] = { lang: mNmat['Language Skills'], quant: mNmat['Quantitative Skills'], logic: mNmat['Logical Reasoning'], total: mNmat['Total Scaled'], lockStatus: mNmat['Lock Status'] };
   const mXat = xat.find(r => String(r['StudentID']).trim() == sid); if(mXat) studentLoadedOfficialScores["XAT"] = { valr: mXat['VALR'], dm: mXat['DM'], qadi: mXat['QA DI'], total: mXat['Total Score'], percentile: mXat['Percentile'], lockStatus: mXat['Lock Status'] };
@@ -614,7 +583,7 @@ async function fetchAllData() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   INTERFACE GENERATION COMPILERS
+   UI LAYOUT VIEW ENGINE COMPILERS (DEFENSIVE FROM-SCRATCH CORES)
 ═══════════════════════════════════════════════════════════ */
 function renderAll() {
   renderProfile();
@@ -624,9 +593,6 @@ function renderAll() {
   renderLearningFlow();
   renderAnnouncementsFeed();
   renderStudyMaterialsVault('all');
-  
-  const selectorEl = document.getElementById('master-exam-selector');
-  if (selectorEl) { switchExamFormFields(selectorEl.value); }
 }
 
 function showPage(pageId, element) {
@@ -647,7 +613,6 @@ function renderProfile() {
   document.getElementById('nav-batch').textContent = s.target_exam + ' · ' + s.batch;
   document.getElementById('profile-name').textContent = s.name;
   document.getElementById('profile-meta').textContent = `Target Track: ${s.target_exam} · Class Batch: ${s.batch} · Portal ID: ${s.id}`;
-  document.getElementById('profile-exam-badge').textContent = s.target_exam;
   document.getElementById('d-name').textContent = s.name;
   document.getElementById('d-email').textContent = s.email;
   document.getElementById('d-phone').textContent = s.phone;
@@ -682,7 +647,7 @@ function renderAttendanceGrid() {
   const list = document.getElementById('att-list');
   if(list) {
     list.innerHTML = allAttendance.map(r=>`
-      <div class="att-row"><div class="att-date">${fmtDate(r.Date)}</div><div class="att-subject">${r.Subject||r.Topic||'Lecture Session'}</div><span class="att-status ${r.Status==='Present'?'status-present':'status-absent'}">${r.Status}</span></div>
+      <div class="att-row"><div class="att-date">${fmtDate(r.Date)}</div><div class="att-subject">${r.Subject||r.Topic||'Lecture'}</div><span class="att-status ${r.Status==='Present'?'status-present':'status-absent'}">${r.Status}</span></div>
     `).join('');
   }
 }
@@ -690,8 +655,6 @@ function renderAttendanceGrid() {
 function setScoreFilters(type) { currentSelectedType = type; renderScores(); }
 
 function renderScores() {
-  const ctx = document.getElementById('scoreChart')?.getContext('2d');
-  if(!ctx) return;
   const targetDataset = currentSelectedType === 'SimCAT' ? allScoresSimcat : allScoresBenchmark;
   const listContainer = document.getElementById('score-list');
   const subjectBars = document.getElementById('subject-bars-container');
@@ -711,15 +674,23 @@ function renderScores() {
   document.getElementById('an-peak-pct').textContent = peak ? peak.toFixed(2) : '0.00';
   document.getElementById('an-efficiency').textContent = count ? Math.round((tVarc+tDilr+tQa)/(count*3)) + '%ile Avg' : '0%ile';
 
-  if(scoreChartInstance) scoreChartInstance.destroy();
-  scoreChartInstance = new Chart(ctx, {
-    type:'line',
-    data: {
-      labels: targetDataset.map(r=>r['Test Name']),
-      datasets:[{label:'Score Index Timeline', data: targetDataset.map(r=>parseFloat(r['Total Score']||r['Score Obtained']||0)), borderColor:'#2B4EFF', tension:0.3, fill:false}]
-    },
-    options: {responsive:true, maintainAspectRatio:false}
-  });
+  // ⚡ DEFENSIVE SAFETY CHECK: Prevents Chart is not defined script compilation crashes
+  if (typeof Chart !== 'undefined') {
+    const ctx = document.getElementById('scoreChart')?.getContext('2d');
+    if (ctx) {
+      if(scoreChartInstance) scoreChartInstance.destroy();
+      scoreChartInstance = new Chart(ctx, {
+        type:'line',
+        data: {
+          labels: targetDataset.map(r=>r['Test Name']),
+          datasets:[{label:'Progress Analytics Score Index', data: targetDataset.map(r=>parseFloat(r['Total Score']||r['Score Obtained']||0)), borderColor:'#2B4EFF', tension:0.3, fill:false}]
+        },
+        options: {responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}}
+      });
+    }
+  } else {
+    console.warn("⚠️ ChartJS script canvas container loading asynchronously in background.");
+  }
 
   const aV = count ? Math.round(tVarc/count) : 0;
   const aD = count ? Math.round(tDilr/count) : 0;
@@ -736,7 +707,7 @@ function renderScores() {
     listContainer.innerHTML = targetDataset.map(r=>`
       <div class="score-row">
         <div class="score-test" style="font-weight:600;">${r['Test Name']} <span style="font-size:11px; font-weight:400; color:var(--text3);">(${r.Date||'Recent'})</span></div>
-        <div class="score-pills"><span class="score-pill pill-t">Observed: ${r['Total Score']||r['Score Obtained']}</span><span class="score-pill pill-q">${r['Overall Percentile']||r['Percentile']||'0'} %ile</span></div>
+        <div class="score-pills"><span class="score-pill pill-t">Score: ${r['Total Score']||r['Score Obtained']}</span><span class="score-pill pill-q">${r['Overall Percentile']||r['Percentile']||'0'} %ile</span></div>
       </div>
     `).join('');
   }
@@ -744,12 +715,12 @@ function renderScores() {
 
 function renderSchedule() {
   const list = document.getElementById('schedule-list'); if(!list) return;
-  if(!allSchedule.length) { list.innerHTML = '<div class="empty"><p>No upcoming lectures uploaded for this batch assignment segment.</p></div>'; return; }
+  if(!allSchedule.length) { list.innerHTML = '<div class="empty"><p>No upcoming classes recorded inside your batch sheet rows.</p></div>'; return; }
   list.innerHTML = allSchedule.map(r=>`
     <div class="sched-item">
       <div class="sched-time-col"><div class="sched-time">${r.Time}</div><div class="sched-date">${r.Date}</div></div>
       <div class="sched-dot-col"><div class="sched-dot" style="background:var(--accent)"></div><div class="sched-line"></div></div>
-      <div class="sched-info"><div class="sched-topic" style="font-weight:600;">${r.Topic} [${r.Subject}]</div><div class="sched-meta">${r['Room / Mode'] || 'Lecture Hall'} &middot; ${r.Faculty || 'IMS Faculty'}</div></div>
+      <div class="sched-info"><div class="sched-topic" style="font-weight:600;">${r.Topic} [${r.Subject}]</div><div class="sched-meta">${r['Room / Mode']} &middot; ${r.Faculty}</div></div>
     </div>
   `).join('');
 }
@@ -792,7 +763,7 @@ function renderAnnouncementsFeed() {
   if(!myAnnouncements.length) { box.style.display='none'; return; }
   box.style.display='block';
   feed.innerHTML = myAnnouncements.map(r=>`
-    <div style="background:var(--bg); border-left:4px solid var(--accent); padding:14px; border-radius:var(--radius-sm);">
+    <div style="background:var(--surface2); border-left:4px solid var(--accent); padding:14px; border-radius:var(--radius-sm);">
       <div style="font-size:11px; color:var(--text3); float:right; font-weight:500;">${r.Timestamp||''}</div>
       <div style="font-weight:600; color:var(--text); font-size:14px;">${r.Title}</div>
       <div style="font-size:13px; color:var(--text2); margin-top:2px; line-height:1.5;">${r.Description}</div>
@@ -803,10 +774,10 @@ function renderAnnouncementsFeed() {
 function renderStudyMaterialsVault(filter) {
   const container = document.getElementById('material-grid-container'); if(!container) return;
   let data = [...myMaterials]; if(filter!=='all') data = data.filter(r=>r['Subject']===filter);
-  if(!data.length) { container.innerHTML = '<div class="card" style="grid-column:1/-1; text-align:center; color:var(--text3); padding:40px;">📂 No handouts uploaded for this subject line matrix.</div>'; return; }
+  if(!data.length) { container.innerHTML = '<div class="card" style="grid-column:1/-1; text-align:center; color:var(--text3); padding:40px;">📂 No lecture handouts logged under this tab section.</div>'; return; }
   container.innerHTML = data.map(r=>`
     <div class="card" style="margin-bottom:0; box-shadow:var(--shadow); display:flex; flex-direction:column; justify-content:space-between; padding:18px 20px;">
-      <div><span class="badge badge-blue" style="margin-bottom:8px; font-weight:600;">${r.Subject}</span><h4 style="font-size:15px; font-weight:600; line-height:1.4;">${r.Title}</h4><p style="font-size:13px; color:var(--text2); margin-top:4px; line-height:1.5;">${r.Description||'Lecture workspace handout documentation.'}</p></div>
+      <div><span class="badge badge-blue" style="margin-bottom:8px; font-weight:600;">${r.Subject}</span><h4 style="font-size:15px; font-weight:600; line-height:1.4;">${r.Title}</h4><p style="font-size:13px; color:var(--text2); margin-top:4px; line-height:1.5;">${r.Description||'Institutional prep resource asset.'}</p></div>
       <div style="border-top:1px solid var(--border); padding-top:12px; margin-top:16px; display:flex; justify-content:space-between; align-items:center;">
         <span style="font-size:11px; color:var(--text3);">Added: ${r['Uploaded Date']||'---'}</span><a href="${r['Download Link']}" target="_blank" style="font-size:12px; color:var(--accent); font-weight:600; text-decoration:none;">Download &rarr;</a>
       </div>
@@ -820,7 +791,7 @@ function filterMaterial(sub, btn) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   TWO-WAY TRANSMISSION ROUTINES (WEBHOOK REDIRECT BACKENDS)
+   TWO-WAY SHEET TRANSACTION WEBHOOK ROUTINES
 ═══════════════════════════════════════════════════════════ */
 async function writeDataToCentralSheet(payload) {
   try {
@@ -832,13 +803,13 @@ async function writeDataToCentralSheet(payload) {
 }
 
 async function handleCallSubmission(event) {
-  event.preventDefault(); const b = event.target.querySelector('button'); b.disabled=true; b.textContent = "Syncing...";
+  event.preventDefault(); const b = event.target.querySelector('button'); b.disabled=true; b.textContent = "Syncing Tracker...";
   const success = await writeDataToCentralSheet({ action: "logCall", studentId: currentStudent.id, collegeName: document.getElementById('form-coll-name').value, stage: document.getElementById('form-coll-stage').value, notes: document.getElementById('form-coll-notes').value });
-  if(success) { alert("College tracking status logged successfully!"); event.target.reset(); } b.disabled=false; b.textContent = "Log Tracker Entry";
+  if(success) { alert("College logs mirrored into sheet row successfully!"); event.target.reset(); } b.disabled=false; b.textContent = "Log Tracker Entry";
 }
 
 async function processOfficialScoreFormSubmit(event) {
-  event.preventDefault(); const exam = document.getElementById('master-exam-selector').value; const b = document.getElementById('master-score-submit-btn'); b.disabled=true; b.textContent = "Processing sync...";
+  event.preventDefault(); const exam = document.getElementById('master-exam-selector').value; const b = document.getElementById('master-score-submit-btn'); b.disabled=true; b.textContent = "Pushing updates...";
   let scores = {};
   if (exam === "CAT") {
     scores = { varc: document.getElementById('inp-varc').value, dilr: document.getElementById('inp-dilr').value, qa: document.getElementById('inp-qa').value, total: document.getElementById('inp-total').value, percentile: document.getElementById('inp-pct').value };
@@ -850,7 +821,7 @@ async function processOfficialScoreFormSubmit(event) {
     scores = { english: document.getElementById('inp-english').value, reasoning: document.getElementById('inp-reasoning').value, quant: document.getElementById('inp-quant').value, total: document.getElementById('inp-total').value };
   }
   const success = await writeDataToCentralSheet({ action: "updateOfficialScore", examName: exam, studentId: currentStudent.id, scores: scores });
-  if(success) alert(`Success! Your official ${exam} score parameters have been pushed directly to your master Google Sheet database row cells.`); b.disabled=false; b.textContent = "Save Profile Matrix";
+  if(success) alert(`Success! Your official ${exam} score parameters have been pushed directly to your master Google Sheet rows.`); b.disabled=false; b.textContent = "Save Profile Matrix";
 }
 
 function switchExamFormFields(exam) {
@@ -864,11 +835,11 @@ function switchExamFormFields(exam) {
   
   if (isLocked) {
     lockNotice.style.display = "block"; lockNotice.style.background = "var(--red-light)"; lockNotice.style.color = "var(--red)";
-    lockNotice.innerHTML = "🔒 <b>Verification Frozen:</b> This entry has been validated and locked by IMS Admin. Changes are disabled.";
+    lockNotice.innerHTML = "🔒 <b>Verification Frozen:</b> This entry has been locked by IMS Admin. Form inputs disabled.";
     submitBtn.disabled = true; submitBtn.style.background = "var(--text3)"; submitBtn.textContent = "Locked Profile";
   } else {
     lockNotice.style.display = "block"; lockNotice.style.background = "var(--green-light)"; lockNotice.style.color = "var(--green)";
-    lockNotice.innerHTML = savedData ? "🟢 <b>Active Logs:</b> Saved records fetched. Submitting will overwrite your spreadsheet entries." : "⏳ No records logged inside your sheet row for this exam sequence.";
+    lockNotice.innerHTML = savedData ? "🟢 <b>Active Logs:</b> Saved scorecard values fetched. Saving updates your spreadsheet cells." : "⏳ No records found logged inside your sheet row for this exam sequence.";
     submitBtn.disabled = false; submitBtn.style.background = "var(--accent)"; submitBtn.textContent = "Save Profile Matrix";
   }
 
@@ -880,8 +851,8 @@ function switchExamFormFields(exam) {
       <div><label style="font-size:11px; color:var(--text2);">Quant Raw</label><input type="number" id="inp-qa" value="${savedData?.qa||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
     </div>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
-      <div><label style="font-size:11px; color:var(--text2);">Total Aggregate Score</label><input type="number" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">Overall Percentile</label><input type="text" id="inp-pct" value="${savedData?.percentile||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
+      <div><label style="font-size:11px; color:var(--text2);">Total Score</label><input type="number" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
+      <div><label style="font-size:11px; color:var(--text2);">Overall %ile</label><input type="text" id="inp-pct" value="${savedData?.percentile||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
     </div>`;
   } else if (exam === "NMAT") {
     html = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;">
@@ -898,7 +869,7 @@ function switchExamFormFields(exam) {
     </div>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
       <div><label style="font-size:11px; color:var(--text2);">Total Score</label><input type="number" step="0.01" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">Overall Percentile</label><input type="text" id="inp-pct" value="${savedData?.percentile||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
+      <div><label style="font-size:11px; color:var(--text2);">Overall %ile</label><input type="text" id="inp-pct" value="${savedData?.percentile||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
     </div>`;
   } else if (exam === "SNAP") {
     html = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;">
