@@ -268,25 +268,45 @@ async function handleGoogleCredential(response) {
 </div>
 
 <div id="app">
-  <div class="topnav-user">
-  <!-- 🟢 BELL NOTIFICATION ICON WITH REACTION DROP PANEL -->
-  <div style="position: relative; margin-right: 8px; display: flex; align-items: center;">
-    <button onclick="toggleAnnouncementsDropdown(event)" style="background: none; border: none; cursor: pointer; position: relative; padding: 6px; display: flex; align-items: center; color: var(--text2);" id="notification-bell-btn">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-      <span id="notif-badge" style="display: none; position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background: var(--red); border-radius: 50%;"></span>
-    </button>
-    
-    <!-- Floating Dropdown Overlay Panel Box -->
-    <div id="notif-dropdown" style="display: none; position: absolute; top: 38px; right: 0; width: 320px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); z-index: 1000; max-height: 400px; overflow-y: auto;">
-      <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 14px; color: var(--text);">Institutional Updates</div>
-      <div id="notif-dropdown-feed" style="padding: 8px 0;"></div>
+  <nav class="topnav">
+    <!-- 1. Left Corner Logo Alignment Bracket -->
+    <div class="topnav-logo">
+      <img src="https://imsgujarat.com/wp-content/uploads/elementor/thumbs/high-low-ims-logo-q88bznzqyw17qyylsbpjt2obvw4pcwyu13wepnvt34.png" style="height:36px; display:block;">
     </div>
-  </div>
+    
+    <!-- 2. The Dynamic Flex Spacer (This forces left and right into absolute corners) -->
+    <div class="topnav-spacer"></div>
 
-  <div class="topnav-avatar" id="nav-avatar">ST</div>
-  <div><div class="topnav-name" id="nav-name">---</div><div class="topnav-batch" id="nav-batch">---</div></div>
-  <button class="logout-btn" onclick="logout()">Sign out</button>
-</div>
+    <!-- 3. Right Corner Components Wrapper Panel Container Bracket -->
+    <div style="display:flex; align-items:center; gap:20px;">
+      
+      <!-- BELL NOTIFICATION TRINKET ICON WITH DYNAMIC OVERLAY DRAW PANEL -->
+      <div style="position: relative; display: flex; align-items: center;">
+        <button onclick="toggleAnnouncementsDropdown(event)" style="background: none; border: none; cursor: pointer; position: relative; padding: 6px; display: flex; align-items: center; color: var(--text2);" id="notification-bell-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          <span id="notif-badge" style="display: none; position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background: var(--red); border-radius: 50%;"></span>
+        </button>
+        
+        <!-- Floating Dropdown Overlay Panel Box -->
+        <div id="notif-dropdown" style="display: none; position: absolute; top: 38px; right: 0; width: 320px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); z-index: 1000; max-height: 400px; overflow-y: auto;">
+          <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 14px; color: var(--text);">Institutional Updates</div>
+          <div id="notif-dropdown-feed" style="padding: 8px 0;"></div>
+        </div>
+      </div>
+
+      <!-- USER PROFILE AND ATTRIBUTES INFO SEGMENT CLUSTER -->
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="topnav-avatar" id="nav-avatar">ST</div>
+        <div style="display: flex; flex-direction: column; justify-content: center;">
+          <div class="topnav-name" id="nav-name" style="line-height:1.2; font-weight:500;">---</div>
+          <div class="topnav-batch" id="nav-batch" style="line-height:1.2; margin-top:2px;">---</div>
+        </div>
+      </div>
+
+      <!-- TRANSACTION ROUTINE ESCAPE GATE DISCONNECT HANDLE -->
+      <button class="logout-btn" onclick="logout()">Sign out</button>
+    </div>
+  </nav>
 
   <div class="app-body">
     <aside class="sidebar">
