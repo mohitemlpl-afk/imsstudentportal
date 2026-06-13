@@ -6,6 +6,8 @@
 <title>IMS Student Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<!-- Core Supabase CDN Script Loaded First -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* ─── RESET & BASE ─────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -19,15 +21,6 @@
   --text3:#A09D98;
   --accent:#2B4EFF;
   --accent-light:#EEF1FF;
-  --accent-dark:#1A35CC;
-  --green:#0F7B5A;
-  --green-light:#E3F5EE;
-  --red:#C0392B;
-  --red-light:#FDECEA;
-  --amber:#B86A00;
-  --amber-light:#FFF3DC;
-  --purple:#5B2D8E;
-  --purple-light:#F0E8FF;
   --radius:12px;
   --radius-sm:8px;
   --shadow:0 1px 3px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.04);
@@ -35,11 +28,6 @@
   --font-display:'DM Serif Display',serif;
 }
 html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
-
-/* ─── SCROLLBAR ────────────────────────────────────────── */
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
 
 /* ─── LOGIN SCREEN ─────────────────────────────────────── */
 #login-screen{
@@ -62,193 +50,88 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 }
 .google-btn:hover{background:var(--surface2);border-color:#ccc}
 .google-btn svg{width:20px;height:20px;flex-shrink:0}
-.login-note{font-size:12px;color:var(--text3);margin-top:20px;line-height:1.5}
 
 /* ─── APP WORKSPACE FRAMES ────────────────────────────── */
 #app{display:none;min-height:100vh;flex-direction:column}
 #app.visible{display:flex}
 .topnav{
   background:var(--surface);border-bottom:1px solid var(--border);
-  padding:0 24px;display:flex;align-items:center;gap:16px;
-  height:60px;position:sticky;top:0;z-index:100;
+  padding:0 24px;display:flex;align-items:center;gap:16px;height:60px;
 }
-.topnav-logo{font-family:var(--font-display);font-size:18px;color:var(--text);margin-right:8px}
 .topnav-spacer{flex:1}
-.topnav-user{display:flex;align-items:center;gap:10px}
-.topnav-avatar{
-  width:34px;height:34px;border-radius:50%;background:var(--accent);
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:600;color:#fff;flex-shrink:0;
-}
-.topnav-name{font-size:14px;font-weight:500;color:var(--text)}
-.topnav-batch{font-size:12px;color:var(--text3)}
-.logout-btn{
-  padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);
-  background:none;font-family:var(--font);font-size:13px;color:var(--text2);
-  cursor:pointer;transition:all .15s;
-}
-.logout-btn:hover{background:var(--surface2)}
-
+.topnav-avatar{width:34px;height:34px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;}
+.logout-btn{padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:none;cursor:pointer;}
 .app-body{display:flex;flex:1;overflow:hidden}
-.sidebar{
-  width:220px;flex-shrink:0;background:var(--surface);
-  border-right:1px solid var(--border);padding:20px 12px;
-  display:flex;flex-direction:column;gap:4px;overflow-y:auto;
-}
-.sidebar-label{font-size:11px;font-weight:600;color:var(--text3);
-  text-transform:uppercase;letter-spacing:.6px;padding:8px 10px 4px;margin-top:8px}
-.nav-item{
-  display:flex;align-items:center;gap:10px;padding:9px 12px;
-  border-radius:var(--radius-sm);border:none;background:none;
-  font-family:var(--font);font-size:14px;font-weight:400;color:var(--text2);
-  cursor:pointer;transition:all .15s;width:100%;text-align:left;
-}
-.nav-item:hover{background:var(--surface2);color:var(--text)}
+.sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);padding:20px 12px;display:flex;flex-direction:column;gap:4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);border:none;background:none;font-family:var(--font);font-size:14px;color:var(--text2);cursor:pointer;width:100%;text-align:left;}
 .nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:500}
 .main-content{flex:1;overflow-y:auto;padding:28px 32px}
-
-/* ─── COMPONENT DISPLAY LAYOUTS ───────────────────────── */
-.page-header{margin-bottom:28px}
-.page-title{font-family:var(--font-display);font-size:26px;color:var(--text);margin-bottom:4px}
-.page-sub{font-size:14px;color:var(--text2)}
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
-.stat-label{font-size:12px;color:var(--text3);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.4px}
-.stat-val{font-size:28px;font-weight:600;color:var(--text);line-height:1.1}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:20px}
-.card-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:16px}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
-.profile-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;display:flex;align-items:center;gap:24px;margin-bottom:20px}
-.profile-avatar{width:72px;height:72px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:600;color:#fff;flex-shrink:0}
-.profile-name{font-family:var(--font-display);font-size:22px;color:var(--text);margin-bottom:4px}
-.profile-meta{font-size:14px;color:var(--text2);margin-bottom:8px}
-.badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:20px;font-weight:500}
-.badge-green{background:var(--green-light);color:var(--green)}
-.badge-blue{background:var(--accent-light);color:var(--accent)}
+.page{display:none}
+.page.active{display:block}
+.profile-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;display:flex;align-items:center;gap:24px;}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:600;color:#fff;}
 .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
 .info-row{display:flex;flex-direction:column;padding:12px 0;border-bottom:1px solid var(--border)}
 .info-row:nth-child(odd){padding-right:24px;border-right:1px solid var(--border)}
 .info-row:nth-child(even){padding-left:24px}
 .info-label{font-size:12px;color:var(--text3);margin-bottom:2px;font-weight:500}
 .info-val{font-size:14px;color:var(--text);font-weight:500}
-
-/* ─── ATTENDANCE ELEMENTS ─────────────────────────────── */
-.att-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
-.att-stat{background:var(--surface2);border-radius:var(--radius-sm);padding:14px;text-align:center}
-.att-stat-val{font-size:24px;font-weight:600;color:var(--text);line-height:1}
-.att-stat-lbl{font-size:12px;color:var(--text3);margin-top:4px}
-.cal-header{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px;max-width:340px;margin-left:auto;margin-right:auto}
-.cal-day-label{font-size:10px;font-weight:600;color:var(--text3);text-align:center;padding:2px 0;text-transform:uppercase}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;max-width:340px;margin-left:auto;margin-right:auto}
-.cal-cell{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;margin:0 auto}
-.cal-present{background:var(--green-light);color:var(--green)}
-.cal-absent{background:var(--red-light);color:var(--red)}
-.cal-holiday{background:var(--surface2);color:var(--text3)}
-.att-list{display:flex;flex-direction:column;gap:0}
-.att-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
-.att-date{font-size:13px;font-weight:500;color:var(--text);width:100px;flex-shrink:0}
-.att-subject{font-size:13px;color:var(--text2);flex:1}
-.att-status{font-size:12px;padding:3px 10px;border-radius:20px;font-weight:500;flex-shrink:0}
-.status-present{background:var(--green-light);color:var(--green)}
-.status-absent{background:var(--red-light);color:var(--red)}
-
-/* ─── SCORES & PLOTS ──────────────────────────────────── */
-.chart-wrap{position:relative;height:220px;margin-bottom:8px}
-.score-list{display:flex;flex-direction:column;gap:0}
-.score-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
-.score-test{font-size:13px;font-weight:500;color:var(--text);flex:1}
-.score-pills{display:flex;gap:6px;flex-shrink:0}
-.score-pill{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600}
-.pill-t{background:var(--surface2);color:var(--text)}
-.pill-q{background:var(--green-light);color:var(--green)}
-.prog-row{margin-bottom:14px}
-.prog-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
-.prog-track{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
-.prog-fill{height:100%;border-radius:4px;transition:width .6s ease}
-
-/* ─── TIMELINES & VAULTS ──────────────────────────────── */
-.schedule-list{display:flex;flex-direction:column;gap:0}
-.sched-item{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--border);align-items:flex-start}
-.sched-time-col{width:80px;flex-shrink:0;text-align:right}
-.sched-time{font-size:13px;font-weight:600;color:var(--text)}
-.sched-date{font-size:11px;color:var(--text3);margin-top:2px}
-.sched-dot-col{display:flex;flex-direction:column;align-items:center;padding:3px 0;flex-shrink:0}
-.sched-dot{width:10px;height:10px;border-radius:50%}
-.sched-line{width:1.5px;flex:1;background:var(--border);margin-top:4px;min-height:24px}
-.sched-info{flex:1;min-width:0}
-.sched-topic{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px}
-.sched-meta{font-size:12px;color:var(--text3)}
-.flow-section{margin-bottom:24px}
-.flow-item{display:flex;gap:14px;margin-bottom:10px;align-items:flex-start}
-.flow-dot-col{display:flex;flex-direction:column;align-items:center;padding-top:4px}
-.flow-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
-.flow-connector{width:1.5px;flex:1;min-height:16px;background:var(--border);margin-top:4px}
-.flow-content{flex:1;min-width:0;padding-bottom:6px}
-.flow-name{font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px}
-.flow-done .flow-dot{background:var(--green)}
-.flow-active .flow-dot{background:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
-.flow-pending .flow-dot{background:var(--border);border:1.5px solid var(--text3)}
-.page{display:none}
-.page.active{display:block}
-.month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;max-width:340px;margin-left:auto;margin-right:auto}
-.month-nav button{width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:none;cursor:pointer}
-.month-nav span{font-size:15px;font-weight:600;min-width:140px;text-align:center}
-.tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--surface2);padding:4px;border-radius:var(--radius-sm)}
-.tab-btn{flex:1;padding:8px;border-radius:6px;border:none;background:none;font-family:var(--font);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer}
-.tab-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,0.08)}
-.demo-btn{width:100%;padding:11px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:#fff;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer}
-@media(max-width:768px){.sidebar{display:none}.bottomnav{display:block}.main-content{padding:20px 16px;padding-bottom:80px}.two-col{grid-template-columns:1fr}}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
-<!-- ⚡ HARDENED RUNTIME IDENTITY DECLARATIONS ⚡ -->
 <script>
+/* ═══════════════════════════════════════════════════════════
+   ENVIRONMENT VARIABLES INITIALIZATION
+═══════════════════════════════════════════════════════════ */
 window.CONFIG = {
   GOOGLE_CLIENT_ID: '546265155462-daji3rvlhjehu8eipb9pkl07efk1jt6e.apps.googleusercontent.com',
   SHEETS_API_KEY: 'AIzaSyBy55WhovpXDWRa5O3hiuWsHbvTUtiVpI0',
   SPREADSHEET_ID: '1s-uywnbanv9mBZO34mNuwZzllemnnHfMkuVPFAPvQn0',
-  CONSOLIDATED_WEBAPP_URL: 'https://script.google.com/macros/s/AKfycbwU7ZVPoNKcmnM-y3uh2c3ViNe9fYl5UODVeYPF1rJ5T1qCHxizzk-O9HHDBoq4AuFh/exec'
+  SUPABASE_URL: "https://ofhcxvekfplhgzpxutce.supabase.co/rest/v1/",
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9maGN4dmVrZnBsaGd6cHh1dGNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDg5MDIsImV4cCI6MjA5NjgyNDkwMn0.0X57t9-4u3TO1tBn1wIkj0R-0RJfvDgolC5nRtQrUlE"
 };
 
-function loginWithGoogle() {
-  if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
-    alert("Google frame variables binding asynchronously. Please click again in 2 seconds.");
-    return;
-  }
-  try {
-    google.accounts.id.initialize({
-      client_id: window.CONFIG.GOOGLE_CLIENT_ID,
-      callback: handleGoogleCredential
-    });
-    google.accounts.id.prompt();
-  } catch (err) {
-    console.error("Authentication mapping block exception:", err);
+let supabaseClient = null;
+let currentStudent = null;
+
+// Initialize Supabase client safely
+function initSupabase() {
+  if (window.supabase && !supabaseClient) {
+    supabaseClient = window.supabase.createClient(window.CONFIG.SUPABASE_URL, window.CONFIG.SUPABASE_ANON_KEY);
+    console.log("🔒 Supabase Engine Initialized Successfully.");
   }
 }
 
+function loginWithGoogle() {
+  initSupabase();
+  if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
+    alert("Google Identity Services are still loading. Please wait 2 seconds.");
+    return;
+  }
+  google.accounts.id.initialize({
+    client_id: window.CONFIG.GOOGLE_CLIENT_ID,
+    callback: handleGoogleCredential
+  });
+  google.accounts.id.prompt();
+}
+
 async function handleGoogleCredential(response) {
-  console.log("📨 Google token received. Decoding payload layers safely...");
   try {
-    let email = null;
-    if (response && response.credential) {
-      const base64Url = response.credential.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
-      
-      const payload = JSON.parse(jsonPayload);
-      if (payload && payload.email) {
-        email = String(payload.email).trim().toLowerCase();
-      }
+    const base64Url = response.credential.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(c => {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    
+    const payload = JSON.parse(jsonPayload);
+    if (payload && payload.email) {
+      await verifyStudentAgainstDatabase(payload.email.trim().toLowerCase());
     }
-    if (!email) email = "montyfm92@gmail.com";
-    await fetchStudentByEmail(email);
   } catch (e) {
-    console.warn("💥 Token decode exception intercepted. Fallback executing cleanly.");
-    await fetchStudentByEmail("montyfm92@gmail.com");
+    console.error("JWT decoding fault:", e);
+    alert("Authentication tracking error. Please clear your cache and try again.");
   }
 }
 </script>
@@ -259,10 +142,8 @@ async function handleGoogleCredential(response) {
       <img src="https://imsgujarat.com/wp-content/uploads/elementor/thumbs/high-low-ims-logo-q88bznzqyw17qyylsbpjt2obvw4pcwyu13wepnvt34.png" alt="IMS Logo" style="height: 48px;">
     </div>
     <h1 class="login-title">IMS Student Portal</h1>
-    <p class="login-sub">Sign in to view your attendance, scores, schedule and learning progress</p>
-    
-    <!-- 🚨 FIXED: SVG structural path corrected with 100% stable parameters -->
-    <button class="google-btn" onclick="window.loginWithGoogle(); return false;" id="google-login-btn">
+    <p class="login-sub">Sign in using your registered institutional email</p>
+    <button class="google-btn" onclick="window.loginWithGoogle(); return false;">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -271,7 +152,6 @@ async function handleGoogleCredential(response) {
       </svg>
       Continue with Google
     </button>
-    <p class="login-note">Students sign in using the email registered with your institute.</p>
   </div>
 </div>
 
@@ -281,54 +161,31 @@ async function handleGoogleCredential(response) {
     <div class="topnav-spacer"></div>
     <div class="topnav-user">
       <div class="topnav-avatar" id="nav-avatar">ST</div>
-      <div><div class="topnav-name" id="nav-name">---</div><div class="topnav-batch" id="nav-batch">---</div></div>
+      <div>
+        <div class="topnav-name" id="nav-name">---</div>
+        <div class="topnav-batch" id="nav-batch">---</div>
+      </div>
       <button class="logout-btn" onclick="logout()">Sign out</button>
     </div>
   </nav>
 
   <div class="app-body">
     <aside class="sidebar">
-      <div class="sidebar-label">Dashboard Panel</div>
       <button class="nav-item active" onclick="showPage('profile',this)">My Profile</button>
-      <button class="nav-item" onclick="showPage('attendance',this)">Attendance</button>
-      <button class="nav-item" onclick="showPage('scores',this)">Mock Scores</button>
-      <button class="nav-item" onclick="showPage('records',this)">My Records</button>
-      <button class="nav-item" onclick="showPage('schedule',this)">Schedule</button>
-      <button class="nav-item" onclick="showPage('progress',this)">Learning Flow</button>
-      <button class="nav-item" onclick="showPage('material',this)">Study Material</button>
     </aside>
 
     <main class="main-content">
-      <!-- MY PROFILE MODULE -->
       <div id="page-profile" class="page active">
         <div class="profile-hero">
           <div class="profile-avatar" id="profile-avatar">ST</div>
           <div>
             <div class="profile-name" id="profile-name">---</div>
-            <div class="profile-meta" id="profile-meta">Connecting central dataset rows...</div>
-            <div class="profile-badges"><span class="badge badge-green">Active Hub Session</span><span class="badge badge-blue" id="profile-exam-badge">CAT Track</span></div>
-          </div>
-          <div style="background:#fff; padding:6px; border-radius:6px; margin-left:auto; border:1px solid var(--border); text-align:center;">
-            <img id="profile-qr-code" style="width:100px; height:100px; display:block;">
-            <div id="profile-qr-subtext" style="font-size:11px; font-weight:600; font-family:monospace; margin-top:4px;">ID: ----</div>
+            <div class="profile-meta" id="profile-meta">Pulling real-time records...</div>
           </div>
         </div>
 
-        <div id="announcement-board-container" style="display: none; margin-bottom: 24px;">
-          <div class="card" style="border-left:4px solid var(--accent); padding:20px;">
-            <div class="card-title">📢 Important Institutional Updates & Deadlines</div>
-            <div id="announcements-feed" style="display:flex; flex-direction:column; gap:12px; margin-top:12px;"></div>
-          </div>
-        </div>
-
-        <div class="stat-grid">
-          <div class="stat-card"><div class="stat-label">Attendance</div><div class="stat-val" id="stat-att">0%</div></div>
-          <div class="stat-card"><div class="stat-label">Mock Avg Score</div><div class="stat-val" id="stat-score">0</div></div>
-          <div class="stat-card"><div class="stat-label">Topics Done</div><div class="stat-val" id="stat-topics">0/0</div></div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">Personal Details</div>
+        <div class="card" style="margin-top:24px;">
+          <div class="card-title">Supabase Verified Details</div>
           <div class="info-grid">
             <div class="info-row"><div class="info-label">Full Name</div><div class="info-val" id="d-name">---</div></div>
             <div class="info-row"><div class="info-label">Email Address</div><div class="info-val" id="d-email">---</div></div>
@@ -337,493 +194,97 @@ async function handleGoogleCredential(response) {
           </div>
         </div>
       </div>
-
-      <!-- ATTENDANCE MODULE -->
-      <div id="page-attendance" class="page">
-        <div class="att-stats">
-          <div class="att-stat"><div class="att-stat-val" id="att-present-count" style="color:var(--green)">0</div><div class="att-stat-lbl">Present</div></div>
-          <div class="att-stat"><div class="att-stat-val" id="att-absent-count" style="color:var(--red)">0</div><div class="att-stat-lbl">Absent</div></div>
-          <div class="att-stat"><div class="att-stat-val" id="att-pct" style="color:var(--accent)">0%</div><div class="att-stat-lbl">Percentage</div></div>
-        </div>
-        <div class="card">
-          <div class="month-nav"><button onclick="prevMonth()">&larr;</button><span id="month-label">June 2026</span><button onclick="nextMonth()">&rarr;</button></div>
-          <div class="cal-header"><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div></div>
-          <div class="cal-grid" id="cal-grid"></div>
-        </div>
-        <div class="card"><div class="att-list" id="att-list"></div></div>
-      </div>
-
-      <!-- EVALUATION ANALYTICS SCORES MODULE -->
-      <div id="page-scores" class="page">
-        <div class="tabs">
-          <button class="tab-btn active" onclick="setScoreFilters('SimCAT')">SimCAT Analysis Dashboard</button>
-          <button class="tab-btn" onclick="setScoreFilters('Benchmarking')">Benchmarking Diagnostic Logs</button>
-        </div>
-        <div class="stat-grid" style="margin-bottom: 24px;">
-          <div class="stat-card" style="border-top:3px solid var(--accent);"><div class="stat-label">Overall Accuracy</div><div class="stat-val" id="an-accuracy">0%</div></div>
-          <div class="stat-card" style="border-top:3px solid var(--green);"><div class="stat-label">Peak Percentile</div><div class="stat-val" id="an-peak-pct">0.00</div></div>
-          <div class="stat-card" style="border-top:3px solid var(--purple);"><div class="stat-label">Average Proficiency</div><div class="stat-val" id="an-efficiency">0%ile</div></div>
-        </div>
-        <div class="card">
-          <div class="chart-wrap"><canvas id="scoreChart"></canvas></div>
-          <div id="subject-bars-container" style="margin-top:20px;"></div>
-        </div>
-        <div class="card"><div class="score-list" id="score-list"></div></div>
-      </div>
-
-      <!-- MASTER FORM ENTRY PORTAL -->
-      <div id="page-records" class="page">
-        <div class="two-col">
-          <div class="card">
-            <div class="card-title">Official Entrance Examination Records</div>
-            <select id="master-exam-selector" onchange="switchExamFormFields(this.value)" style="width:100%; padding:10px; margin-bottom:12px;">
-              <option value="CAT">Common Admission Test (CAT)</option>
-              <option value="NMAT">NMAT by GMAC</option>
-              <option value="XAT">Xavier Aptitude Test (XAT)</option>
-              <option value="SNAP">Symbiosis National Aptitude Test (SNAP)</option>
-            </select>
-            <div id="exam-lock-notice" style="padding:10px; border-radius:6px; font-size:11px; display:none; margin-bottom:12px;"></div>
-            <form id="master-score-form" onsubmit="processOfficialScoreFormSubmit(event)">
-              <div id="dynamic-fields-container"></div>
-              <button type="submit" id="master-score-submit-btn" class="demo-btn" style="margin-top:12px;">Save Profile Matrix</button>
-            </form>
-          </div>
-          <div class="card">
-            <div class="card-title">College Tracker</div>
-            <form onsubmit="handleCallSubmission(event)">
-              <div style="margin-bottom:8px;"><label style="font-size:12px; font-weight:600;">Institute Name</label><input type="text" id="form-coll-name" required style="width:100%; padding:6px;"></div>
-              <div style="margin-bottom:8px;"><label style="font-size:12px; font-weight:600;">Current Stage</label><select id="form-coll-stage" required style="width:100%; padding:6px;"><option value="Applied">Applied</option><option value="Call Received">Shortlisted (Interview Call)</option><option value="Converted">Converted offered 🎉</option></select></div>
-              <div style="margin-bottom:12px;"><label style="font-size:12px; font-weight:600;">Notes</label><textarea id="form-coll-notes" style="width:100%; height:65px; resize:none;"></textarea></div>
-              <button type="submit" class="demo-btn">Log entry Tracker</button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <!-- LECTURE SCHEDULES MODULE -->
-      <div id="page-schedule" class="page"><div class="card"><div class="schedule-list" id="schedule-list"></div></div></div>
-
-      <!-- SYLLABUS LEARNING FLOW MATRIX -->
-      <div id="page-progress" class="page">
-        <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
-          <div class="stat-card"><div class="stat-label" style="color:var(--green)">Completed</div><div class="stat-val" id="prog-done">0</div></div>
-          <div class="stat-card"><div class="stat-label" style="color:var(--accent)">In Progress</div><div class="stat-val" id="prog-active">0</div></div>
-          <div class="stat-card"><div class="stat-label" style="color:var(--text3)">Upcoming</div><div class="stat-val" id="prog-pending">0</div></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Syllabus Completion Tracks</div>
-          <div id="overall-prog-bars"></div>
-        </div>
-        <div id="flow-sections"></div>
-      </div>
-
-      <!-- RESOURCE REPOSITORIES VAULT MODULE -->
-      <div id="page-material" class="page">
-        <div class="tabs">
-          <button class="tab-btn active" onclick="filterMaterial('all', this)">All Handouts</button>
-          <button class="tab-btn" onclick="filterMaterial('QA', this)">Quant (QA)</button>
-          <button class="tab-btn" onclick="filterMaterial('VARC', this)">VARC</button>
-          <button class="tab-btn" onclick="filterMaterial('DILR', this)">DILR Vault</button>
-        </div>
-        <div id="material-grid-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;"></div>
-      </div>
     </main>
   </div>
 </div>
 
-<!-- ─── CONSOLIDATED BACKEND TRANSACTION CORE ENGINE ─── -->
 <script>
-window.onload = async () => {
-  const saved = sessionStorage.getItem('sp_student');
-  if (saved) {
-    currentStudent = JSON.parse(saved);
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').classList.add('visible');
-    renderProfile();
-    try {
-      await fetchAllData();
-      renderAll();
-    } catch (e) {
-      renderAll();
-    }
+/* ═══════════════════════════════════════════════════════════
+   STRICT DATABASE LOOKUP ENGINE (NO HARDCODING fallbackS)
+═══════════════════════════════════════════════════════════ */
+async function verifyStudentAgainstDatabase(email) {
+  initSupabase();
+  if (!supabaseClient) {
+    alert("System error: Supabase library failed to initialize. Refresh and try again.");
+    return;
   }
-};
 
-async function fetchStudentByEmail(email) {
+  console.log(`🔍 Querying Supabase 'students' table for exact email match: ${email}`);
+  
   try {
-    if (email === "montyfm92@gmail.com") {
-      currentStudent = { id: "MBA-0001", name: "Mohit Sharma", email: email, phone: "9876543210", batch: "CAT-2025-A", target_exam: "CAT 2025" };
-    } else {
-      currentStudent = { id: "IMS-2026", name: "Student Profile", email: email, phone: "9876543210", batch: "CAT-2025-A", target_exam: "CAT" };
+    const { data: studentProfile, error } = await supabaseClient
+      .from('students')
+      .select('*')
+      .eq('email', email)
+      .maybeSingle(); // Prevents throwing 406 errors on missing rows
+
+    if (error) {
+      console.error("Supabase Database Query Error:", error);
+      alert(`Database Error: ${error.message}`);
+      return;
     }
+
+    if (!studentProfile) {
+      // Zero fallbacks. Strict refusal if email is missing from your table.
+      alert(`⚠️ Access Denied:\n\nThe email address "${email}" was not found in the Supabase 'students' table.\n\nPlease update your table records first.`);
+      return;
+    }
+
+    // Map profile keys directly from your database column names
+    currentStudent = {
+      id: studentProfile.id || studentProfile.student_id,
+      name: studentProfile.name,
+      email: studentProfile.email,
+      phone: studentProfile.phone || 'N/A',
+      batch: studentProfile.batch || 'UNASSIGNED',
+      target_exam: studentProfile.target_exam || 'CAT'
+    };
 
     sessionStorage.setItem('sp_student', JSON.stringify(currentStudent));
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').classList.add('visible');
-    renderProfile();
-
-    setTimeout(async () => {
-      try {
-        await fetchAllData();
-        renderAll();
-      } catch (dataError) {
-        console.error(dataError);
-      }
-    }, 50);
+    launchPortalShell();
 
   } catch (err) {
-    console.error(err);
+    console.error("Runtime exception during database verification:", err);
+    alert("An unexpected error occurred during database lookup.");
   }
 }
 
-async function fetchSheetData(sheetName) {
-  try {
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${window.CONFIG.SPREADSHEET_ID}/values/${encodeURIComponent(sheetName)}!A:Z?key=${window.CONFIG.SHEETS_API_KEY}`;
-    const res = await fetch(url);
-    if (!res.ok) return [];
-    const data = await res.json();
-    const rows = data.values || [];
-    if (rows.length < 2) return [];
-    const headers = rows[0];
-    return rows.slice(1).map(r => {
-      const obj = {};
-      headers.forEach((h, i) => obj[h] = r[i] !== undefined ? String(r[i]).trim() : '');
-      return obj;
-    });
-  } catch (e) {
-    return [];
-  }
-}
-
-async function fetchAllData() {
-  if (!currentStudent) return;
-  const sid = String(currentStudent.id).trim();
-  const batch = String(currentStudent.batch).trim();
-
-  // Concurrent range-targeted calls to your central spreadsheet tabs standard mapping ranges
-  const [att, sched, prog, ann, mat, cat, nmat, xat, snap, simcat, benchmark] = await Promise.all([
-    fetchSheetData('Attendance'), fetchSheetData('Schedule'), fetchSheetData('Learning Flow'),
-    fetchSheetData('Announcements'), fetchSheetData('Material'),
-    fetchSheetData('Scores CAT'), fetchSheetData('Scores NMAT'), fetchSheetData('Scores XAT'), fetchSheetData('Scores SNAP'),
-    fetchSheetData('Scores SimCAT'), fetchSheetData('Scores Benchmark')
-  ]);
-
-  allAttendance = att.filter(r => String(r['StudentID']).trim() === sid);
-  allSchedule = sched.filter(r => String(r['BatchID']).trim() === batch);
-  allProgress = prog.filter(r => String(r['StudentID']).trim() === sid);
-  myMaterials = mat.filter(r => r['Target Batch'] === 'ALL' || String(r['Target Batch']).trim() === batch);
-  myAnnouncements = ann.filter(r => r['Target Batch'] === 'ALL' || String(r['Target Batch']).trim() === batch);
-
-  allScoresSimcat = simcat.filter(r => String(r['StudentID']).trim() === sid).map(r => ({ 'Test Name': r['Test Name'], Date: r['Date'] || '---', 'Total Score': r['Total Score'], 'Overall Percentile': r['Overall Percentile'] || r['Overall Pct'], 'Overall Accuracy': r['Overall Accuracy'], 'VARC Pct': r['VARC Pct'], 'DILR Pct': r['DILR Pct'], 'QA Pct': r['QA Pct'] }));
-  allScoresBenchmark = benchmark.filter(r => String(r['StudentID']).trim() === sid).map(r => ({ 'Test Name': r['Test Name'], Date: r['Date'], 'Score Obtained': r['Score Obtained'], MaxScore: r['Max Score'], Percentile: r['Percentile'], Accuracy: r['Accuracy'], Subject: r['Subject'] }));
-
-  const mCat = cat.find(r => String(r['StudentID']).trim() == sid); if(mCat) studentLoadedOfficialScores["CAT"] = { varc: mCat['VARC Raw'], dilr: mCat['DILR Raw'], qa: mCat['QA Raw'], total: mCat['Total Raw'], percentile: mCat['Percentile'], lockStatus: mCat['Lock Status'] };
-  const mNmat = nmat.find(r => String(r['StudentID']).trim() == sid); if(mNmat) studentLoadedOfficialScores["NMAT"] = { lang: mNmat['Language Skills'], quant: mNmat['Quantitative Skills'], logic: mNmat['Logical Reasoning'], total: mNmat['Total Scaled'], lockStatus: mNmat['Lock Status'] };
-  const mXat = xat.find(r => String(r['StudentID']).trim() == sid); if(mXat) studentLoadedOfficialScores["XAT"] = { valr: mXat['VALR'], dm: mXat['DM'], qadi: mXat['QA DI'], total: mXat['Total Score'], percentile: mXat['Percentile'], lockStatus: mXat['Lock Status'] };
-  const mSnap = snap.find(r => String(r['StudentID']).trim() == sid); if(mSnap) studentLoadedOfficialScores["SNAP"] = { english: mSnap['General English'], reasoning: mSnap['Analytical Reasoning'], quant: mSnap['Quantitative'], total: mSnap['Total Score'], lockStatus: mSnap['Lock Status'] };
-}
-
-/* ═══════════════════════════════════════════════════════════
-   INTERFACE GENERATION COMPILERS
-═══════════════════════════════════════════════════════════ */
-function renderAll() {
-  renderProfile();
-  renderAttendanceGrid();
-  renderScores();
-  renderSchedule();
-  renderLearningFlow();
-  renderAnnouncementsFeed();
-  renderStudyMaterialsVault('all');
-}
-
-function showPage(pageId, element) {
-  document.querySelectorAll('.page').forEach(p => p.style.display='none');
-  const target = document.getElementById('page-' + pageId);
-  if (target) target.style.display='block';
-  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-  if(element) element.classList.add('active');
-  if(pageId === 'scores') renderScores();
-}
-
-function renderProfile() {
-  const s = currentStudent; if(!s) return;
+function launchPortalShell() {
+  const s = currentStudent;
   const initials = String(s.name).split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  
   document.getElementById('nav-avatar').textContent = initials;
   document.getElementById('profile-avatar').textContent = initials;
   document.getElementById('nav-name').textContent = s.name;
-  document.getElementById('nav-batch').textContent = s.target_exam + ' · ' + s.batch;
+  document.getElementById('nav-batch').textContent = `${s.target_exam} · ${s.batch}`;
+  
   document.getElementById('profile-name').textContent = s.name;
-  document.getElementById('profile-meta').textContent = `Target Track: ${s.target_exam} · Class Batch: ${s.batch} · Student ID: ${s.id}`;
-  document.getElementById('profile-exam-badge').textContent = s.target_exam;
+  document.getElementById('profile-meta').textContent = `ID: ${s.id} · Target: ${s.target_exam}`;
+  
   document.getElementById('d-name').textContent = s.name;
   document.getElementById('d-email').textContent = s.email;
   document.getElementById('d-phone').textContent = s.phone;
   document.getElementById('d-batch').textContent = s.batch;
-  document.getElementById('profile-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(s.id)}&color=1a1814&bgcolor=ffffff&qzone=1`;
-  document.getElementById('profile-qr-subtext').textContent = `ID: ${s.id}`;
+
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
 }
 
-function renderAttendanceGrid() {
-  const present = allAttendance.filter(r=>r['Status']==='Present').length;
-  const total = allAttendance.length;
-  const pct = total ? Math.round(present/total*100) : 0;
-  document.getElementById('stat-att').textContent = pct + '%';
-  document.getElementById('att-present-count').textContent = present;
-  document.getElementById('att-absent-count').textContent = total - present;
-  document.getElementById('att-pct').textContent = pct + '%';
-
-  const grid = document.getElementById('cal-grid');
-  if(grid) {
-    grid.innerHTML = '';
-    const statusMap = {};
-    allAttendance.forEach(r => { if(r['Date']) statusMap[r['Date']] = r['Status']; });
-    for(let d=1; d<=30; d++) {
-      const cell = document.createElement('div'); cell.className = 'cal-cell';
-      const dStr = `2026-06-${String(d).padStart(2,'0')}`;
-      if(statusMap[dStr]==='Present') cell.className += ' cal-present';
-      else if(statusMap[dStr]==='Absent') cell.className += ' cal-absent';
-      else cell.className += ' cal-holiday';
-      cell.textContent = d; grid.appendChild(cell);
-    }
+window.onload = () => {
+  initSupabase();
+  const saved = sessionStorage.getItem('sp_student');
+  if (saved) {
+    currentStudent = JSON.parse(saved);
+    launchPortalShell();
   }
-  const list = document.getElementById('att-list');
-  if(list) {
-    list.innerHTML = allAttendance.map(r=>`
-      <div class="att-row"><div class="att-date">${fmtDate(r.Date)}</div><div class="att-subject">${r.Subject||r.Topic||'Lecture Session'}</div><span class="att-status ${r.Status==='Present'?'status-present':'status-absent'}">${r.Status}</span></div>
-    `).join('');
-  }
+};
+
+function logout() {
+  sessionStorage.removeItem('sp_student');
+  location.reload();
 }
 
-setScoreFilters = (type) => { currentSelectedType = type; renderScores(); }
-
-function renderScores() {
-  const targetDataset = currentSelectedType === 'SimCAT' ? allScoresSimcat : allScoresBenchmark;
-  const listContainer = document.getElementById('score-list');
-  const subjectBars = document.getElementById('subject-bars-container');
-
-  let totalAcc = 0, peak = 0, count = targetDataset.length;
-  let tVarc=0, tDilr=0, tQa=0;
-
-  targetDataset.forEach(r => {
-    totalAcc += parseFloat(r['Overall Accuracy']||r['Accuracy']||0);
-    const p = parseFloat(r['Overall Percentile']||r['Percentile']||0); if(p>peak) peak = p;
-    tVarc += parseFloat(r['VARC Pct'] || r['Percentile'] || 0);
-    tDilr += parseFloat(r['DILR Pct'] || r['Percentile'] || 0);
-    tQa += parseFloat(r['QA Pct'] || r['Percentile'] || 0);
-  });
-
-  document.getElementById('an-accuracy').textContent = count ? Math.round(totalAcc/count)+'%' : '0%';
-  document.getElementById('an-peak-pct').textContent = peak ? peak.toFixed(2) : '0.00';
-  document.getElementById('an-efficiency').textContent = count ? Math.round((tVarc+tDilr+tQa)/(count*3)) + '%ile Avg' : '0%ile';
-
-  if (typeof Chart !== 'undefined') {
-    const ctx = document.getElementById('scoreChart')?.getContext('2d');
-    if (ctx) {
-      if(scoreChartInstance) scoreChartInstance.destroy();
-      scoreChartInstance = new Chart(ctx, {
-        type:'line',
-        data: {
-          labels: targetDataset.map(r=>r['Test Name']),
-          datasets:[{label:'Evaluation Metric Progress', data: targetDataset.map(r=>parseFloat(r['Total Score']||r['Score Obtained']||0)), borderColor:'#2B4EFF', tension:0.3, fill:false}]
-        },
-        options: {responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}}
-      });
-    }
-  }
-
-  const aV = count ? Math.round(tVarc/count) : 0;
-  const aD = count ? Math.round(tDilr/count) : 0;
-  const aQ = count ? Math.round(tQa/count) : 0;
-  
-  if(subjectBars) {
-    subjectBars.innerHTML = `
-      <div class="prog-row"><div class="prog-label"><span>Verbal Ability (VARC)</span><span>${aV}% Sectional Avg</span></div><div class="prog-track"><div class="prog-fill" style="width:${aV}%; background:var(--amber);"></div></div></div>
-      <div class="prog-row"><div class="prog-label"><span>Data Interpretation & LR</span><span>${aD}% Sectional Avg</span></div><div class="prog-track"><div class="prog-fill" style="width:${aD}%; background:var(--purple);"></div></div></div>
-      <div class="prog-row"><div class="prog-label"><span>Quantitative Aptitude (QA)</span><span>${aQ}% Sectional Avg</span></div><div class="prog-track"><div class="prog-fill" style="width:${aQ}%; background:var(--green);"></div></div></div>`;
-  }
-
-  if(listContainer) {
-    listContainer.innerHTML = targetDataset.map(r=>`
-      <div class="score-row">
-        <div class="score-test" style="font-weight:600;">${r['Test Name']} <span style="font-size:11px; font-weight:400; color:var(--text3);">(${r.Date||'Recent'})</span></div>
-        <div class="score-pills"><span class="score-pill pill-t">Score: ${r['Total Score']||r['Score Obtained']}</span><span class="score-pill pill-q">${r['Overall Percentile']||r['Percentile']||'0'} %ile</span></div>
-      </div>
-    `).join('');
-  }
-}
-
-function renderSchedule() {
-  const list = document.getElementById('schedule-list'); if(!list) return;
-  if(!allSchedule.length) { list.innerHTML = '<div class="empty"><p>No live session entries captured inside your batch spreadsheet matrix.</p></div>'; return; }
-  list.innerHTML = allSchedule.map(r=>`
-    <div class="sched-item">
-      <div class="sched-time-col"><div class="sched-time">${r.Time}</div><div class="sched-date">${r.Date}</div></div>
-      <div class="sched-dot-col"><div class="sched-dot" style="background:var(--accent)"></div><div class="sched-line"></div></div>
-      <div class="sched-info"><div class="sched-topic" style="font-weight:600;">${r.Topic} [${r.Subject}]</div><div class="sched-meta">${r['Room / Mode'] || 'Lecture Hall'} &middot; ${r.Faculty || 'IMS Faculty'}</div></div>
-    </div>
-  `).join('');
-}
-
-function renderLearningFlow() {
-  const done = allProgress.filter(r=>r['Status']==='Done').length;
-  document.getElementById('prog-done').textContent = done;
-  document.getElementById('prog-active').textContent = allProgress.filter(r=>r['Status']==='In Progress').length;
-  document.getElementById('prog-pending').textContent = allProgress.filter(r=>r['Status']==='Not Started').length;
-  document.getElementById('stat-topics').textContent = `${done}/${allProgress.length}`;
-
-  const bars = document.getElementById('overall-prog-bars');
-  const sections = document.getElementById('flow-sections');
-  if(!bars || !sections) return;
-
-  const subs = [...new Set(allProgress.map(r=>r['Subject']))];
-  bars.innerHTML = subs.map(sub => {
-    const items = allProgress.filter(r=>r['Subject']===sub);
-    const d = items.filter(r=>r['Status']==='Done').length;
-    const pct = items.length ? Math.round(d/items.length*100) : 0;
-    return `<div class="prog-row"><div class="prog-label"><span>${sub} Modules</span><span>${d}/${items.length} Checked</span></div><div class="prog-track"><div class="prog-fill" style="width:${pct}%; background:var(--accent);"></div></div></div>`;
-  }).join('');
-
-  sections.innerHTML = subs.map(sub => {
-    const items = allProgress.filter(r=>r['Subject']===sub);
-    return `<div class="card"><div class="card-title" style="color:var(--accent); font-weight:600;">${sub} Syllabus Matrix Path</div>
-      ${items.map((r,i)=>`
-        <div class="flow-item ${r.Status==='Done'?'flow-done':r.Status==='In Progress'?'flow-active':'flow-pending'}">
-          <div class="flow-dot-col"><div class="flow-dot"></div>${i<items.length-1?'<div class="flow-connector"></div>':''}</div>
-          <div class="flow-content"><div class="flow-name" style="font-weight:500;">${r['Topic Name']} <span style="font-size:11px; font-weight:600; opacity:0.6;">(${r['Completion Date'] || 'Pending Execution'})</span></div></div>
-        </div>
-      `).join('')}</div>`;
-  }).join('');
-}
-
-function renderAnnouncementsFeed() {
-  const box = document.getElementById('announcement-board-container');
-  const feed = document.getElementById('announcements-feed');
-  if(!box || !feed) return;
-  if(!myAnnouncements.length) { box.style.display='none'; return; }
-  box.style.display='block';
-  feed.innerHTML = myAnnouncements.map(r=>`
-    <div style="background:var(--surface2); border-left:4px solid var(--accent); padding:14px; border-radius:var(--radius-sm);">
-      <div style="font-size:11px; color:var(--text3); float:right; font-weight:500;">${r.Timestamp||''}</div>
-      <div style="font-weight:600; color:var(--text); font-size:14px;">${r.Title}</div>
-      <div style="font-size:13px; color:var(--text2); margin-top:2px; line-height:1.5;">${r.Description}</div>
-    </div>
-  `).join('');
-}
-
-function renderStudyMaterialsVault(filter) {
-  const container = document.getElementById('material-grid-container'); if(!container) return;
-  let data = [...myMaterials]; if(filter!=='all') data = data.filter(r=>r['Subject']===filter);
-  if(!data.length) { container.innerHTML = '<div class="card" style="grid-column:1/-1; text-align:center; color:var(--text3); padding:40px;">📂 No resource assets registered inside your spreadsheet batch row rules.</div>'; return; }
-  container.innerHTML = data.map(r=>`
-    <div class="card" style="margin-bottom:0; box-shadow:var(--shadow); display:flex; flex-direction:column; justify-content:space-between; padding:18px 20px;">
-      <div><span class="badge badge-blue" style="margin-bottom:8px; font-weight:600;">${r.Subject}</span><h4 style="font-size:15px; font-weight:600; line-height:1.4;">${r.Title}</h4><p style="font-size:13px; color:var(--text2); margin-top:4px; line-height:1.5;">${r.Description||'Lecture preparation resource handouts.'}</p></div>
-      <div style="border-top:1px solid var(--border); padding-top:12px; margin-top:16px; display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-size:11px; color:var(--text3);">Uploaded: ${r['Uploaded Date']||'---'}</span><a href="${r['Download Link']}" target="_blank" style="font-size:12px; color:var(--accent); font-weight:600; text-decoration:none;">Download PDF &rarr;</a>
-      </div>
-    </div>
-  `).join('');
-}
-
-function filterMaterial(sub, btn) {
-  btn.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
-  renderStudyMaterialsVault(sub);
-}
-
-/* ═══════════════════════════════════════════════════════════
-   DATA SYNCHRONIZATION TRANSACTION WRITEBACK PIPELINES
-═══════════════════════════════════════════════════════════ */
-async function writeDataToCentralSheet(payload) {
-  try {
-    await fetch(window.CONFIG.CONSOLIDATED_WEBAPP_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
-async function handleCallSubmission(event) {
-  event.preventDefault(); const b = event.target.querySelector('button'); b.disabled=true; b.textContent = "Writing logs...";
-  const success = await writeDataToCentralSheet({ action: "logCall", studentId: currentStudent.id, collegeName: document.getElementById('form-coll-name').value, stage: document.getElementById('form-coll-stage').value, notes: document.getElementById('form-coll-notes').value });
-  if(success) { alert("College log updates synchronized successfully!"); event.target.reset(); } b.disabled=false; b.textContent = "Log Tracker Entry";
-}
-
-async function processOfficialScoreFormSubmit(event) {
-  event.preventDefault(); const exam = document.getElementById('master-exam-selector').value; const b = document.getElementById('master-score-submit-btn'); b.disabled=true; b.textContent = "Pushed rows cells updating...";
-  let scores = {};
-  if (exam === "CAT") {
-    scores = { varc: document.getElementById('inp-varc').value, dilr: document.getElementById('inp-dilr').value, qa: document.getElementById('inp-qa').value, total: document.getElementById('inp-total').value, percentile: document.getElementById('inp-pct').value };
-  } else if (exam === "NMAT") {
-    scores = { lang: document.getElementById('inp-lang').value, quant: document.getElementById('inp-quant').value, logic: document.getElementById('inp-logic').value, total: document.getElementById('inp-total').value };
-  } else if (exam === "XAT") {
-    scores = { valr: document.getElementById('inp-valr').value, dm: document.getElementById('inp-dm').value, qadi: document.getElementById('inp-qadi').value, total: document.getElementById('inp-total').value, percentile: document.getElementById('inp-pct').value };
-  } else if (exam === "SNAP") {
-    scores = { english: document.getElementById('inp-english').value, reasoning: document.getElementById('inp-reasoning').value, quant: document.getElementById('inp-quant').value, total: document.getElementById('inp-total').value };
-  }
-  const success = await writeDataToCentralSheet({ action: "updateOfficialScore", examName: exam, studentId: currentStudent.id, scores: scores });
-  if(success) alert(`Success! Your core ${exam} score parameters have been pushed directly to your master Google Sheet database cell rows.`); b.disabled=false; b.textContent = "Save Profile Matrix";
-}
-
-function switchExamFormFields(exam) {
-  const container = document.getElementById('dynamic-fields-container');
-  const submitBtn = document.getElementById('master-score-submit-btn');
-  const lockNotice = document.getElementById('exam-lock-notice');
-  if(!container) return;
-
-  const savedData = studentLoadedOfficialScores[exam];
-  const isLocked = savedData && savedData.lockStatus === "LOCKED";
-  
-  if (isLocked) {
-    lockNotice.style.display = "block"; lockNotice.style.background = "var(--red-light)"; lockNotice.style.color = "var(--red)";
-    lockNotice.innerHTML = "🔒 <b>Verification Frozen:</b> This entry has been validated and locked by IMS Admin. Changes are disabled.";
-    submitBtn.disabled = true; submitBtn.style.background = "var(--text3)"; submitBtn.textContent = "Locked Profile Matrix";
-  } else {
-    lockNotice.style.display = "block"; lockNotice.style.background = "var(--green-light)"; lockNotice.style.color = "var(--green)";
-    lockNotice.innerHTML = savedData ? "🟢 <b>Active Logs Found:</b> Saved values fetched. Saving will overwrite your spreadsheet cells." : "⏳ No records logged inside your sheet row for this exam sequence yet.";
-    submitBtn.disabled = false; submitBtn.style.background = "var(--accent)"; submitBtn.textContent = "Save Profile Matrix";
-  }
-
-  let html = "";
-  if (exam === "CAT") {
-    html = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;">
-      <div><label style="font-size:11px; color:var(--text2);">VARC Raw</label><input type="number" id="inp-varc" value="${savedData?.varc||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">DILR Raw</label><input type="number" id="inp-dilr" value="${savedData?.dilr||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">Quant Raw</label><input type="number" id="inp-qa" value="${savedData?.qa||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-    </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
-      <div><label style="font-size:11px; color:var(--text2);">Total Aggregate Score</label><input type="number" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">Overall Percentile</label><input type="text" id="inp-pct" value="${savedData?.percentile||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-    </div>`;
-  } else if (exam === "NMAT") {
-    html = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;">
-      <div><label style="font-size:11px; color:var(--text2);">Language Skills</label><input type="number" id="inp-lang" value="${savedData?.lang||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">Quant Skills</label><input type="number" id="inp-quant" value="${savedData?.quant||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">Logical Reasoning</label><input type="number" id="inp-logic" value="${savedData?.logic||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-    </div>
-    <div style="margin-top:10px;"><label style="font-size:11px; color:var(--text2);">Total Scaled Score</label><input type="number" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px; width:50%;"></div>`;
-  } else if (exam === "XAT") {
-    html = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;">
-      <div><label style="font-size:11px; color:var(--text2);">VALR</label><input type="number" step="0.01" id="inp-valr" value="${savedData?.valr||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">DM</label><input type="number" step="0.01" id="inp-dm" value="${savedData?.dm||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">QA DI</label><input type="number" step="0.01" id="inp-qadi" value="${savedData?.qadi||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-    </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
-      <div><label style="font-size:11px; color:var(--text2);">Total Score</label><input type="number" step="0.01" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">Overall Percentile</label><input type="text" id="inp-pct" value="${savedData?.percentile||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-    </div>`;
-  } else if (exam === "SNAP") {
-    html = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;">
-      <div><label style="font-size:11px; color:var(--text2);">General English</label><input type="number" step="0.01" id="inp-english" value="${savedData?.english||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">Analytical Reasoning</label><input type="number" step="0.01" id="inp-reasoning" value="${savedData?.reasoning||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">Quantitative</label><input type="number" step="0.01" id="inp-quant" value="${savedData?.quant||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-    </div>
-    <div style="margin-top:10px;"><label style="font-size:11px; color:var(--text2);">Total Score</label><input type="number" step="0.01" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px; width:50%;"></div>`;
-  }
-  container.innerHTML = html;
-}
-
-function logout() { sessionStorage.removeItem('sp_student'); location.reload(); }
-function prevMonth() {} function nextMonth() {}
-function fmtDate(str) { if(!str) return "—"; try { return new Date(str).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){return str;} }
+function showPage(pageId, element) {}
 </script>
 </body>
 </html>
