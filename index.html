@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>IMS Student Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght=300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -357,9 +357,8 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 </head>
 <body>
 
-<!-- ⚡ INLINE ROOT OAUTH HANDLER SCRIPT (DECLARED BEFORE DOM LAYOUT) ⚡ -->
+<!-- ⚡ TOP-LEVEL IDENTITY SYNC ENGINE ⚡ -->
 <script>
-// Global config object instantiated at bare context initialization line
 window.CONFIG = {
   GOOGLE_CLIENT_ID: '546265155462-daji3rvlhjehu8eipb9pkl07efk1jt6e.apps.googleusercontent.com',
   SHEETS_API_KEY: 'AIzaSyBy55WhovpXDWRa5O3hiuWsHbvTUtiVpI0',
@@ -369,14 +368,10 @@ window.CONFIG = {
 };
 
 function loginWithGoogle() {
-  console.log("🖱️ Auth button event context verified.");
-  
-  // Explicit defensive validation pattern matching your target SDK endpoint
   if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
-    alert("Google Identity Framework is finishing initialization handshakes.\n\nPlease wait 3 seconds and click again.");
+    alert("Identity sync handshake incomplete. Try again in 2 seconds.");
     return;
   }
-  
   try {
     google.accounts.id.initialize({
       client_id: window.CONFIG.GOOGLE_CLIENT_ID,
@@ -384,7 +379,7 @@ function loginWithGoogle() {
     });
     google.accounts.id.prompt();
   } catch (err) {
-    console.error("Google Client SDK Pipeline Interruption Exception:", err);
+    console.error("SDK initialization layout drop:", err);
   }
 }
 
@@ -392,11 +387,10 @@ async function handleGoogleCredential(response) {
   try {
     const payload = JSON.parse(atob(response.credential.split('.')[1]));
     if (payload && payload.email) {
-      console.log("📨 Token translated successfully for email mapping:", payload.email);
       await fetchStudentByEmail(payload.email);
     }
   } catch (e) {
-    console.error("Identity token formatting compilation error:", e);
+    console.error("JWT string decoding error:", e);
   }
 }
 </script>
@@ -409,10 +403,9 @@ async function handleGoogleCredential(response) {
     <h1 class="login-title" style="margin-top: 8px;">IMS Student Portal</h1>
     <p class="login-sub">Sign in to view your attendance, scores, schedule and learning progress</p>
 
-    <!-- Native Event Handler binding layout explicitly targeting root scope layout -->
     <button class="google-btn" onclick="window.loginWithGoogle(); return false;" id="google-login-btn">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92(3.28-4.74 3.28-8.09z" fill="#4285F4"/>
         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
         <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
         <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
@@ -484,7 +477,7 @@ async function handleGoogleCredential(response) {
             <div class="profile-avatar" id="profile-avatar">ST</div>
             <div>
               <div class="profile-name" id="profile-name">Student Workspace</div>
-              <div class="profile-meta" id="profile-meta">Synchronizing secure active tracks...</div>
+              <div class="profile-meta" id="profile-meta">Compiling row mapping matrices...</div>
               <div class="profile-badges">
                 <span class="badge badge-green">Active Student</span>
                 <span class="badge badge-blue" id="profile-exam-badge">IMS Matrix</span>
@@ -517,22 +510,22 @@ async function handleGoogleCredential(response) {
           <div class="stat-card">
             <div class="stat-label">Attendance</div>
             <div class="stat-val" id="stat-att">0%</div>
-            <div class="stat-sub var(--text3)" id="stat-att-sub">Synchronizing ledger lines...</div>
+            <div class="stat-sub stat-neutral" id="stat-att-sub">Syncing attendance blocks...</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Mock avg score</div>
             <div class="stat-val" id="stat-score">0</div>
-            <div class="stat-sub stat-neutral" id="stat-score-sub">Awaiting confirmation query</div>
+            <div class="stat-sub stat-neutral" id="stat-score-sub">Compiling records...</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Topics done</div>
             <div class="stat-val" id="stat-topics">0/0</div>
-            <div class="stat-sub stat-neutral">Syllabus analysis tracking</div>
+            <div class="stat-sub stat-neutral">Syllabus analysis</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Tests taken</div>
             <div class="stat-val" id="stat-tests">0</div>
-            <div class="stat-sub stat-neutral">Active engine parameters</div>
+            <div class="stat-sub stat-neutral">Active runtime sync</div>
           </div>
         </div>
 
@@ -692,7 +685,7 @@ async function handleGoogleCredential(response) {
           <div class="card" style="margin-bottom:0">
             <div class="card-title">
               <span class="card-title-text">
-                <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2 2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
                 College Application Tracker
               </span>
             </div>
@@ -823,17 +816,57 @@ async function handleGoogleCredential(response) {
   </nav>
 </div>
 
-<!-- ─── PRIMARY WORKSPACE SCRIPTS ENGINE ─── -->
+<!-- ─── WORKSPACE CONTROLLER CORE ENGINE ─── -->
 <script>
+const SUPABASE_URL = "https://ofhcxvekfplhgzpxutce.supabase.co/rest/v1/";      
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9maGN4dmVrZnBsaGd6cHh1dGNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDg5MDIsImV4cCI6MjA5NjgyNDkwMn0.0X57t9-4u3TO1tBn1wIkj0R-0RJfvDgolC5nRtQrUlE"; 
+
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const APPS_SCRIPT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwU7ZVPoNKcmnM-y3uh2c3ViNe9fYl5UODVeYPF1rJ5T1qCHxizzk-O9HHDBoq4AuFh/exec";
+
+let currentStudent = null;
+let allAttendance = [];
+let allScores = [];
+let allSchedule = [];
+let allProgress = [];
+let calMonth = 5; // June
+let calYear = 2026;
+let scoreChartInstance = null;
+let scheduleFilter = 'all';
+let studentLoadedOfficialScores = {};
+let currentSelectedType = 'SimCAT'; 
+let currentMaterialFilter = 'all';
+
 /* ═══════════════════════════════════════════════════════════
-   PORTAL REGISTRY FRAMEWORKS (SUPABASE ENGINE CORE)
+   LIFECYCLE REFRESH HANDLER (PREVENTS LOGOUT BOUNCE)
+═══════════════════════════════════════════════════════════ */
+window.onload = async () => {
+  const saved = sessionStorage.getItem('sp_student');
+  if (saved) {
+    console.log("🔄 Existing profile catch verified inside browser cache layers.");
+    currentStudent = JSON.parse(saved);
+    
+    // Smooth Transition UI unlock before pulling huge files
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    renderProfile();
+    
+    try {
+      await fetchAllData();
+      renderAll();
+    } catch (err) {
+      console.error("Lifecycle background reload crash bypassed cleanly:", err);
+    }
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════
+   PROFILE COMPILING REGISTRY (SUPABASE AND FALLBACK OVERRIDES)
 ═══════════════════════════════════════════════════════════ */
 async function fetchStudentByEmail(email) {
-  console.log("🚀 Starting verification loop for:", email);
   try {
     let matchedProfile = null;
 
-    // 1. Safe Query Wrap: If columns are misspelled, it handles it gracefully instead of crashing
     try {
       const { data, error } = await supabase
         .from('students')
@@ -843,30 +876,25 @@ async function fetchStudentByEmail(email) {
         
       if (!error && data) {
         matchedProfile = data;
-        console.log("✅ Profile found inside master rows:", matchedProfile);
       }
     } catch (dbErr) {
-      console.warn("⚠️ Supabase schema lookup bypassed due to column typography:", dbErr);
+      console.warn("Supabase channel read failure handled:", dbErr);
     }
 
-    // 2. Emergency Backup Assignment: Auto-build profile details if the database row field breaks
     if (!matchedProfile) {
-      console.log("🛠 /> Activating local administrative assignment fallback.");
-      
       if (email === "montyfm92@gmail.com") {
-        // 🚨 ADJUST THESE TWO VALUES TO MATCH your GOOGLE SHEET EXACTLY:
         matchedProfile = {
-          id: "IMS0001103577",         // ◄— Paste your exact StudentID row value from your sheet here!
+          id: "IMS0001103577", // ◄— Aligned directly to match your spreadsheets column row cells
           name: "Mohit Sharma",
           email: email,
           phone: "9876543210",
-          batch: "CAT2601",     // ◄— Paste your exact BatchID column tag from your sheet here!
-          target_exam: "CAT 2025"
+          batch: "CAT2601",
+          target_exam: "CAT"
         };
       } else {
         matchedProfile = {
           id: "IMS-" + Math.floor(1000 + Math.random() * 9000),
-          name: "Student Workspace",
+          name: "Student Profile",
           email: email,
           phone: "9876543210",
           batch: "UNASSIGNED",
@@ -875,17 +903,16 @@ async function fetchStudentByEmail(email) {
       }
     }
 
-    // 3. Assemble currentStudent Object parameters
     currentStudent = {
-      id: matchedProfile.id || matchedProfile.student_id || "IMS-9999",
-      name: matchedProfile.name || matchedProfile.FullName || "Mohit Sharma",
+      id: matchedProfile.id || "MBA-0001",
+      name: matchedProfile.name || "Mohit Sharma",
       email: matchedProfile.email || email,
       phone: matchedProfile.phone || "9876543210",
       batch: matchedProfile.batch || "CAT-2025-A",
       target_exam: matchedProfile.target_exam || "CAT",
       
-      "Student ID": matchedProfile.id || "IMS-9999",
-      "IMS Pin": matchedProfile.id || "IMS-9999",
+      "Student ID": matchedProfile.id || "MBA-0001",
+      "IMS Pin": matchedProfile.id || "MBA-0001",
       "Name": matchedProfile.name || "Mohit Sharma",
       "Email": matchedProfile.email || email,
       "Batch": matchedProfile.batch || "CAT-2025-A",
@@ -894,36 +921,29 @@ async function fetchStudentByEmail(email) {
 
     sessionStorage.setItem('sp_student', JSON.stringify(currentStudent));
 
-    // 4. Force Instant UI Layout Unlocking Execution
-    console.log("🔓 Unlocking operational workspace panels.");
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').classList.add('visible');
     renderProfile();
 
-    // 5. Attempt background data streams completely independently
-    setTimeout(async () => {
-      try {
-        await fetchAllData();
-        renderAll();
-      } catch (sheetErr) {
-        console.error("Secondary background sheet elements loading deferred:", sheetErr);
-      }
-    }, 50);
+    try {
+      await fetchAllData();
+      renderAll();
+    } catch (dataError) {
+      console.error("Delayed payload sync bypassed:", dataError);
+    }
 
   } catch (err) {
-    console.error("💥 Authentication Pipeline Crash handled:", err);
-    
-    // Hard Override Backup: Forces the layout dashboard open no matter what goes wrong
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').classList.add('visible');
+    console.error("Critical authentication channel drop:", err);
   }
 }
+
 /* ═══════════════════════════════════════════════════════════
-   DATA GATHERING CHANNELS
+   DATA LOADING ENGINE CHANNELS (REPAIRED V4 RANGE RANGE KEYS)
 ═══════════════════════════════════════════════════════════ */
 async function fetchSheetData(sheetName) {
   try {
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${window.CONFIG.SPREADSHEET_ID}/values/${encodeURIComponent(sheetName)}?key=${window.CONFIG.SHEETS_API_KEY}`;
+    // ⚡ FIXED: Added explicit sheet range A:Z to comply with raw Sheets API v4 parsing standards
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${window.CONFIG.SPREADSHEET_ID}/values/${encodeURIComponent(sheetName)}!A:Z?key=${window.CONFIG.SHEETS_API_KEY}`;
     const res = await fetch(url);
     const data = await res.json();
     const rows = data.values || [];
@@ -931,18 +951,21 @@ async function fetchSheetData(sheetName) {
     const headers = rows[0];
     return rows.slice(1).map(r => {
       const obj = {};
-      headers.forEach((h, i) => obj[h] = r[i] || '');
+      headers.forEach((h, i) => obj[h] = r[i] !== undefined ? String(r[i]).trim() : '');
       return obj;
     });
   } catch (e) {
+    console.error(`Read error on range matrix index: ${sheetName}`, e);
     return [];
   }
 }
 
 async function fetchAllData() {
   if (!currentStudent) return;
-  const sid = currentStudent.id;
-  const batch = currentStudent.batch;
+  const sid = String(currentStudent.id).trim();
+  const batch = String(currentStudent.batch).trim();
+  
+  console.log(`📊 Syncing Sheet records for identity cell context: ID [${sid}], Batch [${batch}]`);
   
   const [att, sched, prog, announcementsData, materialsData] = await Promise.all([
     fetchSheetData('Attendance'),
@@ -952,9 +975,11 @@ async function fetchAllData() {
     fetchSheetData('Material')
   ]);
   
-  allAttendance = att.filter(r => String(r['StudentID']).trim() === String(sid).trim());
-  allSchedule = sched.filter(r => String(r['BatchID']).trim() === String(batch).trim());
-  allProgress = prog.filter(r => String(r['StudentID']).trim() === String(sid).trim());
+  allAttendance = att.filter(r => String(r['StudentID']).trim() === sid);
+  allSchedule = sched.filter(r => String(r['BatchID']).trim() === batch);
+  allProgress = prog.filter(r => String(r['StudentID']).trim() === sid);
+
+  console.log(`📈 Attendance rows captured: ${allAttendance.length}, Scheduled classes: ${allSchedule.length}`);
 
   const [simcatResponse, benchmarkResponse] = await Promise.all([
     supabase.from('scores_simcat').select('*').eq('student_id', sid),
@@ -987,7 +1012,7 @@ async function fetchAllData() {
   
   const todayMidnight = new Date(); todayMidnight.setHours(0,0,0,0);
   window.myAnnouncements = announcementsData.filter(r => {
-    const isTargeted = r['Target Batch'] === 'ALL' || r['Target Batch'] === batch;
+    const isTargeted = r['Target Batch'] === 'ALL' || String(r['Target Batch']).trim() === batch;
     let isNotExpired = true;
     if (r['Expiry Date']) {
       const expParts = r['Expiry Date'].includes('/') ? r['Expiry Date'].split('/') : null;
@@ -997,18 +1022,12 @@ async function fetchAllData() {
     return isTargeted && isNotExpired;
   });
 
-  window.myMaterials = materialsData.filter(r => r['Target Batch'] === 'ALL' || r['Target Batch'] === batch);
+  window.myMaterials = materialsData.filter(r => r['Target Batch'] === 'ALL' || String(r['Target Batch']).trim() === batch);
 }
 
 /* ═══════════════════════════════════════════════════════════
-   UI PIPELINE CONTROLLERS
+   UI PIPELINE INITIALIZATION RENDERERS
 ═══════════════════════════════════════════════════════════ */
-function loadApp() {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').classList.add('visible');
-  renderAll();
-}
-
 function logout() {
   sessionStorage.removeItem('sp_student');
   currentStudent = null;
@@ -1049,9 +1068,6 @@ function showPage(pageId, element) {
   if (element) element.classList.add('active');
 }
 
-/* ═══════════════════════════════════════════════════════════
-   LAYOUT VIEW ENGINE COMPILERS
-═══════════════════════════════════════════════════════════ */
 function renderProfile() {
   const s = currentStudent;
   if (!s) return;
@@ -1479,7 +1495,7 @@ async function handleCallSubmission(event) {
 
   const success = await sendDataToGoogleSheet(payload);
   if (success) {
-    alert("College tracking record saved and mirrored successfully!");
+    alert("College tracking record saved successfully!");
     event.target.reset();
   }
   submitBtn.disabled = false;
@@ -1560,7 +1576,7 @@ async function processOfficialScoreFormSubmit(event) {
   let fileData = null; let fileName = null;
   
   if (!studentLoadedOfficialScores[exam] && fileInput.files.length === 0) {
-    alert("Proof Required: Please upload a verification scorecard image/PDF.");
+    alert("Verification Document Needed: Please upload a scorecard proof image/PDF.");
     return;
   }
   
@@ -1569,7 +1585,7 @@ async function processOfficialScoreFormSubmit(event) {
   if (fileInput.files.length > 0) {
     const file = fileInput.files[0];
     if (file.size > 1048576) { 
-      alert("❌ File Too Large (Max 1 MB Allowed).");
+      alert("❌ Upload capped at a maximum of 1 MB file scale sizes.");
       fileInput.value = ""; submitBtn.disabled = false; submitBtn.textContent = "Save Exam Profile Records"; return;
     }
     fileName = file.name;
@@ -1601,7 +1617,7 @@ async function processOfficialScoreFormSubmit(event) {
   
   const success = await sendDataToGoogleSheet(masterPayload);
   if (success) {
-    alert(`🎉 ${exam} Score matrix successfully synchronized!`);
+    alert(`🎉 ${exam} Matrix verification sync completed!`);
     studentLoadedOfficialScores[exam] = { ...scoresPayload, proofUrl: fileData ? "Processing..." : studentLoadedOfficialScores[exam]?.proofUrl, lockStatus: "OPEN" };
     await fetchAllOfficialExamSubTabs();
   }
@@ -1632,8 +1648,16 @@ async function fetchAllOfficialExamSubTabs() {
     const currentSelector = document.getElementById('master-exam-selector');
     if (currentSelector) switchExamFormFields(currentSelector.value);
   } catch(e) {
-    console.error("Records configuration sync fault:", e);
+    console.error("Historical profile compilation loop drops:", e);
   }
+}
+
+function fmtDate(str) {
+  if (!str) return '—';
+  try {
+    const d = new Date(str);
+    return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  } catch(e) { return str; }
 }
 </script>
 </body>
