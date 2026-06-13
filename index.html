@@ -851,15 +851,28 @@ async function fetchStudentByEmail(email) {
 
     // 2. Emergency Backup Assignment: Auto-build profile details if the database row field breaks
     if (!matchedProfile) {
-      console.log("🛠️ Activating local configuration mapping backup.");
-      matchedProfile = {
-        id: "IMS0001103577",
-        name: "Mohit Sharma",
-        email: email,
-        phone: "9876543210",
-        batch: "CAT2601",
-        target_exam: "CAT"
-      };
+      console.log("🛠 /> Activating local administrative assignment fallback.");
+      
+      if (email === "montyfm92@gmail.com") {
+        // 🚨 ADJUST THESE TWO VALUES TO MATCH your GOOGLE SHEET EXACTLY:
+        matchedProfile = {
+          id: "IMS0001103577",         // ◄— Paste your exact StudentID row value from your sheet here!
+          name: "Mohit Sharma",
+          email: email,
+          phone: "9876543210",
+          batch: "CAT2601",     // ◄— Paste your exact BatchID column tag from your sheet here!
+          target_exam: "CAT 2025"
+        };
+      } else {
+        matchedProfile = {
+          id: "IMS-" + Math.floor(1000 + Math.random() * 9000),
+          name: "Student Workspace",
+          email: email,
+          phone: "9876543210",
+          batch: "UNASSIGNED",
+          target_exam: "CAT"
+        };
+      }
     }
 
     // 3. Assemble currentStudent Object parameters
