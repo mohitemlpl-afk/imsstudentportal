@@ -20,6 +20,7 @@
   --text3:#A09D98;
   --accent:#2B4EFF;
   --accent-light:#EEF1FF;
+  --accent-dark:#1A35CC;
   --green:#0F7B5A;
   --green-light:#E3F5EE;
   --red:#C0392B;
@@ -62,7 +63,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 }
 .google-btn:hover{background:var(--surface2);border-color:#ccc}
 .google-btn svg{width:20px;height:20px;flex-shrink:0}
-.login-note{font-size:12px;color:var(--text3);margin-top:20px;line-height:1.5}
 
 /* ─── APP WORKSPACE SHELL ────────────────────────────── */
 #app{display:none;min-height:100vh;flex-direction:column}
@@ -107,7 +107,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:500}
 .main-content{flex:1;overflow-y:auto;padding:28px 32px}
 
-/* ─── COMPONENT DISPLAY LAYOUTS ───────────────────────── */
+/* ─── GRID LAYOUT ARCHITECTURES ───────────────────────── */
 .page-header{margin-bottom:28px}
 .page-title{font-family:var(--font-display);font-size:26px;color:var(--text);margin-bottom:4px}
 .page-sub{font-size:14px;color:var(--text2)}
@@ -132,7 +132,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .info-label{font-size:12px;color:var(--text3);margin-bottom:2px;font-weight:500}
 .info-val{font-size:14px;color:var(--text);font-weight:500}
 
-/* ─── ATTENDANCE MODULE ───────────────────────────────── */
+/* ─── ATTENDANCE GRID ELEMENTS ────────────────────────── */
 .att-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
 .att-stat{background:var(--surface2);border-radius:var(--radius-sm);padding:14px;text-align:center}
 .att-stat-val{font-size:24px;font-weight:600;color:var(--text);line-height:1}
@@ -152,7 +152,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .status-present{background:var(--green-light);color:var(--green)}
 .status-absent{background:var(--red-light);color:var(--red)}
 
-/* ─── SCORES MAPS ─────────────────────────────────────── */
+/* ─── ANALYTICS SCORES SECTIONS ───────────────────────── */
 .chart-wrap{position:relative;height:220px;margin-bottom:8px}
 .score-list{display:flex;flex-direction:column;gap:0}
 .score-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
@@ -166,7 +166,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .prog-track{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
 .prog-fill{height:100%;border-radius:4px;transition:width .6s ease}
 
-/* ─── TIMELINES & CORES ───────────────────────────────── */
+/* ─── TIMELINES & VAULT COMPILERS ─────────────────────── */
 .schedule-list{display:flex;flex-direction:column;gap:0}
 .sched-item{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--border);align-items:flex-start}
 .sched-time-col{width:80px;flex-shrink:0;text-align:right}
@@ -190,18 +190,25 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .flow-pending .flow-dot{background:var(--border);border:1.5px solid var(--text3)}
 .page{display:none}
 .page.active{display:block}
+.month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;max-width:340px;margin-left:auto;margin-right:auto}
+.month-nav button{width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:none;cursor:pointer}
+.month-nav span{font-size:15px;font-weight:600;min-width:140px;text-align:center}
 .tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--surface2);padding:4px;border-radius:var(--radius-sm)}
 .tab-btn{flex:1;padding:8px;border-radius:6px;border:none;background:none;font-family:var(--font);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer}
 .tab-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,0.08)}
 .demo-btn{width:100%;padding:11px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:#fff;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer}
-@media(max-width:768px){.sidebar{display:none}.bottomnav{display:block}.main-content{padding:20px 16px;padding-bottom:80px}.two-col{grid-template-columns:1fr}}
+.dynamic-fields-container label{font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px;margin-top:8px;}
+.dynamic-fields-container input{width:100%;padding:8px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font);}
+@media(max-width:768px){.sidebar{display:none}.bottomnav{display:block}.main-content{padding:20px 16px;padding-bottom:80px} .two-col{grid-template-columns:1fr}}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
-<!-- ─── CONFIGURATION REGISTRY LAYER ─── -->
 <script>
+/* ═══════════════════════════════════════════════════════════
+   ENVIRONMENT KEYS MATRIX SPECIFICATIONS
+═══════════════════════════════════════════════════════════ */
 window.CONFIG = {
   GOOGLE_CLIENT_ID: '546265155462-daji3rvlhjehu8eipb9pkl07efk1jt6e.apps.googleusercontent.com',
   SHEETS_API_KEY: 'AIzaSyBy55WhovpXDWRa5O3hiuWsHbvTUtiVpI0',
@@ -217,14 +224,14 @@ let currentStudent = null;
 function initSupabase() {
   if (window.supabase && !supabaseClient) {
     supabaseClient = window.supabase.createClient(window.CONFIG.SUPABASE_URL, window.CONFIG.SUPABASE_ANON_KEY);
-    console.log("🔒 Supabase Connection Instance Initialized.");
+    console.log("🔒 Supabase Connection Instance Initialized Safely.");
   }
 }
 
 function loginWithGoogle() {
   initSupabase();
   if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
-    alert("Google Identity Handshake is initializing. Please click again in 2 seconds.");
+    alert("System handshakes compiling in background. Click again in a moment.");
     return;
   }
   google.accounts.id.initialize({
@@ -247,8 +254,7 @@ async function handleGoogleCredential(response) {
       await querySupabaseStudent(payload.email.trim().toLowerCase());
     }
   } catch (e) {
-    console.error(e);
-    alert("Authorization parsing fault. Please refresh.");
+    alert("Authorization sequence dropped. Clear cache and restart.");
   }
 }
 </script>
@@ -260,15 +266,7 @@ async function handleGoogleCredential(response) {
     </div>
     <h1 class="login-title">IMS Student Portal</h1>
     <p class="login-sub">Sign in using your registered institutional email</p>
-    <button class="google-btn" onclick="window.loginWithGoogle(); return false;">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-      </svg>
-      Continue with Google
-    </button>
+    <button class="google-btn" onclick="window.loginWithGoogle(); return false;">Continue with Google</button>
   </div>
 </div>
 
@@ -285,7 +283,7 @@ async function handleGoogleCredential(response) {
 
   <div class="app-body">
     <aside class="sidebar">
-      <div class="sidebar-label">Main Dashboard</div>
+      <div class="sidebar-label">Dashboard Nav</div>
       <button class="nav-item active" onclick="showPage('profile',this)">My Profile</button>
       <button class="nav-item" onclick="showPage('attendance',this)">Attendance</button>
       <button class="nav-item" onclick="showPage('scores',this)">Mock Scores</button>
@@ -296,7 +294,7 @@ async function handleGoogleCredential(response) {
     </aside>
 
     <main class="main-content">
-      <!-- MY PROFILE PAGE -->
+      <!-- PAGE 1: PROFILE DASHBOARD -->
       <div id="page-profile" class="page active">
         <div class="profile-hero">
           <div class="profile-avatar" id="profile-avatar">ST</div>
@@ -335,7 +333,7 @@ async function handleGoogleCredential(response) {
         </div>
       </div>
 
-      <!-- ATTENDANCE PAGE -->
+      <!-- PAGE 2: ATTENDANCE TRACKER -->
       <div id="page-attendance" class="page">
         <div class="att-stats">
           <div class="att-stat"><div class="att-stat-val" id="att-present-count" style="color:var(--green)">0</div><div class="att-stat-lbl">Present</div></div>
@@ -343,14 +341,14 @@ async function handleGoogleCredential(response) {
           <div class="att-stat"><div class="att-stat-val" id="att-pct" style="color:var(--accent)">0%</div><div class="att-stat-lbl">Percentage</div></div>
         </div>
         <div class="card">
-          <div class="month-nav"><button>&larr;</button><span id="month-label">June 2026</span><button>&rarr;</button></div>
+          <div class="month-nav"><button onclick="prevMonth()">&larr;</button><span id="month-label">June 2026</span><button onclick="nextMonth()">&rarr;</button></div>
           <div class="cal-header"><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div></div>
           <div class="cal-grid" id="cal-grid"></div>
         </div>
         <div class="card"><div class="att-list" id="att-list"></div></div>
       </div>
 
-      <!-- MOCK SCORES PAGE -->
+      <!-- PAGE 3: PERFORMANCE CHARTS -->
       <div id="page-scores" class="page">
         <div class="tabs">
           <button class="tab-btn active" onclick="setScoreFilters('SimCAT')">SimCAT Analysis Dashboard</button>
@@ -368,7 +366,7 @@ async function handleGoogleCredential(response) {
         <div class="card"><div class="score-list" id="score-list"></div></div>
       </div>
 
-      <!-- OFFICIAL EXAM RECORDS PORTAL -->
+      <!-- PAGE 4: RESTORED TWO-WAY EXAM RECORDS VERIFICATION TRANSCRIPT PANELS -->
       <div id="page-records" class="page">
         <div class="two-col">
           <div class="card">
@@ -381,26 +379,26 @@ async function handleGoogleCredential(response) {
             </select>
             <div id="exam-lock-notice" style="padding:10px; border-radius:6px; font-size:11px; display:none; margin-bottom:12px;"></div>
             <form id="master-score-form" onsubmit="processOfficialScoreFormSubmit(event)">
-              <div id="dynamic-fields-container"></div>
-              <button type="submit" id="master-score-submit-btn" class="demo-btn" style="margin-top:12px;">Save Profile Matrix</button>
+              <div id="dynamic-fields-container" class="dynamic-fields-container"></div>
+              <button type="submit" id="master-score-submit-btn" class="demo-btn" style="margin-top:16px;">Save Verification Records</button>
             </form>
           </div>
           <div class="card">
-            <div class="card-title">College Tracker</div>
+            <div class="card-title">College Application Status Tracker</div>
             <form onsubmit="handleCallSubmission(event)">
-              <div style="margin-bottom:8px;"><label style="font-size:12px; font-weight:600;">Institute Name</label><input type="text" id="form-coll-name" required style="width:100%; padding:6px;"></div>
-              <div style="margin-bottom:8px;"><label style="font-size:12px; font-weight:600;">Current Stage</label><select id="form-coll-stage" required style="width:100%; padding:6px;"><option value="Applied">Applied</option><option value="Call Received">Shortlisted (Interview Call)</option><option value="Converted">Converted offered 🎉</option></select></div>
-              <div style="margin-bottom:12px;"><label style="font-size:12px; font-weight:600;">Notes</label><textarea id="form-coll-notes" style="width:100%; height:65px; resize:none;"></textarea></div>
+              <div style="margin-bottom:8px;"><label style="font-size:12px; font-weight:600;">Institute Name</label><input type="text" id="form-coll-name" placeholder="e.g. IIM Ahmedabad" required style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px;"></div>
+              <div style="margin-bottom:8px;"><label style="font-size:12px; font-weight:600;">Current Stage</label><select id="form-coll-stage" required style="width:100%; padding:8px; border:1px solid var(--border); border-radius:4px;"><option value="Applied">Form Filled / Applied</option><option value="Call Received">Shortlisted (Interview Call)</option><option value="Converted">Converted offered 🎉</option></select></div>
+              <div style="margin-bottom:12px;"><label style="font-size:12px; font-weight:600;">Interview Logs Notes</label><textarea id="form-coll-notes" style="width:100%; height:80px; resize:none; border:1px solid var(--border); border-radius:4px; padding:8px;"></textarea></div>
               <button type="submit" class="demo-btn">Log entry Tracker</button>
             </form>
           </div>
         </div>
       </div>
 
-      <!-- SCHEDULE MODULE -->
+      <!-- PAGE 5: SCHEDULES -->
       <div id="page-schedule" class="page"><div class="card"><div class="schedule-list" id="schedule-list"></div></div></div>
 
-      <!-- LEARNING PROGRESS MODULE -->
+      <!-- PAGE 6: LEARNING FLOW SYLLABUS TRACK TIMELINES -->
       <div id="page-progress" class="page">
         <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
           <div class="stat-card"><div class="stat-label" style="color:var(--green)">Completed</div><div class="stat-val" id="prog-done">0</div></div>
@@ -414,7 +412,7 @@ async function handleGoogleCredential(response) {
         <div id="flow-sections"></div>
       </div>
 
-      <!-- STUDY MATERIALS MODULE -->
+      <!-- PAGE 7: STUDY MATERIALS REPOSITORY VAULTS -->
       <div id="page-material" class="page">
         <div class="tabs">
           <button class="tab-btn active" onclick="filterMaterial('all', this)">All Handouts</button>
@@ -428,50 +426,29 @@ async function handleGoogleCredential(response) {
   </div>
 </div>
 
-<!-- ─── WORKSPACE RUNTIME ARCHITECTURE CONTROLLER ─── -->
+<!-- ─── ENGINE MANAGEMENT ROUTINES CONTROLLER ─── -->
 <script>
 async function querySupabaseStudent(email) {
   initSupabase();
   if (!supabaseClient) {
-    alert("Supabase script allocation error. Please check your network connectivity context.");
-    return;
+    alert("Supabase driver initialization stall."); return;
   }
-  
-  console.log("🔍 Direct query executed against Public Schema rows for email:", email);
-  
   try {
-    // Explicit cross-origin fetch bypass routine matching strict column mappings
     const targetUrl = `${window.CONFIG.SUPABASE_URL}students?email=eq.${encodeURIComponent(email)}`;
-    const headers = {
-      "apikey": window.CONFIG.SUPABASE_ANON_KEY,
-      "Authorization": `Bearer ${window.CONFIG.SUPABASE_ANON_KEY}`,
-      "Accept": "application/json",
-      "Range-Unit": "items"
-    };
-
+    const headers = { "apikey": window.CONFIG.SUPABASE_ANON_KEY, "Authorization": `Bearer ${window.CONFIG.SUPABASE_ANON_KEY}`, "Accept": "application/json" };
     const response = await fetch(targetUrl, { method: "GET", headers: headers });
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Supabase API Execution Barrier: ${response.status} - ${errorText}`);
-    }
-
     const profiles = await response.json();
-    console.log("📦 Supabase server returned matching profile arrays:", profiles);
 
     if (!profiles || profiles.length === 0) {
-      // 🚨 REAL VERBAL ALERTS: Explains exactly what happened inside the table index
-      alert(`⚠️ Student Authorization Access Denied:\n\nThe email address "${email}" is missing from your Supabase table schema.\n\nTo unlock, please open your Supabase Table Editor and add a student row containing this email parameter address.`);
+      alert(`⚠️ Student Authorization Access Denied:\n\nThe email "${email}" is missing from your Supabase rows.`);
       return;
     }
 
     const matchedProfile = profiles[0];
-
-    // Build the runtime active profile object mapping parameter names to database column strings
     currentStudent = {
-      id: matchedProfile.id || matchedProfile.student_id || "MBA-0001",
-      name: matchedProfile.name || "Student Name",
-      email: matchedProfile.email || email,
+      id: matchedProfile.id || matchedProfile.student_id,
+      name: matchedProfile.name,
+      email: matchedProfile.email,
       phone: matchedProfile.phone || "---",
       batch: matchedProfile.batch || "UNASSIGNED",
       target_exam: matchedProfile.target_exam || "CAT"
@@ -479,10 +456,8 @@ async function querySupabaseStudent(email) {
 
     sessionStorage.setItem('sp_student', JSON.stringify(currentStudent));
     launchWorkspaceShell();
-
   } catch (err) {
-    console.error("Critical connection failure trace:", err);
-    alert(`💥 Secure Connection Block:\n\n${err.message}\n\nEnsure Row Level Security (RLS) is wide open or that public SELECT permissions are active.`);
+    alert(`💥 Secure Connection Block: ${err.message}`);
   }
 }
 
@@ -497,7 +472,6 @@ function launchWorkspaceShell() {
       await fetchAllData();
       renderAll();
     } catch(e) {
-      console.warn("Background tables parsing deferred:", e);
       renderAll();
     }
   }, 50);
@@ -517,9 +491,7 @@ async function fetchSheetData(sheetName) {
       headers.forEach((h, i) => obj[h] = r[i] !== undefined ? String(r[i]).trim() : '');
       return obj;
     });
-  } catch (e) {
-    return [];
-  }
+  } catch (e) { return []; }
 }
 
 async function fetchAllData() {
@@ -549,6 +521,9 @@ async function fetchAllData() {
   if (Array.isArray(snap)) { const mSnap = snap.find(r => String(r['StudentID']).trim() == sid); if(mSnap) studentLoadedOfficialScores["SNAP"] = { english: mSnap['General English'], reasoning: mSnap['Analytical Reasoning'], quant: mSnap['Quantitative'], total: mSnap['Total Score'], lockStatus: mSnap['Lock Status'] }; }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   INTERFACE PLOT INITIALIZATION DATA LAYOUT RE-RENDERS
+═══════════════════════════════════════════════════════════ */
 function renderAll() {
   renderProfile();
   renderAttendanceGrid();
@@ -566,6 +541,7 @@ function showPage(pageId, element) {
   document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
   if(element) element.classList.add('active');
   if(pageId === 'scores') renderScores();
+  if(pageId === 'records') { const s = document.getElementById('master-exam-selector'); if(s) switchExamFormFields(s.value); }
 }
 
 function renderProfile() {
@@ -582,7 +558,7 @@ function renderProfile() {
   document.getElementById('d-email').textContent = s.email;
   document.getElementById('d-phone').textContent = s.phone;
   document.getElementById('d-batch').textContent = s.batch;
-  document.getElementById('profile-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(s.id)}&color=1a1814&bgcolor=ffffff&qzone=1`;
+  document.getElementById('profile-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(s.id)}`;
   document.getElementById('profile-qr-subtext').textContent = `ID: ${s.id}`;
 }
 
@@ -602,7 +578,7 @@ function renderAttendanceGrid() {
     allAttendance.forEach(r => { if(r['Date']) statusMap[r['Date']] = r['Status']; });
     for(let d=1; d<=30; d++) {
       const cell = document.createElement('div'); cell.className = 'cal-cell';
-      const dStr = `2026-06-%60${String(d).padStart(2,'0')}%60`;
+      const dStr = `2026-06-${String(d).padStart(2,'0')}`;
       if(statusMap[dStr]==='Present') cell.className += ' cal-present';
       else if(statusMap[dStr]==='Absent') cell.className += ' cal-absent';
       else cell.className += ' cal-holiday';
@@ -616,6 +592,8 @@ function renderAttendanceGrid() {
     `).join('');
   }
 }
+
+function setScoreFilters(type) { currentSelectedType = type; renderScores(); }
 
 function renderScores() {
   const targetDataset = currentSelectedType === 'SimCAT' ? allScoresSimcat : allScoresBenchmark;
@@ -645,44 +623,38 @@ function renderScores() {
         type:'line',
         data: {
           labels: targetDataset.map(r=>r['Test Name']),
-          datasets:[{label:'Evaluation', data: targetDataset.map(r=>parseFloat(r['Total Score']||r['Score Obtained']||0)), borderColor:'#2B4EFF', tension:0.3, fill:false}]
+          datasets:[{label:'Evaluation Metric Timeline', data: targetDataset.map(r=>parseFloat(r['Total Score']||r['Score Obtained']||0)), borderColor:'#2B4EFF', tension:0.3, fill:false}]
         },
         options: {responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}}
       });
     }
   }
 
-  const aV = count ? Math.round(tVarc/count) : 0;
-  const aD = count ? Math.round(tDilr/count) : 0;
-  const aQ = count ? Math.round(tQa/count) : 0;
-  
+  const aV = count ? Math.round(tVarc/count) : 0; const aD = count ? Math.round(tDilr/count) : 0; const aQ = count ? Math.round(tQa/count) : 0;
   if(subjectBars) {
     subjectBars.innerHTML = `
       <div class="prog-row"><div class="prog-label"><span>Verbal Ability (VARC)</span><span>${aV}% Sectional Avg</span></div><div class="prog-track"><div class="prog-fill" style="width:${aV}%; background:var(--amber);"></div></div></div>
       <div class="prog-row"><div class="prog-label"><span>Data Interpretation & LR</span><span>${aD}% Sectional Avg</span></div><div class="prog-track"><div class="prog-fill" style="width:${aD}%; background:var(--purple);"></div></div></div>
       <div class="prog-row"><div class="prog-label"><span>Quantitative Aptitude (QA)</span><span>${aQ}% Sectional Avg</span></div><div class="prog-track"><div class="prog-fill" style="width:${aQ}%; background:var(--green);"></div></div></div>`;
   }
-
   if(listContainer) {
     listContainer.innerHTML = targetDataset.map(r=>`
       <div class="score-row">
         <div class="score-test" style="font-weight:600;">${r['Test Name']} <span style="font-size:11px; font-weight:400; color:var(--text3);">(${r.Date||'Recent'})</span></div>
         <div class="score-pills"><span class="score-pill pill-t">Score: ${r['Total Score']||r['Score Obtained']}</span><span class="score-pill pill-q">${r['Overall Percentile']||r['Percentile']||'0'} %ile</span></div>
-      </div>
-    `).join('');
+      </div>`).join('');
   }
 }
 
 function renderSchedule() {
   const list = document.getElementById('schedule-list'); if(!list) return;
-  if(!allSchedule.length) { list.innerHTML = '<div class="empty"><p>No upcoming live lectures captured inside spreadsheet database row matching.</p></div>'; return; }
+  if(!allSchedule.length) { list.innerHTML = '<div class="empty"><p>No upcoming live session tracks registered in spreadsheet database arrays.</p></div>'; return; }
   list.innerHTML = allSchedule.map(r=>`
     <div class="sched-item">
       <div class="sched-time-col"><div class="sched-time">${r.Time}</div><div class="sched-date">${r.Date}</div></div>
       <div class="sched-dot-col"><div class="sched-dot" style="background:var(--accent)"></div><div class="sched-line"></div></div>
-      <div class="sched-info"><div class="sched-topic" style="font-weight:600;">${r.Topic} [${r.Subject}]</div><div class="sched-meta">${r['Room / Mode'] || 'Lecture Hall'} &middot; ${r.Faculty || 'IMS Faculty'}</div></div>
-    </div>
-  `).join('');
+      <div class="sched-info"><div class="sched-topic" style="font-weight:600;">${r.Topic} [${r.Subject}]</div><div class="sched-meta">${r['Room / Mode']} &middot; ${r.Faculty}</div></div>
+    </div>`).join('');
 }
 
 function renderLearningFlow() {
@@ -692,34 +664,26 @@ function renderLearningFlow() {
   document.getElementById('prog-pending').textContent = allProgress.filter(r => r['Status']==='Not Started').length;
   document.getElementById('stat-topics').textContent = `${done}/${allProgress.length}`;
 
-  const bars = document.getElementById('overall-prog-bars');
-  const sections = document.getElementById('flow-sections');
-  if(!bars || !sections) return;
-
+  const bars = document.getElementById('overall-prog-bars'); const sections = document.getElementById('flow-sections'); if(!bars || !sections) return;
   const subs = [...new Set(allProgress.map(r => r['Subject']))];
   bars.innerHTML = subs.map(sub => {
-    const items = allProgress.filter(r => r['Subject']===sub);
-    const d = items.filter(r => r['Status']==='Done').length;
-    const pct = items.length ? Math.round(d/items.length*100) : 0;
-    return `<div class="prog-row"><div class="prog-label"><span>${sub} Modules</span><span>${d}/${items.length} Checked</span></div><div class="prog-track"><div class="prog-fill" style="width:${pct}%; background:var(--accent);"></div></div></div>`;
+    const items = allProgress.filter(r => r['Subject']===sub); const d = items.filter(r => r['Status']==='Done').length; const pct = items.length ? Math.round(d/items.length*100) : 0;
+    return `<div class="prog-row"><div class="prog-label"><span>${sub} Syllabus Matrix</span><span>${d}/${items.length} Complete</span></div><div class="prog-track"><div class="prog-fill" style="width:${pct}%; background:var(--accent);"></div></div></div>`;
   }).join('');
 
   sections.innerHTML = subs.map(sub => {
     const items = allProgress.filter(r => r['Subject']===sub);
-    return `<div class="card"><div class="card-title" style="color:var(--accent); font-weight:600;">${sub} Syllabus Track</div>
+    return `<div class="card"><div class="card-title" style="color:var(--accent); font-weight:600;">${sub} Syllabus Tracking Module</div>
       ${items.map((r,i)=>`
         <div class="flow-item ${r.Status==='Done'?'flow-done':r.Status==='In Progress'?'flow-active':'flow-pending'}">
           <div class="flow-dot-col"><div class="flow-dot"></div>${i<items.length-1?'<div class="flow-connector"></div>':''}</div>
           <div class="flow-content"><div class="flow-name" style="font-weight:500;">${r['Topic Name']} <span style="font-size:11px; font-weight:600; opacity:0.6;">(${r['Completion Date'] || 'Pending'})</span></div></div>
-        </div>
-      `).join('')}</div>`;
+        </div>`).join('')}</div>`;
   }).join('');
 }
 
 function renderAnnouncementsFeed() {
-  const box = document.getElementById('announcement-board-container');
-  const feed = document.getElementById('announcements-feed');
-  if(!box || !feed) return;
+  const box = document.getElementById('announcement-board-container'); const feed = document.getElementById('announcements-feed'); if(!box || !feed) return;
   if(!myAnnouncements.length) { box.style.display='none'; return; }
   box.style.display='block';
   feed.innerHTML = myAnnouncements.map(r=>`
@@ -727,22 +691,20 @@ function renderAnnouncementsFeed() {
       <div style="font-size:11px; color:var(--text3); float:right; font-weight:500;">${r.Timestamp||''}</div>
       <div style="font-weight:600; color:var(--text); font-size:14px;">${r.Title}</div>
       <div style="font-size:13px; color:var(--text2); margin-top:2px; line-height:1.5;">${r.Description}</div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 function renderStudyMaterialsVault(filter) {
   const container = document.getElementById('material-grid-container'); if(!container) return;
   let data = [...myMaterials]; if(filter!=='all') data = data.filter(r => r['Subject']===filter);
-  if(!data.length) { container.innerHTML = '<div class="card" style="grid-column:1/-1; text-align:center; color:var(--text3); padding:40px;">📂 No materials registered inside spreadsheet batch formatting arrays.</div>'; return; }
+  if(!data.length) { container.innerHTML = '<div class="card" style="grid-column:1/-1; text-align:center; color:var(--text3); padding:40px;">📂 No resource assets registered inside spreadsheet batch formatting arrays.</div>'; return; }
   container.innerHTML = data.map(r=>`
     <div class="card" style="margin-bottom:0; box-shadow:var(--shadow); display:flex; flex-direction:column; justify-content:space-between; padding:18px 20px;">
-      <div><span class="badge badge-blue" style="margin-bottom:8px; font-weight:600;">${r.Subject}</span><h4 style="font-size:15px; font-weight:600; line-height:1.4;">${r.Title}</h4><p style="font-size:13px; color:var(--text2); margin-top:4px; line-height:1.5;">${r.Description||'Lecture preparation resource handouts.'}</p></div>
+      <div><span class="badge badge-blue" style="margin-bottom:8px; font-weight:600;">${r.Subject}</span><h4 style="font-size:15px; font-weight:600; line-height:1.4;">${r.Title}</h4><p style="font-size:13px; color:var(--text2); margin-top:4px; line-height:1.5;">${r.Description||'Institutional prep resource handouts.'}</p></div>
       <div style="border-top:1px solid var(--border); padding-top:12px; margin-top:16px; display:flex; justify-content:space-between; align-items:center;">
         <span style="font-size:11px; color:var(--text3);">Uploaded: ${r['Uploaded Date']||'---'}</span><a href="${r['Download Link']}" target="_blank" style="font-size:12px; color:var(--accent); font-weight:600; text-decoration:none;">Download PDF &rarr;</a>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 function filterMaterial(sub, btn) {
@@ -750,23 +712,24 @@ function filterMaterial(sub, btn) {
   renderStudyMaterialsVault(sub);
 }
 
+/* ═══════════════════════════════════════════════════════════
+   TWO-WAY TRANSACTION CORES WRITING TO SHEETS WEBAPPS
+═══════════════════════════════════════════════════════════ */
 async function writeDataToCentralSheet(payload) {
   try {
     await fetch(window.CONFIG.CONSOLIDATED_WEBAPP_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
     return true;
-  } catch (e) {
-    return false;
-  }
+  } catch (e) { return false; }
 }
 
 async function handleCallSubmission(event) {
   event.preventDefault(); const b = event.target.querySelector('button'); b.disabled=true; b.textContent = "Writing logs...";
   const success = await writeDataToCentralSheet({ action: "logCall", studentId: currentStudent.id, collegeName: document.getElementById('form-coll-name').value, stage: document.getElementById('form-coll-stage').value, notes: document.getElementById('form-coll-notes').value });
-  if(success) { alert("College logs updated successfully!"); event.target.reset(); } b.disabled=false; b.textContent = "Log Tracker Entry";
+  if(success) { alert("College application tracker row saved successfully!"); event.target.reset(); } b.disabled=false; b.textContent = "Log Tracker Entry";
 }
 
 async function processOfficialScoreFormSubmit(event) {
-  event.preventDefault(); const exam = document.getElementById('master-exam-selector').value; const b = document.getElementById('master-score-submit-btn'); b.disabled=true; b.textContent = "Updating lines...";
+  event.preventDefault(); const exam = document.getElementById('master-exam-selector').value; const b = document.getElementById('master-score-submit-btn'); b.disabled=true; b.textContent = "Pushed rows syncing...";
   let scores = {};
   if (exam === "CAT") {
     scores = { varc: document.getElementById('inp-varc').value, dilr: document.getElementById('inp-dilr').value, qa: document.getElementById('inp-qa').value, total: document.getElementById('inp-total').value, percentile: document.getElementById('inp-pct').value };
@@ -778,17 +741,12 @@ async function processOfficialScoreFormSubmit(event) {
     scores = { english: document.getElementById('inp-english').value, reasoning: document.getElementById('inp-reasoning').value, quant: document.getElementById('inp-quant').value, total: document.getElementById('inp-total').value };
   }
   const success = await writeDataToCentralSheet({ action: "updateOfficialScore", examName: exam, studentId: currentStudent.id, scores: scores });
-  if(success) alert(`Success! Your official ${exam} score parameters have been pushed directly to your master Google Sheet database rows.`); b.disabled=false; b.textContent = "Save Profile Matrix";
+  if(success) alert(`Success! Your official ${exam} score transcripts have been pushed directly to your master Google Sheet database.`); b.disabled=false; b.textContent = "Save Verification Records";
 }
 
 function switchExamFormFields(exam) {
-  const container = document.getElementById('dynamic-fields-container');
-  const submitBtn = document.getElementById('master-score-submit-btn');
-  const lockNotice = document.getElementById('exam-lock-notice');
-  if(!container) return;
-
-  const savedData = studentLoadedOfficialScores[exam];
-  const isLocked = savedData && savedData.lockStatus === "LOCKED";
+  const container = document.getElementById('dynamic-fields-container'); const submitBtn = document.getElementById('master-score-submit-btn'); const lockNotice = document.getElementById('exam-lock-notice'); if(!container) return;
+  const savedData = studentLoadedOfficialScores[exam]; const isLocked = savedData && savedData.lockStatus === "LOCKED";
   
   if (isLocked) {
     lockNotice.style.display = "block"; lockNotice.style.background = "var(--red-light)"; lockNotice.style.color = "var(--red)";
@@ -796,58 +754,41 @@ function switchExamFormFields(exam) {
     submitBtn.disabled = true; submitBtn.style.background = "var(--text3)"; submitBtn.textContent = "Locked Profile Matrix";
   } else {
     lockNotice.style.display = "block"; lockNotice.style.background = "var(--green-light)"; lockNotice.style.color = "var(--green)";
-    lockNotice.innerHTML = savedData ? "🟢 <b>Active Logs Found:</b> Saved values fetched. Saving will overwrite your spreadsheet cells." : "⏳ No records logged inside your sheet row for this exam sequence yet.";
-    submitBtn.disabled = false; submitBtn.style.background = "var(--accent)"; submitBtn.textContent = "Save Profile Matrix";
+    lockNotice.innerHTML = savedData ? "🟢 <b>Active Logs Found:</b> Records loaded. Saving updates your spreadsheet cells." : "⏳ No entries logged inside your sheet row for this exam sequence yet.";
+    submitBtn.disabled = false; submitBtn.style.background = "var(--accent)"; submitBtn.textContent = "Save Verification Records";
   }
 
   let html = "";
   if (exam === "CAT") {
-    html = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;">
-      <div><label style="font-size:11px; color:var(--text2);">VARC Raw</label><input type="number" id="inp-varc" value="${savedData?.varc||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">DILR Raw</label><input type="number" id="inp-dilr" value="${savedData?.dilr||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">Quant Raw</label><input type="number" id="inp-qa" value="${savedData?.qa||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-    </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
-      <div><label style="font-size:11px; color:var(--text2);">Total Aggregate Score</label><input type="number" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">Overall Percentile</label><input type="text" id="inp-pct" value="${savedData?.percentile||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-    </div>`;
+    html = `<div><label>VARC Raw Score</label><input type="number" id="inp-varc" value="${savedData?.varc||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>DILR Raw Score</label><input type="number" id="inp-dilr" value="${savedData?.dilr||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Quantitative Raw Score</label><input type="number" id="inp-qa" value="${savedData?.qa||''}" required ${isLocked?'disabled':''}</div>
+            <div><label>Total Aggregate Score</label><input type="number" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Overall Percentile</label><input type="text" id="inp-pct" value="${savedData?.percentile||''}" placeholder="e.g. 99.85" required ${isLocked?'disabled':''}></div>`;
   } else if (exam === "NMAT") {
-    html = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;">
-      <div><label style="font-size:11px; color:var(--text2);">Language Skills</label><input type="number" id="inp-lang" value="${savedData?.lang||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">Quant Skills</label><input type="number" id="inp-quant" value="${savedData?.quant||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">Logical Reasoning</label><input type="number" id="inp-logic" value="${savedData?.logic||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-    </div>
-    <div style="margin-top:10px;"><label style="font-size:11px; color:var(--text2);">Total Scaled Score</label><input type="number" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px; width:50%;"></div>`;
+    html = `<div><label>Language Skills Scaled</label><input type="number" id="inp-lang" value="${savedData?.lang||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Quantitative Skills Scaled</label><input type="number" id="inp-quant" value="${savedData?.quant||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Logical Reasoning Scaled</label><input type="number" id="inp-logic" value="${savedData?.logic||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Total Cumulative Scaled Score</label><input type="number" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''}></div>`;
   } else if (exam === "XAT") {
-    html = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;">
-      <div><label style="font-size:11px; color:var(--text2);">VALR</label><input type="number" step="0.01" id="inp-valr" value="${savedData?.valr||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">DM</label><input type="number" step="0.01" id="inp-dm" value="${savedData?.dm||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">QA DI</label><input type="number" step="0.01" id="inp-qadi" value="${savedData?.qadi||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-    </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
-      <div><label style="font-size:11px; color:var(--text2);">Total Score</label><input type="number" step="0.01" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">Overall Percentile</label><input type="text" id="inp-pct" value="${savedData?.percentile||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-    </div>`;
+    html = `<div><label>Verbal & Logical Ability (VALR)</label><input type="number" step="0.01" id="inp-valr" value="${savedData?.valr||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Decision Making (DM)</label><input type="number" step="0.01" id="inp-dm" value="${savedData?.dm||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Quant Ability & DI (QA DI)</label><input type="number" step="0.01" id="inp-qadi" value="${savedData?.qadi||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Total Score</label><input type="number" step="0.01" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Overall Percentile</label><input type="text" id="inp-pct" value="${savedData?.percentile||''}" required ${isLocked?'disabled':''}></div>`;
   } else if (exam === "SNAP") {
-    html = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;">
-      <div><label style="font-size:11px; color:var(--text2);">General English</label><input type="number" step="0.01" id="inp-english" value="${savedData?.english||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">Analytical Reasoning</label><input type="number" step="0.01" id="inp-reasoning" value="${savedData?.reasoning||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-      <div><label style="font-size:11px; color:var(--text2);">Quantitative</label><input type="number" step="0.01" id="inp-quant" value="${savedData?.quant||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px;"></div>
-    </div>
-    <div style="margin-top:10px;"><label style="font-size:11px; color:var(--text2);">Total Score</label><input type="number" step="0.01" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''} style="width:100%; padding:6px; border:1px solid var(--border); border-radius:4px; width:50%;"></div>`;
+    html = `<div><label>General English</label><input type="number" step="0.01" id="inp-english" value="${savedData?.english||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Analytical & Logical Reasoning</label><input type="number" step="0.01" id="inp-reasoning" value="${savedData?.reasoning||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Quantitative, DI & DS</label><input type="number" step="0.01" id="inp-quant" value="${savedData?.quant||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Total Cumulative Score</label><input type="number" step="0.01" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''}></div>`;
   }
   container.innerHTML = html;
 }
 
 window.onload = async () => {
-  initSupabase();
-  const saved = sessionStorage.getItem('sp_student');
-  if (saved) {
-    currentStudent = JSON.parse(saved);
-    launchWorkspaceShell();
-  }
+  initSupabase(); const saved = sessionStorage.getItem('sp_student');
+  if (saved) { currentStudent = JSON.parse(saved); launchWorkspaceShell(); }
 };
-
 function logout() { sessionStorage.removeItem('sp_student'); location.reload(); }
 function prevMonth() {} function nextMonth() {}
 function fmtDate(str) { if(!str) return "—"; try { return new Date(str).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){return str;} }
