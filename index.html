@@ -733,26 +733,33 @@ function renderAnnouncementsFeed() {
     return;
   }
   
-  // 1. Fire up red notification light dot marker indicator flag status
+  // Helper script utility to search text blocks and convert raw links into live elements
+  const linkifyText = (textString) => {
+    if (!textString) return '';
+    const urlPattern = /(\b(https?):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    return textString.replace(urlPattern, '<a href="$1" target="_blank" style="color:var(--accent); font-weight:500; text-decoration:underline;">$1</a>');
+  };
+
+  // 1. Activate notification alert status dot marker
   if (badge) badge.style.display = 'block';
   
-  // 2. Map structural code variables formatting parameters into dropdown card items template
+  // 2. Build layout arrays formatting for header floating bell drop down menu panel
   const dropdownHtml = myAnnouncements.map(r => `
     <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); transition: background .15s;" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='none'">
       <div style="font-size: 11px; color: var(--text3); margin-bottom: 2px;">${r.Timestamp||'Recent'}</div>
       <div style="font-weight: 600; font-size: 13px; color: var(--text); line-height: 1.4;">${r.Title}</div>
-      <div style="font-size: 12px; color: var(--text2); margin-top: 2px; line-height: 1.5; white-space: pre-line;">${r.Description}</div>
+      <div style="font-size: 12px; color: var(--text2); margin-top: 2px; line-height: 1.5; white-space: pre-line;">${linkifyText(r.Description)}</div>
     </div>
   `).join('');
   
   if (dropdownFeed) dropdownFeed.innerHTML = dropdownHtml;
 
-  // 3. Keep main greeting profile card mirror array synchronized as a layout redundancy backup fallback option
+  // 3. Synchronize matching data template structure inside welcome profile card panel
   const boardHtml = myAnnouncements.map(r => `
-    <div style="background:var(--surface2); border-left:4px solid var(--accent); padding:14px; border-radius:var(--radius-sm);">
+    <div style="background:var(--surface2); border-left:4px solid var(--accent); padding:14px; border-radius:var(--radius-sm); margin-bottom:10px;">
       <div style="font-size:11px; color:var(--text3); float:right; font-weight:500;">${r.Timestamp||''}</div>
-      <div style="font-weight:600; color:var(--text); font-size:14px;">${r.Title}</div>
-      <div style="font-size:13px; color:var(--text2); margin-top:2px; line-height:1.5;">${r.Description}</div>
+      <div style="font-weight:600; color:var(--text); font-size:14px; margin-bottom:4px;">${r.Title}</div>
+      <div style="font-size:13px; color:var(--text2); margin-top:2px; line-height:1.5; white-space: pre-line;">${linkifyText(r.Description)}</div>
     </div>
   `).join('');
 
