@@ -75,7 +75,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
   height:60px;position:sticky;top:0;z-index:100;
 }
 .topnav-logo{font-family:var(--font-display);font-size:18px;color:var(--text);margin-right:8px}
-.topnav-logo span{color:var(--accent)}
 .topnav-spacer{flex:1}
 .topnav-user{display:flex;align-items:center;gap:10px}
 .topnav-avatar{
@@ -103,9 +102,8 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
   display:flex;flex-direction:column;align-items:center;gap:3px;
   padding:6px 12px;border-radius:var(--radius-sm);border:none;background:none;
   font-family:var(--font);font-size:11px;color:var(--text3);cursor:pointer;
-  transition:color .15s;
 }
-.bnav-item svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bnav-item svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8}
 .bnav-item.active{color:var(--accent)}
 
 /* ─── MAIN LAYOUT ──────────────────────────────────────── */
@@ -117,19 +115,17 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 }
 .sidebar-label{font-size:11px;font-weight:600;color:var(--text3);
   text-transform:uppercase;letter-spacing:.6px;padding:8px 10px 4px;margin-top:8px}
-.sidebar-label:first-child{margin-top:0}
 .nav-item{
   display:flex;align-items:center;gap:10px;padding:9px 12px;
   border-radius:var(--radius-sm);border:none;background:none;
   font-family:var(--font);font-size:14px;font-weight:400;color:var(--text2);
   cursor:pointer;transition:all .15s;width:100%;text-align:left;
 }
-.nav-item svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .nav-item:hover{background:var(--surface2);color:var(--text)}
 .nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:500}
 .main-content{flex:1;overflow-y:auto;padding:28px 32px}
 
-/* ─── PAGE ATTRIBUTES & GRIDS ─────────────────────────── */
+/* ─── GRIDS & COMPONENT ATTRIBUTES ─────────────────────── */
 .page-header{margin-bottom:28px}
 .page-title{font-family:var(--font-display);font-size:26px;color:var(--text);margin-bottom:4px}
 .page-sub{font-size:14px;color:var(--text2)}
@@ -138,9 +134,11 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .stat-label{font-size:12px;color:var(--text3);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.4px}
 .stat-val{font-size:28px;font-weight:600;color:var(--text);line-height:1.1}
 .stat-sub{font-size:12px;margin-top:4px}
+.stat-up{color:var(--green)}
+.stat-dn{color:var(--red)}
+.stat-neutral{color:var(--text3)}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px;margin-bottom:20px}
 .card-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
-.card-title-text{display:flex;align-items:center;gap:8px}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
 .profile-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;display:flex;align-items:center;gap:24px;margin-bottom:20px}
 .profile-avatar{width:72px;height:72px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:600;color:#fff;flex-shrink:0}
@@ -149,12 +147,16 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .badge{display:inline-block;font-size:12px;padding:3px 10px;border-radius:20px;font-weight:500}
 .badge-green{background:var(--green-light);color:var(--green)}
 .badge-blue{background:var(--accent-light);color:var(--accent)}
+.badge-purple{background:var(--purple-light);color:var(--purple)}
+.badge-amber{background:var(--amber-light);color:var(--amber)}
 .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
 .info-row{display:flex;flex-direction:column;padding:12px 0;border-bottom:1px solid var(--border)}
 .info-row:nth-child(odd){padding-right:24px;border-right:1px solid var(--border)}
 .info-row:nth-child(even){padding-left:24px}
 .info-label{font-size:12px;color:var(--text3);margin-bottom:2px;font-weight:500}
 .info-val{font-size:14px;color:var(--text);font-weight:500}
+
+/* ─── ATTENDANCE CALENDAR ─────────────────────────────── */
 .att-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
 .att-stat{background:var(--surface2);border-radius:var(--radius-sm);padding:14px;text-align:center}
 .att-stat-val{font-size:24px;font-weight:600;color:var(--text);line-height:1}
@@ -173,7 +175,8 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .att-status{font-size:12px;padding:3px 10px;border-radius:20px;font-weight:500;flex-shrink:0}
 .status-present{background:var(--green-light);color:var(--green)}
 .status-absent{background:var(--red-light);color:var(--red)}
-.status-late{background:var(--amber-light);color:var(--amber)}
+
+/* ─── PERFORMANCE TRACKS ──────────────────────────────── */
 .chart-wrap{position:relative;height:220px;margin-bottom:8px}
 .score-list{display:flex;flex-direction:column;gap:0}
 .score-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
@@ -182,6 +185,12 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .score-pill{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600}
 .pill-t{background:var(--surface2);color:var(--text)}
 .pill-q{background:var(--green-light);color:var(--green)}
+.prog-row{margin-bottom:14px}
+.prog-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+.prog-track{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;transition:width .6s ease}
+
+/* ─── SCHEDULE & LEARNING FLOW TIMELINES ──────────────── */
 .schedule-list{display:flex;flex-direction:column;gap:0}
 .sched-item{display:flex;gap:16px;padding:14px 0;border-bottom:1px solid var(--border);align-items:flex-start}
 .sched-time-col{width:80px;flex-shrink:0;text-align:right}
@@ -193,11 +202,25 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .sched-info{flex:1;min-width:0}
 .sched-topic{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px}
 .sched-meta{font-size:12px;color:var(--text3)}
+.flow-section{margin-bottom:24px}
+.flow-item{display:flex;gap:14px;margin-bottom:10px;align-items:flex-start}
+.flow-dot-col{display:flex;flex-direction:column;align-items:center;padding-top:4px}
+.flow-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.flow-connector{width:1.5px;flex:1;min-height:16px;background:var(--border);margin-top:4px}
+.flow-content{flex:1;min-width:0;padding-bottom:6px}
+.flow-name{font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px}
+.flow-meta{font-size:12px;color:var(--text3)}
+.flow-done .flow-dot{background:var(--green)}
+.flow-active .flow-dot{background:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.flow-pending .flow-dot{background:var(--border)}
 .page{display:none}
 .page.active{display:block}
 .month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;max-width:340px;margin-left:auto;margin-right:auto}
 .month-nav button{width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:none;cursor:pointer}
 .month-nav span{font-size:15px;font-weight:600;min-width:140px;text-align:center}
+.tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--surface2);padding:4px;border-radius:var(--radius-sm)}
+.tab-btn{flex:1;padding:8px;border-radius:6px;border:none;background:none;font-family:var(--font);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer}
+.tab-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,0.08)}
 .demo-btn{width:100%;padding:11px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:#fff;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer}
 @media(max-width:768px){.sidebar{display:none}.bottomnav{display:block}.main-content{padding:20px 16px;padding-bottom:80px}.two-col{grid-template-columns:1fr}}
 </style>
@@ -205,7 +228,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 </head>
 <body>
 
-<!-- ⚡ CONSOLIDATED SINGLE-SOURCE ENGINE SHIELD ⚡ -->
 <script>
 window.CONFIG = {
   GOOGLE_CLIENT_ID: '546265155462-daji3rvlhjehu8eipb9pkl07efk1jt6e.apps.googleusercontent.com',
@@ -216,7 +238,7 @@ window.CONFIG = {
 
 function loginWithGoogle() {
   if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
-    alert("System initializing. Please click again in 2 seconds.");
+    alert("Google API framework initializing. Click again in a moment.");
     return;
   }
   try {
@@ -226,7 +248,7 @@ function loginWithGoogle() {
     });
     google.accounts.id.prompt();
   } catch (err) {
-    console.error("OAuth loop setup dropped:", err);
+    console.error(err);
   }
 }
 
@@ -237,7 +259,7 @@ async function handleGoogleCredential(response) {
       await forceUnifiedLoginGate(payload.email);
     }
   } catch (e) {
-    console.error("Token translation failure:", e);
+    console.error(e);
   }
 }
 </script>
@@ -245,36 +267,21 @@ async function handleGoogleCredential(response) {
 <div id="login-screen">
   <div class="login-card">
     <div style="margin-bottom: 24px; display: flex; align-items: center; justify-content: center;">
-      <img src="https://imsgujarat.com/wp-content/uploads/elementor/thumbs/high-low-ims-logo-q88bznzqyw17qyylsbpjt2obvw4pcwyu13wepnvt34.png" alt="IMS Logo" style="height: 48px; width: auto; object-fit: contain; display: block;">
+      <img src="https://imsgujarat.com/wp-content/uploads/elementor/thumbs/high-low-ims-logo-q88bznzqyw17qyylsbpjt2obvw4pcwyu13wepnvt34.png" alt="IMS Logo" style="height: 48px;">
     </div>
     <h1 class="login-title">IMS Student Portal</h1>
     <p class="login-sub">Sign in to view your attendance, scores, schedule and learning progress</p>
-
-    <button class="google-btn" onclick="window.loginWithGoogle(); return false;">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-      </svg>
-      Continue with Google
-    </button>
-    <p class="login-note">Students sign in using the email registered with your institute.</p>
+    <button class="google-btn" onclick="window.loginWithGoogle(); return false;">Continue with Google</button>
   </div>
 </div>
 
 <div id="app">
   <nav class="topnav">
-    <div class="topnav-logo">
-      <img src="https://imsgujarat.com/wp-content/uploads/elementor/thumbs/high-low-ims-logo-q88bznzqyw17qyylsbpjt2obvw4pcwyu13wepnvt34.png" alt="Logo" style="height: 36px;">
-    </div>
+    <div class="topnav-logo"><img src="https://imsgujarat.com/wp-content/uploads/elementor/thumbs/high-low-ims-logo-q88bznzqyw17qyylsbpjt2obvw4pcwyu13wepnvt34.png" style="height:36px;"></div>
     <div class="topnav-spacer"></div>
     <div class="topnav-user">
       <div class="topnav-avatar" id="nav-avatar">ST</div>
-      <div>
-        <div class="topnav-name" id="nav-name">---</div>
-        <div class="topnav-batch" id="nav-batch">---</div>
-      </div>
+      <div><div class="topnav-name" id="nav-name">---</div><div class="topnav-batch" id="nav-batch">---</div></div>
       <button class="logout-btn" onclick="logout()">Sign out</button>
     </div>
   </nav>
@@ -286,17 +293,19 @@ async function handleGoogleCredential(response) {
       <button class="nav-item" onclick="showPage('scores',this)">Mock Scores</button>
       <button class="nav-item" onclick="showPage('records',this)">My Records</button>
       <button class="nav-item" onclick="showPage('schedule',this)">Schedule</button>
+      <button class="nav-item" onclick="showPage('progress',this)">Learning Flow</button>
+      <button class="nav-item" onclick="showPage('material',this)">Study Material</button>
     </aside>
 
     <main class="main-content">
-      <!-- PROFILE PAGE -->
+      <!-- RESTORED: MY PROFILE VIEW PANELS -->
       <div id="page-profile" class="page active">
         <div class="profile-hero">
           <div class="profile-avatar" id="profile-avatar">ST</div>
           <div>
             <div class="profile-name" id="profile-name">---</div>
-            <div class="profile-meta" id="profile-meta">Connecting Google Sheets Vault...</div>
-            <span class="badge badge-green">Active Portal Session</span>
+            <div class="profile-meta" id="profile-meta">Connecting central ecosystem rows...</div>
+            <span class="badge badge-green">Active Hub Link</span>
           </div>
           <div style="background:#fff; padding:6px; border-radius:6px; margin-left:auto; border:1px solid var(--border);">
             <img id="profile-qr-code" style="width:100px; height:100px; display:block;">
@@ -304,19 +313,20 @@ async function handleGoogleCredential(response) {
           </div>
         </div>
 
+        <!-- RESTORED: ANNOUNCEMENT BOARD FRAMEWORK -->
+        <div id="announcement-board-container" style="display: none; margin-bottom: 24px;">
+          <div class="card" style="border-left: 4px solid var(--accent); padding: 20px;">
+            <div class="card-title">
+              <span class="card-title-text">📢 Important Institutional Updates & Deadlines</span>
+            </div>
+            <div id="announcements-feed" style="display: flex; flex-direction: column; gap: 12px; margin-top:10px;"></div>
+          </div>
+        </div>
+
         <div class="stat-grid">
-          <div class="stat-card">
-            <div class="stat-label">Attendance</div>
-            <div class="stat-val" id="stat-att">0%</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Mock Avg Score</div>
-            <div class="stat-val" id="stat-score">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Total Tests Taken</div>
-            <div class="stat-val" id="stat-tests">0</div>
-          </div>
+          <div class="stat-card"><div class="stat-label">Attendance</div><div class="stat-val" id="stat-att">0%</div></div>
+          <div class="stat-card"><div class="stat-label">Mock Avg Score</div><div class="stat-val" id="stat-score">0</div></div>
+          <div class="stat-card"><div class="stat-label">Topics Complete</div><div class="stat-val" id="stat-topics">0/0</div></div>
         </div>
 
         <div class="card">
@@ -324,13 +334,13 @@ async function handleGoogleCredential(response) {
           <div class="info-grid">
             <div class="info-row"><div class="info-label">Full Name</div><div class="info-val" id="d-name">---</div></div>
             <div class="info-row"><div class="info-label">Email Address</div><div class="info-val" id="d-email">---</div></div>
-            <div class="info-row"><div class="info-label">Registered Phone</div><div class="info-val" id="d-phone">---</div></div>
+            <div class="info-row"><div class="info-label">Phone</div><div class="info-val" id="d-phone">---</div></div>
             <div class="info-row"><div class="info-label">Batch Code</div><div class="info-val" id="d-batch">---</div></div>
           </div>
         </div>
       </div>
 
-      <!-- ATTENDANCE PAGE -->
+      <!-- ATTENDANCE VIEW PANELS -->
       <div id="page-attendance" class="page">
         <div class="att-stats">
           <div class="att-stat"><div class="att-stat-val" id="att-present-count" style="color:var(--green)">0</div><div class="att-stat-lbl">Present</div></div>
@@ -338,95 +348,105 @@ async function handleGoogleCredential(response) {
           <div class="att-stat"><div class="att-stat-val" id="att-pct" style="color:var(--accent)">0%</div><div class="att-stat-lbl">Percentage</div></div>
         </div>
         <div class="card">
-          <div class="month-nav">
-            <button onclick="prevMonth()">&larr;</button><span id="month-label">June 2026</span><button onclick="nextMonth()">&rarr;</button>
-          </div>
-          <div class="cal-header">
-            <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
-          </div>
+          <div class="month-nav"><button onclick="prevMonth()">&larr;</button><span id="month-label">June 2026</span><button onclick="nextMonth()">&rarr;</button></div>
+          <div class="cal-header"><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div></div>
           <div class="cal-grid" id="cal-grid"></div>
         </div>
-        <div class="card">
-          <div class="card-title"><span class="card-title-text">Recent Log Records</span></div>
-          <div class="att-list" id="att-list"></div>
-        </div>
+        <div class="card"><div class="att-list" id="att-list"></div></div>
       </div>
 
-      <!-- SCORES PAGE -->
+      <!-- RESTORED: COMPLETE GRAPH ANALYTICS SCORES MATRIX -->
       <div id="page-scores" class="page">
+        <div class="tabs">
+          <button class="tab-btn active" onclick="setScoreFilters('SimCAT')">SimCAT Analysis Dashboard</button>
+          <button class="tab-btn" onclick="setScoreFilters('Benchmarking')">Benchmarking Diagnostic Logs</button>
+        </div>
+        <div class="stat-grid" style="margin-bottom: 24px;">
+          <div class="stat-card" style="border-top:3px solid var(--accent);"><div class="stat-label">Overall Accuracy</div><div class="stat-val" id="an-accuracy">0%</div></div>
+          <div class="stat-card" style="border-top:3px solid var(--green);"><div class="stat-label">Peak Percentile</div><div class="stat-val" id="an-peak-pct">0.00</div></div>
+          <div class="stat-card" style="border-top:3px solid var(--purple);"><div class="stat-label">Average Efficiency</div><div class="stat-val" id="an-efficiency">0%</div></div>
+        </div>
         <div class="card">
           <div class="chart-wrap"><canvas id="scoreChart"></canvas></div>
+          <div id="subject-bars-container" style="margin-top: 20px;"></div>
         </div>
-        <div class="card">
-          <div class="card-title"><span class="card-title-text">SimCAT Evaluation tracking Logs</span></div>
-          <div class="score-list" id="score-list"></div>
-        </div>
+        <div class="card"><div class="score-list" id="score-list"></div></div>
       </div>
 
-      <!-- RECORDS UPDATE FORM PAGE -->
+      <!-- RESTORED: COMPREHENSIVE ENTRY INPUT VERIFICATION LABELS -->
       <div id="page-records" class="page">
         <div class="two-col">
           <div class="card">
-            <div class="card-title"><span class="card-title-text">Official Exam Verification Portal</span></div>
-            <label style="font-size:12px; font-weight:600; display:block; margin-bottom:4px;">Select Examination Stream</label>
+            <div class="card-title"><span class="card-title-text">Official Entrance Examination Records</span></div>
             <select id="master-exam-selector" onchange="switchExamFormFields(this.value)" style="width:100%; padding:8px; margin-bottom:12px;">
               <option value="CAT">Common Admission Test (CAT)</option>
               <option value="NMAT">NMAT by GMAC</option>
               <option value="XAT">Xavier Aptitude Test (XAT)</option>
               <option value="SNAP">Symbiosis National Aptitude Test (SNAP)</option>
             </select>
-            <div id="exam-lock-notice" style="padding:8px; border-radius:6px; font-size:11px; margin-bottom:12px; display:none;"></div>
+            <div id="exam-lock-notice" style="padding:8px; display:none; margin-bottom:10px; font-size:12px;"></div>
             <form id="master-score-form" onsubmit="processOfficialScoreFormSubmit(event)">
               <div id="dynamic-fields-container"></div>
-              <button type="submit" id="master-score-submit-btn" class="demo-btn" style="margin-top:12px;">Save Records to Sheet</button>
+              <button type="submit" id="master-score-submit-btn" class="demo-btn" style="margin-top:12px;">Save Profile Matrix</button>
             </form>
           </div>
-
           <div class="card">
-            <div class="card-title"><span class="card-title-text">College Tracker Logs</span></div>
+            <div class="card-title"><span class="card-title-text">College Application Tracker</span></div>
             <form onsubmit="handleCallSubmission(event)">
-              <div style="margin-bottom:8px;">
-                <label style="font-size:12px; font-weight:600;">Institute Name</label>
-                <input type="text" id="form-coll-name" required style="width:100%; padding:6px;">
-              </div>
-              <div style="margin-bottom:8px;">
-                <label style="font-size:12px; font-weight:600;">Stage Status</label>
-                <select id="form-coll-stage" required style="width:100%; padding:6px;">
-                  <option value="Applied">Form Filled / Applied</option>
-                  <option value="Call Received">Shortlisted (Interview Call Received)</option>
-                  <option value="Waitlisted">Waitlisted</option>
-                  <option value="Converted">Converted (Admission Offered 🎉)</option>
-                </select>
-              </div>
-              <div style="margin-bottom:12px;">
-                <label style="font-size:12px; font-weight:600;">Interview Experience Notes</label>
-                <textarea id="form-coll-notes" style="width:100%; height:60px; resize:none;"></textarea>
-              </div>
-              <button type="submit" class="demo-btn">Save to Sheet</button>
+              <div style="margin-bottom:8px;"><label style="font-size:12px;">Institute Name</label><input type="text" id="form-coll-name" required style="width:100%; padding:6px;"></div>
+              <div style="margin-bottom:8px;"><label style="font-size:12px;">Stage Status</label><select id="form-coll-stage" style="width:100%; padding:6px;"><option value="Applied">Applied</option><option value="Call Received">Interview Call</option><option value="Converted">Converted Offered 🎉</option></select></div>
+              <div style="margin-bottom:12px;"><label style="font-size:12px;">Notes</label><textarea id="form-coll-notes" style="width:100%; height:60px; resize:none;"></textarea></div>
+              <button type="submit" class="demo-btn">Log Entry</button>
             </form>
           </div>
         </div>
       </div>
 
-      <!-- SCHEDULE PAGE -->
-      <div id="page-schedule" class="page">
-        <div class="card">
-          <div class="schedule-list" id="schedule-list"></div>
+      <!-- SCHEDULE VIEW PANELS -->
+      <div id="page-schedule" class="page"><div class="card"><div class="schedule-list" id="schedule-list"></div></div></div>
+
+      <!-- RESTORED: LEARNING FLOW SYLLABUS SECTION -->
+      <div id="page-progress" class="page">
+        <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+          <div class="stat-card"><div class="stat-label" style="color:var(--green)">Completed</div><div class="stat-val" id="prog-done">0</div></div>
+          <div class="stat-card"><div class="stat-label" style="color:var(--accent)">In Progress</div><div class="stat-val" id="prog-active">0</div></div>
+          <div class="stat-card"><div class="stat-label" style="color:var(--text3)">Upcoming</div><div class="stat-val" id="prog-pending">0</div></div>
         </div>
+        <div class="card">
+          <div class="card-title"><span class="card-title-text">Syllabus Completion Tracks</span></div>
+          <div id="overall-prog-bars"></div>
+        </div>
+        <div id="flow-sections"></div>
+      </div>
+
+      <!-- RESTORED: STUDY MATERIALS RESOURCES RESOURCE VAULT -->
+      <div id="page-material" class="page">
+        <div class="tabs">
+          <button class="tab-btn active" onclick="filterMaterial('all', this)">All Materials</button>
+          <button class="tab-btn" onclick="filterMaterial('QA', this)">Quant</button>
+          <button class="tab-btn" onclick="filterMaterial('VARC', this)">VARC</button>
+          <button class="tab-btn" onclick="filterMaterial('DILR', this)">DILR Matrix</button>
+        </div>
+        <div id="material-grid-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;"></div>
       </div>
     </main>
   </div>
 </div>
 
-<!-- ─── CORE WORKSPACE CONTROL SCRIPTS LAYER ─── -->
 <script>
 let currentStudent = null;
 let allAttendance = [];
-let allScores = [];
 let allSchedule = [];
+let allScoresSimcat = [];
+let allScoresBenchmark = [];
+let allProgress = [];
+let myAnnouncements = [];
+let myMaterials = [];
 let calMonth = 5; // June
 let calYear = 2026;
 let scoreChartInstance = null;
+let currentSelectedType = 'SimCAT';
+let studentLoadedOfficialScores = {};
 
 window.onload = async () => {
   const saved = sessionStorage.getItem('sp_student');
@@ -439,54 +459,27 @@ window.onload = async () => {
       await fetchAllData();
       renderAll();
     } catch (e) {
-      console.error("Background sync fault deferred:", e);
+      console.error(e);
     }
   }
 };
 
-/* ═══════════════════════════════════════════════════════════
-   UNIFIED LOGIN GATEWAY (IMMUNE TO OUTAGES AND TIMING LOCKS)
-═══════════════════════════════════════════════════════════ */
 async function forceUnifiedLoginGate(email) {
-  // Hardcoded administrative mapping directly resolving your profile values
   if (email === "montyfm92@gmail.com") {
-    currentStudent = {
-      id: "MBA-0001", 
-      name: "Mohit Sharma",
-      email: email,
-      phone: "9876543210",
-      batch: "CAT-2025-A",
-      target_exam: "CAT 2025"
-    };
+    currentStudent = { id: "MBA-0001", name: "Mohit Sharma", email: email, phone: "9876543210", batch: "CAT-2025-A", target_exam: "CAT 2025" };
   } else {
-    // Dynamic matching framework for other batch runs
-    currentStudent = {
-      id: "IMS-" + Math.floor(1000 + Math.random() * 9000),
-      name: "Student Profile",
-      email: email,
-      phone: "9876543210",
-      batch: "CAT-2025-A",
-      target_exam: "CAT"
-    };
+    currentStudent = { id: "IMS-2005", name: "Student Profile", email: email, phone: "9876543210", batch: "CAT-2025-A", target_exam: "CAT" };
   }
-
   sessionStorage.setItem('sp_student', JSON.stringify(currentStudent));
-  
-  // Swap UI displays instantly to bypass system freezes
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').classList.add('visible');
   renderProfile();
-
-  try {
-    await fetchAllData();
-    renderAll();
-  } catch (err) {
-    console.error("Sheets parsing failure bypassed during login framework allocation:", err);
-  }
+  await fetchAllData();
+  renderAll();
 }
 
 /* ═══════════════════════════════════════════════════════════
-   CLEAN CORES READ/WRITE DIRECTLY TO THE SINGLE SHEET LAYER
+   DATA DISCOVERY PARSER MAPPING (SINGLE SHEET LAYER)
 ═══════════════════════════════════════════════════════════ */
 async function fetchSheetData(sheetName) {
   try {
@@ -511,61 +504,238 @@ async function fetchAllData() {
   const sid = currentStudent.id;
   const batch = currentStudent.batch;
 
-  const [att, simcat, sched] = await Promise.all([
+  const [att, simcat, benchmark, sched, prog, ann, mat, cat, nmat, xat, snap] = await Promise.all([
     fetchSheetData('Attendance'),
     fetchSheetData('Scores SimCAT'),
-    fetchSheetData('Schedule')
+    fetchSheetData('Scores Benchmark'),
+    fetchSheetData('Schedule'),
+    fetchSheetData('Learning Flow'),
+    fetchSheetData('Announcements'),
+    fetchSheetData('Material'),
+    fetchSheetData('Scores CAT'),
+    fetchSheetData('Scores NMAT'),
+    fetchSheetData('Scores XAT'),
+    fetchSheetData('Scores SNAP')
   ]);
 
   allAttendance = att.filter(r => r['StudentID'] === sid);
   allSchedule = sched.filter(r => r['BatchID'] === batch);
-  allScores = simcat.filter(r => r['StudentID'] === sid);
+  allScoresSimcat = simcat.filter(r => r['StudentID'] === sid);
+  allScoresBenchmark = benchmark.filter(r => r['StudentID'] === sid);
+  allProgress = prog.filter(r => r['StudentID'] === sid);
+  myMaterials = mat.filter(r => r['Target Batch'] === 'ALL' || r['Target Batch'] === batch);
+  myAnnouncements = ann.filter(r => r['Target Batch'] === 'ALL' || r['Target Batch'] === batch);
+
+  // Compile official scores map parameters cleanly
+  const mCat = cat.find(r => r['StudentID'] === sid); if(mCat) studentLoadedOfficialScores["CAT"] = { varc: mCat['VARC Raw'], dilr: mCat['DILR Raw'], qa: mCat['QA Raw'], total: mCat['Total Raw'], percentile: mCat['Percentile'], lockStatus: mCat['Lock Status'] };
+  const mNmat = nmat.find(r => r['StudentID'] === sid); if(mNmat) studentLoadedOfficialScores["NMAT"] = { lang: mNmat['Language Skills'], quant: mNmat['Quantitative Skills'], logic: mNmat['Logical Reasoning'], total: mNmat['Total Scaled'], lockStatus: mNmat['Lock Status'] };
+  const mXat = xat.find(r => r['StudentID'] === sid); if(mXat) studentLoadedOfficialScores["XAT"] = { valr: mXat['VALR'], dm: mXat['DM'], qadi: mXat['QA DI'], total: mXat['Total Score'], percentile: mXat['Percentile'], lockStatus: mXat['Lock Status'] };
+  const mSnap = snap.find(r => r['StudentID'] === sid); if(mSnap) studentLoadedOfficialScores["SNAP"] = { english: mSnap['General English'], reasoning: mSnap['Analytical Reasoning'], quant: mSnap['Quantitative'], total: mSnap['Total Score'], lockStatus: mSnap['Lock Status'] };
 }
 
 /* ═══════════════════════════════════════════════════════════
-   UNIFIED SINGLE-SHEET BACKEND WRITER TRANSACTIONS
+   DYNAMIC WORKSPACE ELEMENT COMPILERS
+═══════════════════════════════════════════════════════════ */
+function renderAll() {
+  renderProfile();
+  renderAttendanceGrid();
+  renderScores();
+  renderSchedule();
+  renderLearningFlow();
+  renderAnnouncementsFeed();
+  renderStudyMaterialsVault('all');
+}
+
+function showPage(pageId, element) {
+  document.querySelectorAll('.page').forEach(p => p.style.display='none');
+  const target = document.getElementById('page-' + pageId);
+  if (target) target.style.display='block';
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  if(element) element.classList.add('active');
+  if(pageId === 'scores') renderScores();
+}
+
+function renderProfile() {
+  const s = currentStudent;
+  document.getElementById('nav-name').textContent = s.name;
+  document.getElementById('nav-batch').textContent = s.target_exam + ' · ' + s.batch;
+  document.getElementById('profile-name').textContent = s.name;
+  document.getElementById('profile-meta').textContent = `Target: ${s.target_exam} · Class Batch: ${s.batch} · Student ID: ${s.id}`;
+  document.getElementById('d-name').textContent = s.name;
+  document.getElementById('d-email').textContent = s.email;
+  document.getElementById('d-phone').textContent = s.phone;
+  document.getElementById('d-batch').textContent = s.batch;
+  document.getElementById('profile-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(s.id)}`;
+  document.getElementById('profile-qr-subtext').textContent = `ID: ${s.id}`;
+}
+
+function renderAttendanceGrid() {
+  const present = allAttendance.filter(r=>r['Status']==='Present').length;
+  const total = allAttendance.length;
+  const pct = total ? Math.round(present/total*100) : 0;
+  document.getElementById('stat-att').textContent = pct + '%';
+  document.getElementById('att-present-count').textContent = present;
+  document.getElementById('att-absent-count').textContent = total - present;
+  document.getElementById('att-pct').textContent = pct + '%';
+
+  const grid = document.getElementById('cal-grid');
+  if(grid) {
+    grid.innerHTML = '';
+    const statusMap = {};
+    allAttendance.forEach(r => { if(r['Date']) statusMap[r['Date']] = r['Status']; });
+    for(let d=1; d<=30; d++) {
+      const cell = document.createElement('div'); cell.className = 'cal-cell';
+      const dStr = `2026-06-${String(d).padStart(2,'0')}`;
+      if(statusMap[dStr]==='Present') cell.className += ' cal-present';
+      else if(statusMap[dStr]==='Absent') cell.className += ' cal-absent';
+      else cell.className += ' cal-holiday';
+      cell.textContent = d; grid.appendChild(cell);
+    }
+  }
+  const list = document.getElementById('att-list');
+  if(list) {
+    list.innerHTML = allAttendance.map(r=>`
+      <div class="att-row"><div class="att-date">${r.Date}</div><div class="att-subject">${r.Subject||r.Topic||'Lecture'}</div><span class="att-status ${r.Status==='Present'?'status-present':'status-absent'}">${r.Status}</span></div>
+    `).join('');
+  }
+}
+
+function setScoreFilters(type) { currentSelectedType = type; renderScores(); }
+
+function renderScores() {
+  const ctx = document.getElementById('scoreChart')?.getContext('2d');
+  if(!ctx) return;
+  const targetDataset = currentSelectedType === 'SimCAT' ? allScoresSimcat : allScoresBenchmark;
+  const listContainer = document.getElementById('score-list');
+  const subjectBars = document.getElementById('subject-bars-container');
+
+  let totalAcc = 0, peak = 0, count = targetDataset.length;
+  targetDataset.forEach(r => {
+    totalAcc += parseFloat(r['Overall Accuracy']||r['Accuracy']||0);
+    const p = parseFloat(r['Overall Percentile']||r['Percentile']||0); if(p>peak) peak = p;
+  });
+
+  document.getElementById('an-accuracy').textContent = count ? Math.round(totalAcc/count)+'%' : '0%';
+  document.getElementById('an-peak-pct').textContent = peak ? peak.toFixed(2) : '0.00';
+  document.getElementById('an-efficiency').textContent = count + ' Logs Linked';
+
+  if(scoreChartInstance) scoreChartInstance.destroy();
+  scoreChartInstance = new Chart(ctx, {
+    type:'line',
+    data: {
+      labels: targetDataset.map(r=>r['Test Name']),
+      datasets:[{label:'Progress Index', data: targetDataset.map(r=>parseFloat(r['Total Score']||r['Score Obtained']||0)), borderColor:'#2B4EFF', fill:false}]
+    },
+    options: {responsive:true, maintainAspectRatio:false}
+  });
+
+  if(listContainer) {
+    listContainer.innerHTML = targetDataset.map(r=>`
+      <div class="score-row">
+        <div class="score-test">${r['Test Name']} (${r.Date||'---'})</div>
+        <div class="score-pills"><span class="score-pill pill-t">Score: ${r['Total Score']||r['Score Obtained']}</span><span class="score-pill pill-q">${r['Overall Percentile']||r['Percentile']||'0'} %ile</span></div>
+      </div>
+    `).join('');
+  }
+}
+
+function renderSchedule() {
+  const list = document.getElementById('schedule-list'); if(!list) return;
+  if(!allSchedule.length) { list.innerHTML = '<div class="empty"><p>No lectures lined up inside this schedule index.</p></div>'; return; }
+  list.innerHTML = allSchedule.map(r=>`
+    <div class="sched-item">
+      <div class="sched-time-col"><div class="sched-time">${r.Time}</div><div class="sched-date">${r.Date}</div></div>
+      <div class="sched-dot-col"><div class="sched-dot" style="background:var(--accent)"></div><div class="sched-line"></div></div>
+      <div class="sched-info"><div class="sched-topic">${r.Topic} [${r.Subject}]</div><div class="sched-meta">${r['Room / Mode']} &middot; ${r.Faculty}</div></div>
+    </div>
+  `).join('');
+}
+
+function renderLearningFlow() {
+  const done = allProgress.filter(r=>r['Status']==='Done').length;
+  document.getElementById('prog-done').textContent = done;
+  document.getElementById('prog-active').textContent = allProgress.filter(r=>r['Status']==='In Progress').length;
+  document.getElementById('prog-pending').textContent = allProgress.filter(r=>r['Status']==='Not Started').length;
+  document.getElementById('stat-topics').textContent = `${done}/${allProgress.length}`;
+
+  const bars = document.getElementById('overall-prog-bars');
+  const sections = document.getElementById('flow-sections');
+  if(!bars || !sections) return;
+
+  const subs = [...new Set(allProgress.map(r=>r['Subject']))];
+  bars.innerHTML = subs.map(sub => {
+    const items = allProgress.filter(r=>r['Subject']===sub);
+    const d = items.filter(r=>r['Status']==='Done').length;
+    const pct = items.length ? Math.round(d/items.length*100) : 0;
+    return `<div class="prog-row"><div class="prog-label"><span>${sub} Spectrum</span><span>${d}/${items.length} Done</span></div><div class="prog-track"><div class="prog-fill" style="width:${pct}%; background:var(--accent);"></div></div></div>`;
+  }).join('');
+
+  sections.innerHTML = subs.map(sub => {
+    const items = allProgress.filter(r=>r['Subject']===sub);
+    return `<div class="card"><div class="card-title"><span>${sub} Subject Track Matrix</span></div>
+      ${items.map((r,i)=>`
+        <div class="flow-item ${r.Status==='Done'?'flow-done':r.Status==='In Progress'?'flow-active':'flow-pending'}">
+          <div class="flow-dot-col"><div class="flow-dot"></div>${i<items.length-1?'<div class="flow-connector"></div>':''}</div>
+          <div class="flow-content"><div class="flow-name">${r['Topic Name']} <span style="font-size:11px; color:var(--text3);">[${r.Status}]</span></div></div>
+        </div>
+      `).join('')}</div>`;
+  }).join('');
+}
+
+function renderAnnouncementsFeed() {
+  const box = document.getElementById('announcement-board-container');
+  const feed = document.getElementById('announcements-feed');
+  if(!box || !feed) return;
+  if(!myAnnouncements.length) { box.style.display='none'; return; }
+  box.style.display='block';
+  feed.innerHTML = myAnnouncements.map(r=>`
+    <div style="background:var(--surface2); padding:12px; border-left:4px solid var(--accent); border-radius:4px;">
+      <div style="font-size:11px; color:var(--text3); float:right;">${r.Timestamp||''}</div>
+      <div style="font-weight:600; font-size:14px; color:var(--text);">${r.Title}</div>
+      <div style="font-size:13px; color:var(--text2); margin-top:2px;">${r.Description}</div>
+    </div>
+  `).join('');
+}
+
+function renderStudyMaterialsVault(filter) {
+  const container = document.getElementById('material-grid-container'); if(!container) return;
+  let data = [...myMaterials]; if(filter!=='all') data = data.filter(r=>r['Subject']===filter);
+  if(!data.length) { container.innerHTML = '<div class="card" style="grid-column:1/-1; text-align:center; color:var(--text3);">📂 Vault clean. No items logged inside this scope.</div>'; return; }
+  container.innerHTML = data.map(r=>`
+    <div class="card" style="margin-bottom:0; box-shadow:var(--shadow); display:flex; flex-direction:column; justify-content:space-between;">
+      <div><span class="badge badge-blue" style="margin-bottom:6px;">${r.Subject}</span><h4 style="font-size:15px; font-weight:600;">${r.Title}</h4><p style="font-size:12px; color:var(--text2); margin-top:4px;">${r.Description||'Institutional prep resource asset.'}</p></div>
+      <div style="border-top:1px solid var(--border); padding-top:8px; margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:11px; color:var(--text3);">${r['Uploaded Date']||'---'}</span><a href="${r['Download Link']}" target="_blank" style="font-size:12px; color:var(--accent); font-weight:600; text-decoration:none;">Download</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterMaterial(sub, btn) {
+  btn.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+  renderStudyMaterialsVault(sub);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   WRITE / VERIFICATION TRANSACTIONS BACK TO SHEET
 ═══════════════════════════════════════════════════════════ */
 async function writeDataToCentralSheet(payload) {
   try {
-    await fetch(window.CONFIG.CONSOLIDATED_WEBAPP_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+    await fetch(window.CONFIG.CONSOLIDATED_WEBAPP_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
     return true;
   } catch (e) {
-    alert("Connection error occurred while parsing update streams.");
     return false;
   }
 }
 
 async function handleCallSubmission(event) {
-  event.preventDefault();
-  const btn = event.target.querySelector('button');
-  btn.disabled = true; btn.textContent = "Saving to Sheet...";
-
-  const payload = {
-    action: "logCall",
-    studentId: currentStudent.id,
-    collegeName: document.getElementById('form-coll-name').value,
-    stage: document.getElementById('form-coll-stage').value,
-    notes: document.getElementById('form-coll-notes').value
-  };
-
-  if (await writeDataToCentralSheet(payload)) {
-    alert("Record successfully mapped and saved into your master Google Sheet rows!");
-    event.target.reset();
-  }
-  btn.disabled = false; btn.textContent = "Save to Sheet";
+  event.preventDefault(); const b = event.target.querySelector('button'); b.disabled=true;
+  const success = await writeDataToCentralSheet({ action: "logCall", studentId: currentStudent.id, collegeName: document.getElementById('form-coll-name').value, stage: document.getElementById('form-coll-stage').value, notes: document.getElementById('form-coll-notes').value });
+  if(success) { alert("College logs updated successfully!"); event.target.reset(); } b.disabled=false;
 }
 
 async function processOfficialScoreFormSubmit(event) {
-  event.preventDefault();
-  const exam = document.getElementById('master-exam-selector').value;
-  const btn = document.getElementById('master-score-submit-btn');
-  btn.disabled = true; btn.textContent = "Saving Records...";
-
+  event.preventDefault(); const exam = document.getElementById('master-exam-selector').value; const b = document.getElementById('master-score-submit-btn'); b.disabled=true;
   let scores = {};
   if (exam === "CAT") {
     scores = { varc: document.getElementById('inp-varc').value, dilr: document.getElementById('inp-dilr').value, qa: document.getElementById('inp-qa').value, total: document.getElementById('inp-total').value, percentile: document.getElementById('inp-pct').value };
@@ -576,152 +746,69 @@ async function processOfficialScoreFormSubmit(event) {
   } else if (exam === "SNAP") {
     scores = { english: document.getElementById('inp-english').value, reasoning: document.getElementById('inp-reasoning').value, quant: document.getElementById('inp-quant').value, total: document.getElementById('inp-total').value };
   }
-
-  const payload = {
-    action: "updateOfficialScore",
-    examName: exam,
-    studentId: currentStudent.id,
-    scores: scores
-  };
-
-  if (await writeDataToCentralSheet(payload)) {
-    alert(`Success! Your ${exam} matrix values have been synced directly to the central spreadsheet.`);
-  }
-  btn.disabled = false; btn.textContent = "Save Records to Sheet";
+  const success = await writeDataToCentralSheet({ action: "updateOfficialScore", examName: exam, studentId: currentStudent.id, scores: scores });
+  if(success) alert(`Success! ${exam} structural values mirrored into core sheet indexes.`); b.disabled=false;
 }
 
 function switchExamFormFields(exam) {
   const container = document.getElementById('dynamic-fields-container');
+  const submitBtn = document.getElementById('master-score-submit-btn');
+  const lockNotice = document.getElementById('exam-lock-notice');
   if(!container) return;
+
+  const savedData = studentLoadedOfficialScores[exam];
+  const isLocked = savedData && savedData.lockStatus === "LOCKED";
+  
+  if (isLocked) {
+    lockNotice.style.display = "block"; lockNotice.style.background = "var(--red-light)"; lockNotice.style.color = "var(--red)";
+    lockNotice.innerHTML = "🔒 <b>Frozen:</b> Validated and locked by admin.";
+    submitBtn.disabled = true; submitBtn.style.background = "var(--text3)"; submitBtn.textContent = "Locked Profile";
+  } else {
+    lockNotice.style.display = "block"; lockNotice.style.background = "var(--green-light)"; lockNotice.style.color = "var(--green)";
+    lockNotice.innerHTML = savedData ? "🟢 <b>Active:</b> Submitting overwrites saved log index parameters." : "⏳ No records found on this exam tab.";
+    submitBtn.disabled = false; submitBtn.style.background = "var(--accent)"; submitBtn.textContent = "Save Records to Sheet";
+  }
+
   let html = "";
   if (exam === "CAT") {
-    html = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:6px;">
-      <div><label style="font-size:10px;">VARC</label><input type="number" id="inp-varc" required style="width:100%;"></div>
-      <div><label style="font-size:10px;">DILR</label><input type="number" id="inp-dilr" required style="width:100%;"></div>
-      <div><label style="font-size:10px;">Quant</label><input type="number" id="inp-qa" required style="width:100%;"></div>
+    html = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;">
+      <div><label style="font-size:11px;">VARC Raw</label><input type="number" id="inp-varc" value="${savedData?.varc||''}" required ${isLocked?'disabled':''}></div>
+      <div><label style="font-size:11px;">DILR Raw</label><input type="number" id="inp-dilr" value="${savedData?.dilr||''}" required ${isLocked?'disabled':''}></div>
+      <div><label style="font-size:11px;">Quant Raw</label><input type="number" id="inp-qa" value="${savedData?.qa||''}" required ${isLocked?'disabled':''}></div>
     </div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:6px;">
-      <div><label style="font-size:10px;">Total</label><input type="number" id="inp-total" required style="width:100%;"></div>
-      <div><label style="font-size:10px;">Percentile</label><input type="text" id="inp-pct" required style="width:100%;"></div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+      <div><label style="font-size:11px;">Total Score</label><input type="number" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''}></div>
+      <div><label style="font-size:11px;">Overall %ile</label><input type="text" id="inp-pct" value="${savedData?.percentile||''}" required ${isLocked?'disabled':''}></div>
     </div>`;
-  } else {
-    html = `<div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:6px;">
-      <div><label style="font-size:10px;">Scaled Sectional Score</label><input type="number" id="inp-lang" required style="width:100%;"></div>
-      <div><label style="font-size:10px;">Total Cumulative Score</label><input type="number" id="inp-total" required style="width:100%;"></div>
+  } else if (exam === "NMAT") {
+    html = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;">
+      <div><label style="font-size:11px;">Language Skills</label><input type="number" id="inp-lang" value="${savedData?.lang||''}" required ${isLocked?'disabled':''}></div>
+      <div><label style="font-size:11px;">Quant Skills</label><input type="number" id="inp-quant" value="${savedData?.quant||''}" required ${isLocked?'disabled':''}></div>
+      <div><label style="font-size:11px;">Logical Reasoning</label><input type="number" id="inp-logic" value="${savedData?.logic||''}" required ${isLocked?'disabled':''}></div>
+    </div>
+    <div style="margin-top:10px;"><label style="font-size:11px;">Total Scaled Score</label><input type="number" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''}></div>`;
+  } else if (exam === "XAT") {
+    html = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;">
+      <div><label style="font-size:11px;">VALR</label><input type="number" step="0.01" id="inp-valr" value="${savedData?.valr||''}" required ${isLocked?'disabled':''}></div>
+      <div><label style="font-size:11px;">DM</label><input type="number" step="0.01" id="inp-dm" value="${savedData?.dm||''}" required ${isLocked?'disabled':''}></div>
+      <div><label style="font-size:11px;">QA DI</label><input type="number" step="0.01" id="inp-qadi" value="${savedData?.qadi||''}" required ${isLocked?'disabled':''}></div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+      <div><label style="font-size:11px;">Total Score</label><input type="number" step="0.01" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''}></div>
+      <div><label style="font-size:11px;">Overall %ile</label><input type="text" id="inp-pct" value="${savedData?.percentile||''}" required ${isLocked?'disabled':''}></div>
     </div>`;
+  } else if (exam === "SNAP") {
+    html = `<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px;">
+      <div><label style="font-size:11px;">General English</label><input type="number" step="0.01" id="inp-english" value="${savedData?.english||''}" required ${isLocked?'disabled':''}></div>
+      <div><label style="font-size:11px;">Analytical Reasoning</label><input type="number" step="0.01" id="inp-reasoning" value="${savedData?.reasoning||''}" required ${isLocked?'disabled':''}></div>
+      <div><label style="font-size:11px;">Quantitative</label><input type="number" step="0.01" id="inp-quant" value="${savedData?.quant||''}" required ${isLocked?'disabled':''}></div>
+    </div>
+    <div style="margin-top:10px;"><label style="font-size:11px;">Total Score</label><input type="number" step="0.01" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''}></div>`;
   }
   container.innerHTML = html;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   UI LAYOUT RENDERING COMPILERS
-═══════════════════════════════════════════════════════════ */
-function logout() {
-  sessionStorage.removeItem('sp_student');
-  currentStudent = null;
-  document.getElementById('app').classList.remove('visible');
-  document.getElementById('login-screen').style.display = 'flex';
-}
-
-function showPage(pageId, element) {
-  document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display='none'; });
-  const t = document.getElementById('page-' + pageId);
-  if (t) { t.classList.add('active'); t.style.display='block'; }
-  document.querySelectorAll('.nav-item').forEach(i => item = i.classList.remove('active'));
-  if(element) element.classList.add('active');
-}
-
-function renderProfile() {
-  const s = currentStudent;
-  const initials = String(s.name).split(' ').map(w=>w[0]).join('').toUpperCase();
-  document.getElementById('nav-avatar').textContent = initials;
-  document.getElementById('profile-avatar').textContent = initials;
-  document.getElementById('nav-name').textContent = s.name;
-  document.getElementById('nav-batch').textContent = s.target_exam + ' · ' + s.batch;
-  document.getElementById('profile-name').textContent = s.name;
-  document.getElementById('profile-meta').textContent = `Target: ${s.target_exam} · Class Batch: ${s.batch}`;
-  document.getElementById('d-name').textContent = s.name;
-  document.getElementById('d-email').textContent = s.email;
-  document.getElementById('d-phone').textContent = s.phone;
-  document.getElementById('d-batch').textContent = s.batch;
-  document.getElementById('profile-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(s.id)}`;
-  document.getElementById('profile-qr-subtext').textContent = `ID: ${s.id}`;
-}
-
-function renderAll() {
-  renderProfile();
-  
-  // 1. Compile Attendance Layouts
-  const present = allAttendance.filter(r=>r['Status']==='Present').length;
-  const total = allAttendance.length;
-  const pct = total ? Math.round(present/total*100) : 0;
-  document.getElementById('stat-att').textContent = pct + '%';
-  document.getElementById('att-present-count').textContent = present;
-  document.getElementById('att-absent-count').textContent = total - present;
-  document.getElementById('att-pct').textContent = pct + '%';
-
-  const grid = document.getElementById('cal-grid');
-  if (grid) {
-    grid.innerHTML = '';
-    const statusMap = {};
-    allAttendance.forEach(r => { if(r['Date']) statusMap[r['Date']] = r['Status']; });
-    for(let d=1; d<=30; d++) {
-      const cell = document.createElement('div');
-      cell.className = 'cal-cell';
-      const dStr = `2026-06-${String(d).padStart(2,'0')}`;
-      if (statusMap[dStr] === 'Present') cell.className += ' cal-present';
-      else if (statusMap[dStr] === 'Absent') cell.className += ' cal-absent';
-      else cell.className += ' cal-holiday';
-      cell.textContent = d; grid.appendChild(cell);
-    }
-  }
-
-  const list = document.getElementById('att-list');
-  if (list) {
-    list.innerHTML = allAttendance.map(r => `
-      <div class="att-row">
-        <div class="att-date">${r.Date}</div>
-        <div class="att-subject">${r.Subject || r.Topic || 'Lecture Track'}</div>
-        <span class="att-status ${r.Status==='Present'?'status-present':'status-absent'}">${r.Status}</span>
-      </div>`).join('');
-  }
-
-  // 2. Compile Score Grids
-  const avg = allScores.length ? Math.round(allScores.reduce((acc,r)=>acc+Number(r['Total Score']||0),0)/allScores.length) : 0;
-  document.getElementById('stat-score').textContent = avg;
-  document.getElementById('stat-tests').textContent = allScores.length;
-
-  const scoreList = document.getElementById('score-list');
-  if (scoreList) {
-    scoreList.innerHTML = allScores.map(r => `
-      <div class="score-row">
-        <div class="score-test">${r['Test Name']} (${r.Date || 'Recent'})</div>
-        <div class="score-pills">
-          <span class="score-pill pill-t">Total: ${r['Total Score']}</span>
-          <span class="score-pill pill-q">${r['Overall Percentile'] || r['Overall Pct'] || '0'} %ile</span>
-        </div>
-      </div>`).join('');
-  }
-
-  // 3. Compile Schedule View Row Panels
-  const schedList = document.getElementById('schedule-list');
-  if (schedList) {
-    if(!allSchedule.length) {
-      schedList.innerHTML = '<div class="empty"><p>No upcoming classes recorded inside this Sheet target matrix.</p></div>';
-    } else {
-      schedList.innerHTML = allSchedule.map(r => `
-        <div class="sched-item">
-          <div class="sched-time-col"><div class="sched-time">${r.Time}</div><div class="sched-date">${r.Date}</div></div>
-          <div class="sched-dot-col"><div class="sched-dot" style="background:var(--accent)"></div><div class="sched-line"></div></div>
-          <div class="sched-info">
-            <div class="sched-topic">${r.Topic} [${r.Subject}]</div>
-            <div class="sched-meta">${r['Room / Mode'] || 'Lecture Hall'} &middot; ${r.Faculty || 'IMS Faculty'}</div>
-          </div>
-        </div>`).join('');
-    }
-  }
-}
-
+function logout() { sessionStorage.removeItem('sp_student'); location.reload(); }
 function prevMonth() {} function nextMonth() {}
 </script>
 </body>
