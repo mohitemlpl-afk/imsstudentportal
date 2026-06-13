@@ -747,6 +747,8 @@ async function processOfficialScoreFormSubmit(event) {
 function switchExamFormFields(exam) {
   const container = document.getElementById('dynamic-fields-container'); const submitBtn = document.getElementById('master-score-submit-btn'); const lockNotice = document.getElementById('exam-lock-notice'); if(!container) return;
   const savedData = studentLoadedOfficialScores[exam]; const isLocked = savedData && savedData.lockStatus === "LOCKED";
+  const currentData = savedData || { varc:'', dilr:'', qa:'', total:'', percentile:'', lang:'', quant:'', logic:'', valr:'', dm:'', qadi:'', english:'', reasoning:'', lockStatus:'' };
+   const isLocked = currentData.lockStatus === "LOCKED";
   
   if (isLocked) {
     lockNotice.style.display = "block"; lockNotice.style.background = "var(--red-light)"; lockNotice.style.color = "var(--red)";
@@ -760,27 +762,27 @@ function switchExamFormFields(exam) {
 
   let html = "";
   if (exam === "CAT") {
-    html = `<div><label>VARC Raw Score</label><input type="number" id="inp-varc" value="${savedData?.varc||''}" required ${isLocked?'disabled':''}></div>
-            <div><label>DILR Raw Score</label><input type="number" id="inp-dilr" value="${savedData?.dilr||''}" required ${isLocked?'disabled':''}></div>
-            <div><label>Quantitative Raw Score</label><input type="number" id="inp-qa" value="${savedData?.qa||''}" required ${isLocked?'disabled':''}</div>
-            <div><label>Total Aggregate Score</label><input type="number" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''}></div>
-            <div><label>Overall Percentile</label><input type="text" id="inp-pct" value="${savedData?.percentile||''}" placeholder="e.g. 99.85" required ${isLocked?'disabled':''}></div>`;
+    html = `<div><label>VARC Raw Score</label><input type="number" id="inp-varc" value="${currentData.varc||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>DILR Raw Score</label><input type="number" id="inp-dilr" value="${currentData.dilr||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Quantitative Raw Score</label><input type="number" id="inp-qa" value="${currentData.qa||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Total Aggregate Score</label><input type="number" id="inp-total" value="${currentData.total||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Overall Percentile</label><input type="text" id="inp-pct" value="${currentData.percentile||''}" placeholder="e.g. 99.85" required ${isLocked?'disabled':''}></div>`;
   } else if (exam === "NMAT") {
-    html = `<div><label>Language Skills Scaled</label><input type="number" id="inp-lang" value="${savedData?.lang||''}" required ${isLocked?'disabled':''}></div>
-            <div><label>Quantitative Skills Scaled</label><input type="number" id="inp-quant" value="${savedData?.quant||''}" required ${isLocked?'disabled':''}></div>
-            <div><label>Logical Reasoning Scaled</label><input type="number" id="inp-logic" value="${savedData?.logic||''}" required ${isLocked?'disabled':''}></div>
-            <div><label>Total Cumulative Scaled Score</label><input type="number" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''}></div>`;
+    html = `<div><label>Language Skills Scaled</label><input type="number" id="inp-lang" value="${currentData.lang||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Quantitative Skills Scaled</label><input type="number" id="inp-quant" value="${currentData.quant||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Logical Reasoning Scaled</label><input type="number" id="inp-logic" value="${currentData.logic||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Total Cumulative Scaled Score</label><input type="number" id="inp-total" value="${currentData.total||''}" required ${isLocked?'disabled':''}></div>`;
   } else if (exam === "XAT") {
-    html = `<div><label>Verbal & Logical Ability (VALR)</label><input type="number" step="0.01" id="inp-valr" value="${savedData?.valr||''}" required ${isLocked?'disabled':''}></div>
-            <div><label>Decision Making (DM)</label><input type="number" step="0.01" id="inp-dm" value="${savedData?.dm||''}" required ${isLocked?'disabled':''}></div>
-            <div><label>Quant Ability & DI (QA DI)</label><input type="number" step="0.01" id="inp-qadi" value="${savedData?.qadi||''}" required ${isLocked?'disabled':''}></div>
-            <div><label>Total Score</label><input type="number" step="0.01" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''}></div>
-            <div><label>Overall Percentile</label><input type="text" id="inp-pct" value="${savedData?.percentile||''}" required ${isLocked?'disabled':''}></div>`;
+    html = `<div><label>Verbal & Logical Ability (VALR)</label><input type="number" step="0.01" id="inp-valr" value="${currentData.valr||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Decision Making (DM)</label><input type="number" step="0.01" id="inp-dm" value="${currentData.dm||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Quant Ability & DI (QA DI)</label><input type="number" step="0.01" id="inp-qadi" value="${currentData.qadi||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Total Score</label><input type="number" step="0.01" id="inp-total" value="${currentData.total||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Overall Percentile</label><input type="text" id="inp-pct" value="${currentData.percentile||''}" required ${isLocked?'disabled':''}></div>`;
   } else if (exam === "SNAP") {
-    html = `<div><label>General English</label><input type="number" step="0.01" id="inp-english" value="${savedData?.english||''}" required ${isLocked?'disabled':''}></div>
-            <div><label>Analytical & Logical Reasoning</label><input type="number" step="0.01" id="inp-reasoning" value="${savedData?.reasoning||''}" required ${isLocked?'disabled':''}></div>
-            <div><label>Quantitative, DI & DS</label><input type="number" step="0.01" id="inp-quant" value="${savedData?.quant||''}" required ${isLocked?'disabled':''}></div>
-            <div><label>Total Cumulative Score</label><input type="number" step="0.01" id="inp-total" value="${savedData?.total||''}" required ${isLocked?'disabled':''}></div>`;
+    html = `<div><label>General English</label><input type="number" step="0.01" id="inp-english" value="${currentData.english||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Analytical & Logical Reasoning</label><input type="number" step="0.01" id="inp-reasoning" value="${currentData.reasoning||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Quantitative, DI & DS</label><input type="number" step="0.01" id="inp-quant" value="${currentData.quant||''}" required ${isLocked?'disabled':''}></div>
+            <div><label>Total Cumulative Score</label><input type="number" step="0.01" id="inp-total" value="${currentData.total||''}" required ${isLocked?'disabled':''}></div>`;
   }
   container.innerHTML = html;
 }
