@@ -465,6 +465,8 @@ let myMaterials = [];
 let scoreChartInstance = null;
 let currentSelectedType = 'SimCAT';
 let studentLoadedOfficialScores = {};
+  // Global memory register to store processed proof file data fragments
+let structuredProofFileBlob = null;
 
 function toggleAnnouncementsDropdown(event) {
   event.stopPropagation();
@@ -882,7 +884,13 @@ async function handleCallSubmission(event) {
 }
 
 async function processOfficialScoreFormSubmit(event) {
-  event.preventDefault(); const exam = document.getElementById('master-exam-selector').value; const b = document.getElementById('master-score-submit-btn'); b.disabled=true; b.textContent = "Pushed rows cells updating...";
+  event.preventDefault(); 
+  const exam = document.getElementById('master-exam-selector').value; 
+  const b = document.getElementById('master-score-submit-btn'); 
+  
+  b.disabled = true; 
+  b.textContent = "Uploading assets pipeline syncing...";
+  
   let scores = {};
   if (exam === "CAT") {
     scores = { varc: document.getElementById('inp-varc').value, dilr: document.getElementById('inp-dilr').value, qa: document.getElementById('inp-qa').value, total: document.getElementById('inp-total').value, percentile: document.getElementById('inp-pct').value };
@@ -893,8 +901,33 @@ async function processOfficialScoreFormSubmit(event) {
   } else if (exam === "SNAP") {
     scores = { english: document.getElementById('inp-english').value, reasoning: document.getElementById('inp-reasoning').value, quant: document.getElementById('inp-quant').value, total: document.getElementById('inp-total').value };
   }
-  const success = await writeDataToCentralSheet({ action: "updateOfficialScore", examName: exam, studentId: currentStudent.id, scores: scores });
-  if(success) alert(`Success! Your official ${exam} metrics have been updated.`); b.disabled=false; b.textContent = "Save Verification Records";
+  
+  // Package centralized framework transaction object metrics configuration variables
+  const payload = { 
+    action: "updateOfficialScore", 
+    examName: exam, 
+    studentId: currentStudent.id, 
+    scores: scores,
+    // 🟢 PASS THE ATTACHED FILE DATA DOWN STREAM
+    proofFile: structuredProofFileBlob 
+  };
+  
+  const success = await writeDataToCentralSheet(payload);
+  
+  if (success) {
+    alert(`Success! Your official ${exam} metrics and proof documents have been synchronized cleanly to your master Google Sheet database row positions.`); 
+    // Clear out input indicators
+    const fileSelector = document.getElementById('inp-proof-file');
+    if (fileSelector) fileSelector.value = '';
+    const successDiv = document.getElementById('proof-upload-success');
+    if (successDiv) successDiv.style.display = 'none';
+    structuredProofFileBlob = null;
+  } else {
+    alert("System write exception error detected. Checking sheet schema bounds entries.");
+  }
+  
+  b.disabled = false; 
+  b.textContent = "Save Verification Records";
 }
 
 function switchExamFormFields(exam) {
@@ -937,7 +970,21 @@ function switchExamFormFields(exam) {
             <div><label>Quantitative, DI & DS</label><input type="number" step="0.01" id="inp-quant" value="${currentData.quant||''}" required ${isLocked?'disabled':''}></div>
             <div><label>Total Cumulative Score</label><input type="number" step="0.01" id="inp-total" value="${currentData.total||''}" required ${isLocked?'disabled':''}></div>`;
   }
+ // Append the Unified Proof Upload form fields onto the generated layout sequence
+  html += `
+    <div style="margin-top: 16px; border-top: 1px dashed var(--border); padding-top: 14px;">
+      <label style="font-size:12px; font-weight:600; color:var(--text2); display:block; margin-bottom:4px;">
+        Upload Verification Document Proof <span style="color:var(--text3); font-weight:400;">(Max 2MB — PDF, PNG, JPG)</span>
+      </label>
+      <input type="file" id="inp-proof-file" accept=".pdf,.png,.jpg,.jpeg" onchange="validateAndProcessProofFile(this)" style="padding:4px; font-size:13px; border:none; background:none;">
+      <div id="proof-upload-error" style="font-size:11px; color:var(--red); font-weight:500; margin-top:4px; display:none;"></div>
+      <div id="proof-upload-success" style="font-size:11px; color:var(--green); font-weight:500; margin-top:4px; display:none;"></div>
+    </div>
+  `;
+
   container.innerHTML = html;
+  // Reset the loaded file memory slot each time a student switches the active exam selector track
+  structuredProofFileBlob = null;
 }
 
 window.onload = async () => {
@@ -946,6 +993,41 @@ window.onload = async () => {
 };
 function logout() { sessionStorage.removeItem('sp_student'); location.reload(); }
 function fmtDate(str) { if(!str) return "—"; try { return new Date(str).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){return str;} }
+  // 🟢 Real-time file processing and binary serialization validator engine
+function validateAndProcessProofFile(inputElement) {
+  const errorDiv = document.getElementById('proof-upload-error');
+  const successDiv = document.getElementById('proof-upload-success');
+  
+  errorDiv.style.display = 'none';
+  successDiv.style.display = 'none';
+  structuredProofFileBlob = null;
+
+  if (!inputElement.files || inputElement.files.length === 0) return;
+
+  const selectedFile = inputElement.files[0];
+  const maxByteLimit = 2 * 1024 * 1024; // Strict Calculation: 2 Megabytes in bytes
+
+  // Step A: Intercept file weight constraint breaches
+  if (selectedFile.size > maxByteLimit) {
+    errorDiv.textContent = `❌ Upload Blocked: This file size is ${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB. It must be strictly less than 2.00 MB.`;
+    errorDiv.style.display = 'block';
+    inputElement.value = ''; // Flush input channel element memory clear
+    return;
+  }
+
+  // Step B: Serialize file stream into transaction data blocks
+  const streamReader = new FileReader();
+  streamReader.onload = function(event) {
+    structuredProofFileBlob = {
+      base64String: event.target.result.split(',')[1],
+      mimeType: selectedFile.type,
+      fileName: selectedFile.name
+    };
+    successDiv.textContent = `⚡ Attached Successfully: ${selectedFile.name} ready for sheet verification mapping tracking columns.`;
+    successDiv.style.display = 'block';
+  };
+  streamReader.readAsDataURL(selectedFile);
+}
 </script>
 </body>
 </html>
