@@ -282,17 +282,18 @@ async function handleGoogleCredential(response) {
 
     <div style="display:flex; align-items:center; gap:20px;">
       <!-- FLOATING BELL ICON SYSTEM DROPDOWN PANEL -->
-      <div style="position: relative; display: flex; align-items: center;">
-        <button onclick="toggleAnnouncementsDropdown(event)" style="background: none; border: none; cursor: pointer; position: relative; padding: 6px; display: flex; align-items: center; color: var(--text2);" id="notification-bell-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-          <span id="notif-badge" style="display: none; position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background: var(--red); border-radius: 50%;"></span>
-        </button>
-        
-        <div id="notif-dropdown" style="display: none; position: absolute; top: 38px; right: 0; width: 320px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); z-index: 1000; max-height: 400px; overflow-y: auto;">
-          <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 14px; color: var(--text);">Institutional Updates</div>
-          <div id="notif-dropdown-feed" style="padding: 8px 0;"></div>
-        </div>
-      </div>
+      <!-- FIXED NOTIFICATION SYSTEM -->
+<div style="position: relative; display: flex; align-items: center;">
+  <button id="notification-bell-btn" style="background: none; border: none; cursor: pointer; position: relative; padding: 6px; display: flex; align-items: center; color: var(--text2); z-index: 10;" onclick="toggleNotificationDropdown(event)">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+    <span id="notif-badge" style="display: none; position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background: var(--red); border-radius: 50%;"></span>
+  </button>
+  
+  <div id="notif-dropdown" style="display: none; position: absolute; top: 45px; right: -50px; width: 360px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 4px 24px rgba(0,0,0,0.12); z-index: 2000; max-height: 420px; overflow-y: auto;">
+    <div style="padding: 14px 16px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 14px; color: var(--text); position: sticky; top: 0; background: var(--surface);">📢 Updates & Notifications</div>
+    <div id="notif-dropdown-feed" style="padding: 8px 0;"></div>
+  </div>
+</div>
 
       <div style="display:flex; align-items:center; gap:10px;">
         <div class="topnav-avatar" id="nav-avatar">ST</div>
@@ -308,7 +309,7 @@ async function handleGoogleCredential(response) {
 
   <div class="app-body">
     <aside class="sidebar">
-      <div class="sidebar-label">Dashboard Nav</div>
+      <div class="sidebar-label">Dashboard</div>
       <button class="nav-item active" onclick="showPage('profile',this)">My Profile</button>
       <button class="nav-item" onclick="showPage('attendance',this)">Attendance</button>
       <button class="nav-item" onclick="showPage('scores',this)">Mock Scores</button>
@@ -485,17 +486,64 @@ let studentLoadedOfficialScores = {};
   // Global memory register to store processed proof file data fragments
 let structuredProofFileBlob = null;
 
-function toggleAnnouncementsDropdown(event) {
+function toggleNotificationDropdown(event) {
   event.stopPropagation();
   const dropdown = document.getElementById('notif-dropdown');
-  if (dropdown) dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+  if (!dropdown) return;
+  
+  const isVisible = dropdown.style.display === 'block';
+  
+  // Close all other dropdowns
+  document.querySelectorAll('[id$="-dropdown"]').forEach(d => {
+    if (d.id !== 'notif-dropdown') d.style.display = 'none';
+  });
+  
+  // Toggle current dropdown
+  dropdown.style.display = isVisible ? 'none' : 'block';
+  
+  if (!isVisible) {
+    populateNotificationDropdown();
+  }
 }
 
-document.addEventListener('click', () => {
-  const dropdown = document.getElementById('notif-dropdown');
-  if (dropdown) dropdown.style.display = 'none';
-});
+function populateNotificationDropdown() {
+  const feed = document.getElementById('notif-dropdown-feed');
+  if (!feed || !myAnnouncements || myAnnouncements.length === 0) {
+    feed.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text3); font-size: 13px;">No new notifications.</div>';
+    return;
+  }
 
+  feed.innerHTML = myAnnouncements.map((r, idx) => {
+    const actionLink = r['Attached Link'] && r['Attached Link'].trim() 
+      ? r['Attached Link'].trim() 
+      : '';
+    
+    return `
+      <div style="padding: 14px 16px; border-bottom: 1px solid var(--border); cursor: default;">
+        <div style="font-size: 11px; color: var(--text3); margin-bottom: 4px; font-weight: 500;">${r.Timestamp || 'Recent'}</div>
+        <div style="font-weight: 600; font-size: 13px; color: var(--text); line-height: 1.4; margin-bottom: 6px;">${r.Title || 'Update'}</div>
+        <div style="font-size: 12px; color: var(--text2); line-height: 1.5; margin-bottom: 8px; white-space: pre-wrap;">${r.Description || ''}</div>
+        ${actionLink ? `
+          <a href="${actionLink}" target="_blank" rel="noopener noreferrer" style="
+            display: inline-block;
+            padding: 6px 12px;
+            background: var(--accent);
+            color: white;
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: background 0.15s;
+          " onmouseover="this.style.background='var(--accent-dark)'" onmouseout="this.style.background='var(--accent)'">
+            Open Link →
+          </a>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+}
 async function querySupabaseStudent(email) {
   initSupabase();
   if (!supabaseClient) {
@@ -856,40 +904,53 @@ function renderLearningFlow() {
 // ─── STABLE, RE-ENGINEERED ANNOUNCEMENT URL PROCESSING LINKIFIER ENGINE ───
 function renderAnnouncementsFeed() {
   const badge = document.getElementById('notif-badge');
-  const dropdownFeed = document.getElementById('notif-dropdown-feed');
   const boardBox = document.getElementById('announcement-board-container');
   const boardFeed = document.getElementById('announcements-feed');
   
   if (!myAnnouncements || !myAnnouncements.length) {
     if (badge) badge.style.display = 'none';
-    if (dropdownFeed) dropdownFeed.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text3); font-size: 13px;">No new notifications posted.</div>';
     if (boardBox) boardBox.style.display = 'none';
     return;
   }
 
   if (badge) badge.style.display = 'block';
-  
-  // Clean link builder modeled exactly after your study materials engine
-  const createActionLink = (itemRow) => {
-    const url = itemRow['Attached Link'] ? String(itemRow['Attached Link']).trim() : '';
-    if (!url) return '';
-    return `<div style="margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px;">
-              <a href="${url}" target="_blank" style="color: var(--accent); font-weight: 600; text-decoration: none; font-size: 12px; display: inline-flex; align-items: center;">
-                Open Attached Link &rarr;
-              </a>
-            </div>`;
-  };
-  
-  // 1. Populates the floating bell notification dropdown tray
-  const dropdownHtml = myAnnouncements.map(r => `
-    <div style="padding: 12px 16px; border-bottom: 1px solid var(--border);">
-      <div style="font-size: 11px; color: var(--text3); margin-bottom: 2px;">${r.Timestamp||'Recent'}</div>
-      <div style="font-weight: 600; font-size: 13px; color: var(--text); line-height: 1.4;">${r.Title}</div>
-      <div style="font-size: 12px; color: var(--text2); margin-top: 2px; line-height: 1.5; white-space: pre-line;">${r.Description}</div>
-      ${createActionLink(r)}
-    </div>
-  `).join('');
-  
+
+  // Profile card announcements
+  if (boardBox && boardFeed) {
+    boardBox.style.display = 'block';
+    boardFeed.innerHTML = myAnnouncements.map(r => {
+      const actionLink = r['Attached Link'] && r['Attached Link'].trim() 
+        ? r['Attached Link'].trim() 
+        : '';
+      
+      return `
+        <div style="background:var(--surface2); border-left:4px solid var(--accent); padding:16px; border-radius:var(--radius-sm); margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
+            <div style="font-weight:600; color:var(--text); font-size:14px; line-height:1.3; flex:1;">${r.Title || 'Notification'}</div>
+            <div style="font-size:11px; color:var(--text3); white-space:nowrap; margin-left:12px;">${r.Timestamp || ''}</div>
+          </div>
+          <div style="font-size:13px; color:var(--text2); line-height:1.5; margin-bottom:10px; white-space:pre-wrap;">${r.Description || ''}</div>
+          ${actionLink ? `
+            <a href="${actionLink}" target="_blank" rel="noopener noreferrer" style="
+              display: inline-block;
+              padding: 8px 14px;
+              background: var(--accent);
+              color: white;
+              border-radius: var(--radius-sm);
+              font-size: 12px;
+              font-weight: 600;
+              text-decoration: none;
+              cursor: pointer;
+              transition: background 0.15s;
+            " onmouseover="this.style.background='var(--accent-dark)'" onmouseout="this.style.background='var(--accent)'">
+              Open Link →
+            </a>
+          ` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+}  
   if (dropdownFeed) dropdownFeed.innerHTML = dropdownHtml;
 
   // 2. Populates the main greeting profile card panel mirror layout
