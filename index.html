@@ -185,10 +185,10 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
           <span id="notif-badge" style="display: none; position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background: var(--red); border-radius: 50%;"></span>
         </button>
-        <div id="notif-dropdown" style="display: none; position: absolute; top: 45px; right: -50px; width: 360px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 4px 24px rgba(0,0,0,0.12); z-index: 2000; max-height: 420px; overflow-y: auto;">
-          <div style="padding: 14px 16px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 14px; color: var(--text); position: sticky; top: 0; background: var(--surface);">📢 Updates & Notifications</div>
-          <div id="notif-dropdown-feed" style="padding: 8px 0;"></div>
-        </div>
+       <div id="notif-dropdown" style="display: none; position: absolute; top: 45px; right: -50px; width: 360px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 4px 24px rgba(0,0,0,0.12); z-index: 2000; max-height: 420px; overflow-y: auto;">
+  <div style="padding: 14px 16px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 14px; color: var(--text); position: sticky; top: 0; background: var(--surface);">📢 Updates & Notifications</div>
+  <div id="notif-dropdown-feed" style="padding: 8px 0;"></div>
+</div>
       </div>
       <div style="display:flex; align-items:center; gap:10px;">
         <div class="topnav-avatar" id="nav-avatar">ST</div>
@@ -202,151 +202,155 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
   </nav>
 
   <div class="app-body">
-    <aside class="sidebar">
-      <div class="sidebar-label">Dashboard</div>
-      <button class="nav-item active" onclick="showPage('profile',this)">My Profile</button>
-      <button class="nav-item" onclick="showPage('attendance',this)">Attendance</button>
-      <button class="nav-item" onclick="showPage('scores',this)">Mock Scores</button>
-      <button class="nav-item" onclick="showPage('records',this)">My Records</button>
-      <button class="nav-item" onclick="showPage('schedule',this)">Schedule</button>
-      <button class="nav-item" onclick="showPage('progress',this)">Learning Flow</button>
-      <button class="nav-item" onclick="showPage('material',this)">Study Material</button>
-    </aside>
+<aside class="sidebar">
+  <div class="sidebar-label">Dashboard</div>
+  <button class="nav-item active" onclick="showPage('profile',this)">My Profile</button>
+  <button class="nav-item" onclick="showPage('announcements',this)">📢 Announcements</button>
+  <button class="nav-item" onclick="showPage('attendance',this)">Attendance</button>
+  <button class="nav-item" onclick="showPage('scores',this)">Mock Scores</button>
+  <button class="nav-item" onclick="showPage('records',this)">My Records</button>
+  <button class="nav-item" onclick="showPage('schedule',this)">Schedule</button>
+  <button class="nav-item" onclick="showPage('progress',this)">Learning Flow</button>
+  <button class="nav-item" onclick="showPage('material',this)">Study Material</button>
+</aside>
 
     <main class="main-content">
-      <div id="page-profile" class="page active">
-        <div class="profile-hero">
-          <div class="profile-avatar" id="profile-avatar">ST</div>
-          <div>
-            <div class="profile-name" id="profile-name">---</div>
-            <div class="profile-meta" id="profile-meta">Loading...</div>
-            <div class="profile-badges"><span class="badge badge-green">Active Student</span><span class="badge badge-blue" id="profile-exam-badge">CAT</span></div>
-          </div>
-          <div style="background:#fff; padding:6px; border-radius:6px; margin-left:auto; border:1px solid var(--border); text-align:center;">
-            <img id="profile-qr-code" style="width:100px; height:100px; display:block;">
-            <div id="profile-qr-subtext" style="font-size:11px; font-weight:600; font-family:monospace; margin-top:4px;">ID: ----</div>
-          </div>
-        </div>
-        <div id="announcement-board-container" style="display: none; margin-bottom: 24px;">
-          <div class="card" style="border-left:4px solid var(--accent); padding:20px;">
-            <div class="card-title">📢 Important Updates</div>
-            <div id="announcements-feed" style="display:flex; flex-direction:column; gap:12px; margin-top:12px;"></div>
-          </div>
-        </div>
-        <div class="stat-grid">
-          <div class="stat-card"><div class="stat-label">Attendance</div><div class="stat-val" id="stat-att">0%</div></div>
-          <div class="stat-card"><div class="stat-label">Mock Avg Score</div><div class="stat-val" id="stat-score">0</div></div>
-          <div class="stat-card"><div class="stat-label">Topics Done</div><div class="stat-val" id="stat-topics">0/0</div></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Personal Details</div>
-          <div class="info-grid">
-            <div class="info-row"><div class="info-label">Full Name</div><div class="info-val" id="d-name">---</div></div>
-            <div class="info-row"><div class="info-label">Email Address</div><div class="info-val" id="d-email">---</div></div>
-            <div class="info-row"><div class="info-label">Registered Phone</div><div class="info-val" id="d-phone">---</div></div>
-            <div class="info-row"><div class="info-label">Batch Assigned</div><div class="info-val" id="d-batch">---</div></div>
-          </div>
-        </div>
+  <!-- DASHBOARD PROFILE OVERVIEW -->
+  <div id="page-profile" class="page active">
+    <div class="profile-hero">
+      <div class="profile-avatar" id="profile-avatar">ST</div>
+      <div>
+        <div class="profile-name" id="profile-name">---</div>
+        <div class="profile-meta" id="profile-meta">Loading...</div>
+        <div class="profile-badges"><span class="badge badge-green">Active Student</span><span class="badge badge-blue" id="profile-exam-badge">CAT</span></div>
       </div>
+      <div style="background:#fff; padding:6px; border-radius:6px; margin-left:auto; border:1px solid var(--border); text-align:center;">
+        <img id="profile-qr-code" style="width:100px; height:100px; display:block;">
+        <div id="profile-qr-subtext" style="font-size:11px; font-weight:600; font-family:monospace; margin-top:4px;">ID: ----</div>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-label">Attendance</div><div class="stat-val" id="stat-att">0%</div></div>
+      <div class="stat-card"><div class="stat-label">Mock Avg Score</div><div class="stat-val" id="stat-score">0</div></div>
+      <div class="stat-card"><div class="stat-label">Topics Done</div><div class="stat-val" id="stat-topics">0/0</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Personal Details</div>
+      <div class="info-grid">
+        <div class="info-row"><div class="info-label">Full Name</div><div class="info-val" id="d-name">---</div></div>
+        <div class="info-row"><div class="info-label">Email Address</div><div class="info-val" id="d-email">---</div></div>
+        <div class="info-row"><div class="info-label">Registered Phone</div><div class="info-val" id="d-phone">---</div></div>
+        <div class="info-row"><div class="info-label">Batch Assigned</div><div class="info-val" id="d-batch">---</div></div>
+      </div>
+    </div>
+  </div>
 
-      <div id="page-attendance" class="page">
-        <div class="att-stats">
-          <div class="att-stat"><div class="att-stat-val" id="att-present-count" style="color:var(--green)">0</div><div class="att-stat-lbl">Present</div></div>
-          <div class="att-stat"><div class="att-stat-val" id="att-absent-count" style="color:var(--red)">0</div><div class="att-stat-lbl">Absent</div></div>
-          <div class="att-stat"><div class="att-stat-val" id="att-pct" style="color:var(--accent)">0%</div><div class="att-stat-lbl">Percentage</div></div>
-        </div>
-        <div class="card">
-          <div class="month-nav">
-            <button type="button" onclick="changeCalendarMonth(-1)">&larr;</button>
-            <span id="month-label">---</span>
-            <button type="button" onclick="changeCalendarMonth(1)">&rarr;</button>
-          </div>
-          <div class="cal-header" style="display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:11px; font-weight:600; margin-bottom:8px; color:var(--text3);">
-            <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
-          </div>
-          <div class="cal-grid" id="cal-grid"></div>
-        </div>
-        <div class="card"><div class="att-list" id="att-list"></div></div>
-      </div>
+  <div id="page-announcements" class="page">
+    <div class="card">
+      <div class="card-title">📢 All Announcements & Updates</div>
+      <div id="announcements-feed-main" style="display:flex; flex-direction:column; gap:16px; margin-top:16px;"></div>
+    </div>
+  </div>
 
-      <div id="page-scores" class="page">
-        <div class="tabs">
-          <button class="tab-btn active" onclick="setScoreFilters('SimCAT')">SimCAT Analysis</button>
-          <button class="tab-btn" onclick="setScoreFilters('Benchmarking')">Benchmarking Logs</button>
-        </div>
-        <div class="stat-grid" style="margin-bottom: 24px;">
-          <div class="stat-card" style="border-top:3px solid var(--accent);"><div class="stat-label">Overall Accuracy</div><div class="stat-val" id="an-accuracy">0%</div></div>
-          <div class="stat-card" style="border-top:3px solid var(--green);"><div class="stat-label">Peak Percentile</div><div class="stat-val" id="an-peak-pct">0.00</div></div>
-          <div class="stat-card" style="border-top:3px solid var(--purple);"><div class="stat-label">Average Proficiency</div><div class="stat-val" id="an-efficiency">0%ile</div></div>
-        </div>
-        <div class="card">
-          <div class="chart-wrap"><canvas id="scoreChart"></canvas></div>
-          <div id="subject-bars-container" style="margin-top:20px;"></div>
-        </div>
-        <div class="card"><div class="score-list" id="score-list"></div></div>
+  <!-- ATTENDANCE -->
+  <div id="page-attendance" class="page">
+    <div class="att-stats">
+      <div class="att-stat"><div class="att-stat-val" id="att-present-count" style="color:var(--green)">0</div><div class="att-stat-lbl">Present</div></div>
+      <div class="att-stat"><div class="att-stat-val" id="att-absent-count" style="color:var(--red)">0</div><div class="att-stat-lbl">Absent</div></div>
+      <div class="att-stat"><div class="att-stat-val" id="att-pct" style="color:var(--accent)">0%</div><div class="att-stat-lbl">Percentage</div></div>
+    </div>
+    <div class="card">
+      <div class="month-nav">
+        <button type="button" onclick="changeCalendarMonth(-1)">&larr;</button>
+        <span id="month-label">---</span>
+        <button type="button" onclick="changeCalendarMonth(1)">&rarr;</button>
       </div>
+      <div class="cal-header" style="display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:11px; font-weight:600; margin-bottom:8px; color:var(--text3);">
+        <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+    <div class="card"><div class="att-list" id="att-list"></div></div>
+  </div>
 
-      <div id="page-records" class="page">
-        <div class="two-col">
-          <div class="card">
-            <div class="card-title">Official Entrance Examination Records</div>
-            <select id="master-exam-selector" onchange="switchExamFormFields(this.value)" style="width:100%; padding:10px; margin-bottom:12px; font-family:var(--font); border:1px solid var(--border); border-radius:var(--radius-sm);">
-              <option value="CAT">Common Admission Test (CAT)</option>
-              <option value="NMAT">NMAT by GMAC</option>
-              <option value="XAT">Xavier Aptitude Test (XAT)</option>
-              <option value="SNAP">Symbiosis National Aptitude Test (SNAP)</option>
-            </select>
-            <div id="exam-lock-notice" style="padding:10px; border-radius:6px; font-size:11px; display:none; margin-bottom:12px;"></div>
-            <form id="master-score-form" onsubmit="processOfficialScoreFormSubmit(event)">
-              <div id="dynamic-fields-container" class="dynamic-fields-container"></div>
-              <button type="submit" id="master-score-submit-btn" class="demo-btn" style="margin-top:16px;">Save Verification Records</button>
-            </form>
-          </div>
-          <div class="card">
-            <div class="card-title">College Application Status Tracker</div>
-            <form onsubmit="handleCallSubmission(event)">
-              <div style="margin-bottom:12px;"><label style="font-size:12px; font-weight:600; color:var(--text2); display:block; margin-bottom:4px;">Institute Name</label><input type="text" id="form-coll-name" placeholder="e.g. IIM Ahmedabad" required style="width:100%; padding:8px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font);"></div>
-              <div style="margin-bottom:12px;"><label style="font-size:12px; font-weight:600; color:var(--text2); display:block; margin-bottom:4px;">Current Stage</label><select id="form-coll-stage" required style="width:100%; padding:8px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font);"><option value="Applied">Form Filled / Applied</option><option value="Call Received">Shortlisted (Interview Call)</option><option value="Converted">Converted offered 🎉</option></select></div>
-              <div style="margin-bottom:12px;"><label style="font-size:12px; font-weight:600; color:var(--text2); display:block; margin-bottom:4px;">Interview Logs Notes</label><textarea id="form-coll-notes" style="width:100%; height:80px; resize:none; border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px; font-family:var(--font); font-size:14px;"></textarea></div>
-              <button type="submit" class="demo-btn">Log entry Tracker</button>
-            </form>
-          </div>
-        </div>
-      </div>
+  <div id="page-scores" class="page">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="setScoreFilters('SimCAT')">SimCAT Analysis</button>
+      <button class="tab-btn" onclick="setScoreFilters('Benchmarking')">Benchmarking Logs</button>
+    </div>
+    <div class="stat-grid" style="margin-bottom: 24px;">
+      <div class="stat-card" style="border-top:3px solid var(--accent);"><div class="stat-label">Overall Accuracy</div><div class="stat-val" id="an-accuracy">0%</div></div>
+      <div class="stat-card" style="border-top:3px solid var(--green);"><div class="stat-label">Peak Percentile</div><div class="stat-val" id="an-peak-pct">0.00</div></div>
+      <div class="stat-card" style="border-top:3px solid var(--purple);"><div class="stat-label">Average Proficiency</div><div class="stat-val" id="an-efficiency">0%ile</div></div>
+    </div>
+    <div class="card">
+      <div class="chart-wrap"><canvas id="scoreChart"></canvas></div>
+      <div id="subject-bars-container" style="margin-top:20px;"></div>
+    </div>
+    <div class="card"><div class="score-list" id="score-list"></div></div>
+  </div>
 
-      <div id="page-schedule" class="page">
-        <div style="margin-bottom:16px; display:flex; gap:8px;">
-          <button class="schedule-filter-btn schedule-filter-active demo-btn" onclick="filterScheduleBySubject('all', this)" style="flex:1; background:var(--accent); padding:8px;" data-filter="all">All Sessions</button>
-          <button class="schedule-filter-btn demo-btn" onclick="filterScheduleBySubject('QA', this)" style="flex:1; background:var(--green); padding:8px;" data-filter="QA">Quant (QA)</button>
-          <button class="schedule-filter-btn demo-btn" onclick="filterScheduleBySubject('VARC', this)" style="flex:1; background:var(--amber); padding:8px;" data-filter="VARC">VARC</button>
-          <button class="schedule-filter-btn demo-btn" onclick="filterScheduleBySubject('DILR', this)" style="flex:1; background:var(--purple); padding:8px;" data-filter="DILR">DILR</button>
-        </div>
-        <div class="card"><div class="schedule-list" id="schedule-list"></div></div>
+  <div id="page-records" class="page">
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Official Entrance Examination Records</div>
+        <select id="master-exam-selector" onchange="switchExamFormFields(this.value)" style="width:100%; padding:10px; margin-bottom:12px; font-family:var(--font); border:1px solid var(--border); border-radius:var(--radius-sm);">
+          <option value="CAT">Common Admission Test (CAT)</option>
+          <option value="NMAT">NMAT by GMAC</option>
+          <option value="XAT">Xavier Aptitude Test (XAT)</option>
+          <option value="SNAP">Symbiosis National Aptitude Test (SNAP)</option>
+        </select>
+        <div id="exam-lock-notice" style="padding:10px; border-radius:6px; font-size:11px; display:none; margin-bottom:12px;"></div>
+        <form id="master-score-form" onsubmit="processOfficialScoreFormSubmit(event)">
+          <div id="dynamic-fields-container" class="dynamic-fields-container"></div>
+          <button type="submit" id="master-score-submit-btn" class="demo-btn" style="margin-top:16px;">Save Verification Records</button>
+        </form>
       </div>
+      <div class="card">
+        <div class="card-title">College Application Status Tracker</div>
+        <form onsubmit="handleCallSubmission(event)">
+          <div style="margin-bottom:12px;"><label style="font-size:12px; font-weight:600; color:var(--text2); display:block; margin-bottom:4px;">Institute Name</label><input type="text" id="form-coll-name" placeholder="e.g. IIM Ahmedabad" required style="width:100%; padding:8px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font);"></div>
+          <div style="margin-bottom:12px;"><label style="font-size:12px; font-weight:600; color:var(--text2); display:block; margin-bottom:4px;">Current Stage</label><select id="form-coll-stage" required style="width:100%; padding:8px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:var(--font);"><option value="Applied">Form Filled / Applied</option><option value="Call Received">Shortlisted (Interview Call)</option><option value="Converted">Converted offered 🎉</option></select></div>
+          <div style="margin-bottom:12px;"><label style="font-size:12px; font-weight:600; color:var(--text2); display:block; margin-bottom:4px;">Interview Logs Notes</label><textarea id="form-coll-notes" style="width:100%; height:80px; resize:none; border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px; font-family:var(--font); font-size:14px;"></textarea></div>
+          <button type="submit" class="demo-btn">Log entry Tracker</button>
+        </form>
+      </div>
+    </div>
+  </div>
 
-      <div id="page-progress" class="page">
-        <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
-          <div class="stat-card"><div class="stat-label" style="color:var(--green)">Completed</div><div class="stat-val" id="prog-done">0</div></div>
-          <div class="stat-card"><div class="stat-label" style="color:var(--accent)">In Progress</div><div class="stat-val" id="prog-active">0</div></div>
-          <div class="stat-card"><div class="stat-label" style="color:var(--text3)">Upcoming</div><div class="stat-val" id="prog-pending">0</div></div>
-        </div>
-        <div class="card">
-          <div class="card-title">Syllabus Completion Tracks</div>
-          <div id="overall-prog-bars"></div>
-        </div>
-        <div id="flow-sections"></div>
-      </div>
+  <div id="page-schedule" class="page">
+    <div style="margin-bottom:16px; display:flex; gap:8px;">
+      <button class="schedule-filter-btn schedule-filter-active demo-btn" onclick="filterScheduleBySubject('all', this)" style="flex:1; background:var(--accent); padding:8px;" data-filter="all">All Sessions</button>
+      <button class="schedule-filter-btn demo-btn" onclick="filterScheduleBySubject('QA', this)" style="flex:1; background:var(--green); padding:8px;" data-filter="QA">Quant (QA)</button>
+      <button class="schedule-filter-btn demo-btn" onclick="filterScheduleBySubject('VARC', this)" style="flex:1; background:var(--amber); padding:8px;" data-filter="VARC">VARC</button>
+      <button class="schedule-filter-btn demo-btn" onclick="filterScheduleBySubject('DILR', this)" style="flex:1; background:var(--purple); padding:8px;" data-filter="DILR">DILR</button>
+    </div>
+    <div class="card"><div class="schedule-list" id="schedule-list"></div></div>
+  </div>
 
-      <div id="page-material" class="page">
-        <div class="tabs">
-          <button class="tab-btn active" onclick="filterMaterial('all', this)">All Handouts</button>
-          <button class="tab-btn" onclick="filterMaterial('QA', this)">Quant (QA)</button>
-          <button class="tab-btn" onclick="filterMaterial('VARC', this)">VARC</button>
-          <button class="tab-btn" onclick="filterMaterial('DILR', this)">DILR Vault</button>
-        </div>
-        <div id="material-grid-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;"></div>
-      </div>
-    </main>
+  <div id="page-progress" class="page">
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-card"><div class="stat-label" style="color:var(--green)">Completed</div><div class="stat-val" id="prog-done">0</div></div>
+      <div class="stat-card"><div class="stat-label" style="color:var(--accent)">In Progress</div><div class="stat-val" id="prog-active">0</div></div>
+      <div class="stat-card"><div class="stat-label" style="color:var(--text3)">Upcoming</div><div class="stat-val" id="prog-pending">0</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Syllabus Completion Tracks</div>
+      <div id="overall-prog-bars"></div>
+    </div>
+    <div id="flow-sections"></div>
+  </div>
+
+  <div id="page-material" class="page">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="filterMaterial('all', this)">All Handouts</button>
+      <button class="tab-btn" onclick="filterMaterial('QA', this)">Quant (QA)</button>
+      <button class="tab-btn" onclick="filterMaterial('VARC', this)">VARC</button>
+      <button class="tab-btn" onclick="filterMaterial('DILR', this)">DILR Vault</button>
+    </div>
+    <div id="material-grid-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;"></div>
+  </div>
+</main>
   </div>
 </div>
 
@@ -592,28 +596,33 @@ function renderLearningFlow() {
 
 function renderAnnouncementsFeed() {
   const badge = document.getElementById('notif-badge');
-  const boardBox = document.getElementById('announcement-board-container');
-  const boardFeed = document.getElementById('announcements-feed');
   
   if (!myAnnouncements || !myAnnouncements.length) {
     if (badge) badge.style.display = 'none';
-    if (boardBox) boardBox.style.display = 'none';
+    const mainFeed = document.getElementById('announcements-feed-main');
+    if (mainFeed) mainFeed.innerHTML = '<div style="text-align:center; color:var(--text3); padding:40px;">No announcements yet.</div>';
     return;
   }
 
   if (badge) badge.style.display = 'block';
-  if (boardBox && boardFeed) {
-    boardBox.style.display = 'block';
-    boardFeed.innerHTML = myAnnouncements.map(r => {
-      const actionLink = r['Attached Link'] && r['Attached Link'].trim() ? r['Attached Link'].trim() : '';
-      return `
-        <div style="background:var(--surface2); border-left:4px solid var(--accent); padding:16px; border-radius:var(--radius-sm); margin-bottom:12px;">
-          <div style="font-weight:600; color:var(--text); font-size:14px; margin-bottom:4px;">${r.Title}</div>
-          <div style="font-size:13px; color:var(--text2); margin-bottom:10px;">${r.Description}</div>
-          ${actionLink ? `<button style="padding:8px 14px; background:var(--accent); color:white; border:none; border-radius:var(--radius-sm); font-size:12px; font-weight:600; cursor:pointer; font-family:var(--font);" onclick="openNotificationLink('${actionLink.replace(/'/g, "\\'")}'); return false;">Open Link →</button>` : ''}
+
+  // Render in main announcements page
+  const mainFeed = document.getElementById('announcements-feed-main');
+  if (mainFeed) {
+    mainFeed.innerHTML = myAnnouncements.map(r => `
+      <div style="background:var(--surface2); border-left:4px solid var(--accent); padding:16px; border-radius:var(--radius-sm);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
+          <div style="font-weight:600; color:var(--text); font-size:14px;">${r.Title}</div>
+          <div style="font-size:11px; color:var(--text3); white-space:nowrap;">${r.Timestamp || ''}</div>
         </div>
-      `;
-    }).join('');
+        <div style="font-size:13px; color:var(--text2); line-height:1.5; margin-bottom:10px;">${r.Description}</div>
+        ${r['Attached Link'] && r['Attached Link'].trim() ? `
+          <a href="${r['Attached Link']}" target="_blank" rel="noopener noreferrer" style="display:inline-block; padding:8px 14px; background:var(--accent); color:white; border-radius:var(--radius-sm); font-size:12px; font-weight:600; text-decoration:none;">
+            Open Link →
+          </a>
+        ` : ''}
+      </div>
+    `).join('');
   }
 }
 
@@ -623,28 +632,25 @@ function populateNotificationDropdown() {
     if(feed) feed.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text3); font-size: 13px;">No notifications.</div>';
     return;
   }
+
   feed.innerHTML = myAnnouncements.map((r) => {
-    const actionLink = r['Attached Link'] && r['Attached Link'].trim() ? r['Attached Link'].trim() : '';
     return `
-      <div style="padding: 14px 16px; border-bottom: 1px solid var(--border);">
+      <div style="padding: 14px 16px; border-bottom: 1px solid var(--border); cursor:pointer;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
         <div style="font-size: 11px; color: var(--text3); margin-bottom: 4px;">${r.Timestamp || 'Recent'}</div>
         <div style="font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 6px;">${r.Title}</div>
         <div style="font-size: 12px; color: var(--text2); margin-bottom: 8px;">${r.Description}</div>
-        ${actionLink ? `
-          <button style="padding:6px 12px; background:var(--accent); color:white; border:none; border-radius:var(--radius-sm); font-size:11px; font-weight:600; cursor:pointer; font-family:var(--font);" onclick="openNotificationLink('${actionLink.replace(/'/g, "\\'")}'); return false;">
-            Open Link →
-          </button>
-        ` : ''}
+        <button style="padding:6px 12px; background:var(--accent); color:white; border:none; border-radius:var(--radius-sm); font-size:11px; font-weight:600; cursor:pointer; font-family:var(--font);" onclick="goToAnnouncements(); return false;">
+          View All →
+        </button>
       </div>
     `;
   }).join('');
 }
 
-function openNotificationLink(url) {
-  console.log("Opening:", url);
-  if (url && url.trim()) {
-    window.open(url, '_blank');
-  }
+function goToAnnouncements() {
+  const btn = document.querySelector('button[onclick="showPage(\'announcements\',this)"]');
+  showPage('announcements', btn);
+  document.getElementById('notif-dropdown').style.display = 'none';
 }
 function renderStudyMaterialsVault(filter) {
   const container = document.getElementById('material-grid-container');
@@ -660,11 +666,11 @@ function renderStudyMaterialsVault(filter) {
 
 function renderAll() {
   renderProfile();
+  renderAnnouncementsFeed();
   renderAttendanceGrid();
   renderScores();
   renderSchedule();
   renderLearningFlow();
-  renderAnnouncementsFeed();
   renderStudyMaterialsVault('all');
 }
 
