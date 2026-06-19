@@ -8,6 +8,15 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
+  #notif-dropdown a {
+  cursor: pointer;
+  position: relative;
+  z-index: 1001;
+}
+
+#notif-dropdown a:hover {
+  opacity: 0.8;
+}
 /* ─── RESET & BASE ─────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -421,7 +430,15 @@ async function handleGoogleCredential(response) {
       </div>
 
       <!-- SCHEDULE -->
-      <div id="page-schedule" class="page"><div class="card"><div class="schedule-list" id="schedule-list"></div></div></div>
+<div id="page-schedule" class="page">
+  <div style="margin-bottom:16px; display:flex; gap:8px;">
+    <button class="schedule-filter-btn schedule-filter-active demo-btn" onclick="filterScheduleBySubject('all', this)" style="flex:1; background:var(--accent); padding:8px;" data-filter="all">All Sessions</button>
+    <button class="schedule-filter-btn demo-btn" onclick="filterScheduleBySubject('QA', this)" style="flex:1; background:var(--green); padding:8px;" data-filter="QA">Quant (QA)</button>
+    <button class="schedule-filter-btn demo-btn" onclick="filterScheduleBySubject('VARC', this)" style="flex:1; background:var(--amber); padding:8px;" data-filter="VARC">VARC</button>
+    <button class="schedule-filter-btn demo-btn" onclick="filterScheduleBySubject('DILR', this)" style="flex:1; background:var(--purple); padding:8px;" data-filter="DILR">DILR</button>
+  </div>
+  <div class="card"><div class="schedule-list" id="schedule-list"></div></div>
+</div>
 
       <!-- LEARNING PATH PROGRESS MATRIX -->
       <div id="page-progress" class="page">
@@ -761,14 +778,54 @@ function renderScores() {
 }
 
 function renderSchedule() {
-  const list = document.getElementById('schedule-list'); if(!list) return;
-  if(!allSchedule.length) { list.innerHTML = '<div class="empty"><p>No upcoming live session tracks found.</p></div>'; return; }
-  list.innerHTML = allSchedule.map(r=>`
-    <div class="sched-item">
-      <div class="sched-time-col"><div class="sched-time">${r.Time}</div><div class="sched-date">${r.Date}</div></div>
-      <div class="sched-dot-col"><div class="sched-dot" style="background:var(--accent)"></div><div class="sched-line"></div></div>
-      <div class="sched-info"><div class="sched-topic" style="font-weight:600;">${r.Topic} [${r.Subject}]</div><div class="sched-meta">${r['Room / Mode']} &middot; ${r.Faculty}</div></div>
-    </div>`).join('');
+  const list = document.getElementById('schedule-list');
+  if(!list) return;
+
+  // Filter schedule by subject
+  let filtered = [...allSchedule];
+  const currentFilter = document.querySelector('.schedule-filter-active')?.dataset.filter || 'all';
+  if(currentFilter !== 'all') {
+    filtered = filtered.filter(r => r['Subject'] === currentFilter);
+  }
+
+  if(!filtered.length) {
+    list.innerHTML = '<div style="padding:24px; text-align:center; color:var(--text3);">No sessions scheduled for this category.</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(r => {
+    const hasJoinLink = r['Join Link'] && r['Join Link'].trim();
+    const joinButton = hasJoinLink 
+      ? `<a href="${r['Join Link']}" target="_blank" class="demo-btn" style="width:auto; padding:6px 14px; font-size:11px; margin-top:8px; display:inline-block; text-decoration:none;">Join Live Session →</a>`
+      : '';
+
+    return `
+      <div class="sched-item">
+        <div class="sched-time-col">
+          <div class="sched-time">${r.Time}</div>
+          <div class="sched-date">${r.Date}</div>
+        </div>
+        <div class="sched-dot-col">
+          <div class="sched-dot" style="background:var(--accent)"></div>
+          <div class="sched-line"></div>
+        </div>
+        <div class="sched-info">
+          <div class="sched-topic" style="font-weight:600;">${r.Topic} [${r.Subject}]</div>
+          <div class="sched-meta">${r['Room / Mode']} &middot; ${r.Faculty}</div>
+          ${joinButton}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function filterScheduleBySubject(subject, btnElement) {
+  // Remove active class from all filter buttons
+  document.querySelectorAll('.schedule-filter-btn').forEach(btn => btn.classList.remove('schedule-filter-active'));
+  // Add active class to clicked button
+  btnElement.classList.add('schedule-filter-active');
+  btnElement.dataset.filter = subject;
+  // Re-render schedule
+  renderSchedule();
 }
 
 function renderLearningFlow() {
