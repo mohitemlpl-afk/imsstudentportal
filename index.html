@@ -244,18 +244,56 @@ function loginWithGoogle() {
 
 async function handleGoogleCredential(response) {
   try {
-    const base64Url = response.credential.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(c => {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    
-    const payload = JSON.parse(jsonPayload);
-    if (payload && payload.email) {
-      await querySupabaseStudent(payload.email.trim().toLowerCase());
+    if (!response || !response.credential) {
+      alert("❌ Authorization Error: No credential received from Google.");
+      return;
     }
-  } catch (e) {
-    alert("Authorization parsing fault. Please refresh.");
+
+    console.log("🔐 JWT Token received, parsing...");
+    
+    // Decode JWT properly
+    const parts = response.credential.split('.');
+    if (parts.length !== 3) {
+      alert("❌ Invalid JWT format received from Google.");
+      return;
+    }
+
+    // Decode the payload (second part)
+    let payload;
+    try {
+      // Add padding if necessary
+      let base64 = parts[1];
+      const padding = 4 - (base64.length % 4);
+      if (padding !== 4) base64 += '='.repeat(padding);
+      
+      // Replace URL-safe characters
+      base64 = base64.replace(/-/g, '+').replace(/_/g, '/');
+      
+      // Decode
+      const decoded = atob(base64);
+      payload = JSON.parse(decoded);
+    } catch (decodeErr) {
+      console.error("JWT Decode Error:", decodeErr);
+      alert("❌ Failed to decode Google token. Please refresh and try again.");
+      return;
+    }
+
+    console.log("✅ Payload decoded:", payload.email);
+
+    if (!payload || !payload.email) {
+      alert("❌ No email found in Google account. Please use a valid Google account.");
+      return;
+    }
+
+    // Query Supabase with the email
+    const email = payload.email.trim().toLowerCase();
+    console.log("🔍 Looking up student with email:", email);
+    
+    await querySupabaseStudent(email);
+
+  } catch (error) {
+    console.error("🔥 Authorization Error:", error);
+    alert(`❌ Authorization Error: ${error.message}\n\nPlease refresh the page and try again.`);
   }
 }
 </script>
@@ -543,27 +581,49 @@ function populateNotificationDropdown() {
       </div>
     `;
   }).join('');
-}
-async function querySupabaseStudent(email) {
+}async function querySupabaseStudent(email) {
   initSupabase();
   if (!supabaseClient) {
-    alert("Supabase integration error. Please reload layout."); return;
+    alert("❌ Database connection error. Please refresh the page.");
+    return;
   }
+
   try {
+    console.log("📡 Querying Supabase for email:", email);
+    
     const targetUrl = `${window.CONFIG.SUPABASE_URL}students?email=eq.${encodeURIComponent(email)}`;
-    const headers = { "apikey": window.CONFIG.SUPABASE_ANON_KEY, "Authorization": `Bearer ${window.CONFIG.SUPABASE_ANON_KEY}`, "Accept": "application/json" };
-    const response = await fetch(targetUrl, { method: "GET", headers: headers });
+    const headers = { 
+      "apikey": window.CONFIG.SUPABASE_ANON_KEY, 
+      "Authorization": `Bearer ${window.CONFIG.SUPABASE_ANON_KEY}`, 
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    };
+    
+    const response = await fetch(targetUrl, { 
+      method: "GET", 
+      headers: headers 
+    });
+
+    console.log("📬 Supabase Response Status:", response.status);
+
+    if (!response.ok) {
+      throw new Error(`Supabase Error: ${response.status} ${response.statusText}`);
+    }
+
     const profiles = await response.json();
+    console.log("📋 Student Records Found:", profiles.length);
 
     if (!profiles || profiles.length === 0) {
-      alert(`⚠️ Access Denied:\n\nThe email "${email}" is missing from your Supabase table indices.`);
+      alert(`⚠️ Access Denied:\n\nThe email "${email}" is not registered in the system.\n\nPlease contact your institute administrator.`);
       return;
     }
 
     const matchedProfile = profiles[0];
+    console.log("✅ Student matched:", matchedProfile.name);
+
     currentStudent = {
       id: matchedProfile.id || matchedProfile.student_id,
-      name: matchedProfile.name,
+      name: matchedProfile.name || "Student",
       email: matchedProfile.email,
       phone: matchedProfile.phone || "---",
       batch: matchedProfile.batch || "UNASSIGNED",
@@ -571,9 +631,12 @@ async function querySupabaseStudent(email) {
     };
 
     sessionStorage.setItem('sp_student', JSON.stringify(currentStudent));
+    console.log("✅ Session saved, launching portal...");
     launchWorkspaceShell();
+
   } catch (err) {
-    alert(`💥 Secure Connection Block: ${err.message}`);
+    console.error("💥 Supabase Query Error:", err);
+    alert(`❌ Database Error:\n\n${err.message}\n\nPlease refresh and try again.`);
   }
 }
 
