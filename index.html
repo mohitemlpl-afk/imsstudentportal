@@ -218,19 +218,6 @@ window.CONFIG = {
   SUPABASE_URL: "https://ofhcxvekfplhgzpxutce.supabase.co/rest/v1/",
   SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9maGN4dmVrZnBsaGd6cHh1dGNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDg5MDIsImV4cCI6MjA5NjgyNDkwMn0.0X57t9-4u3TO1tBn1wIkj0R-0RJfvDgolC5nRtQrUlE"
 };
-
-function loginWithGoogle() {
-  initSupabase();
-  if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
-    alert("System core handshakes initializing. Please click again.");
-    return;
-  }
-  google.accounts.id.initialize({
-    client_id: window.CONFIG.GOOGLE_CLIENT_ID,
-    callback: handleGoogleCredential
-  });
-  google.accounts.id.prompt();
-}
 // ═══ DECLARE ALL FUNCTIONS FIRST ═══
 
 let supabaseClient = null;
@@ -317,6 +304,19 @@ function launchWorkspaceShell() {
       renderAll();
     }
   }, 50);
+}
+
+function loginWithGoogle() {
+  initSupabase();
+  if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
+    alert("System core handshakes initializing. Please click again.");
+    return;
+  }
+  google.accounts.id.initialize({
+    client_id: window.CONFIG.GOOGLE_CLIENT_ID,
+    callback: handleGoogleCredential
+  });
+  google.accounts.id.prompt();
 }
 async function handleGoogleCredential(response) {
   try {
