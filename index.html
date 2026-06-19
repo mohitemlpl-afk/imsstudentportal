@@ -606,7 +606,7 @@ function renderAnnouncementsFeed() {
 
   if (badge) badge.style.display = 'block';
 
-  // Render in main announcements page (SAME AS STUDY MATERIAL)
+  // Render in main announcements page
   const mainFeed = document.getElementById('announcements-feed-main');
   if (mainFeed) {
     mainFeed.innerHTML = myAnnouncements.map(r => `
@@ -616,7 +616,11 @@ function renderAnnouncementsFeed() {
           <div style="font-size:11px; color:var(--text3); white-space:nowrap;">${r.Timestamp || ''}</div>
         </div>
         <div style="font-size:13px; color:var(--text2); line-height:1.5; margin-bottom:10px;">${r.Description}</div>
-        ${r['Attached Link'] && r['Attached Link'].trim() ? `<a href="${r['Attached Link']}" target="_blank" style="font-size:12px; color:var(--accent); font-weight:600;">Open Link →</a>` : ''}
+        ${r['Action Link'] && r['Action Link'].trim() ? `
+          <a href="${r['Action Link']}" target="_blank" style="display:inline-block; padding:8px 14px; background:var(--accent); color:white; border-radius:var(--radius-sm); font-size:12px; font-weight:600; text-decoration:none;">
+            Open Link →
+          </a>
+        ` : ''}
       </div>
     `).join('');
   }
@@ -624,12 +628,12 @@ function renderAnnouncementsFeed() {
 
 function populateNotificationDropdown() {
   const feed = document.getElementById('notif-dropdown-feed');
+  
   if (!feed || !myAnnouncements || myAnnouncements.length === 0) {
     if(feed) feed.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text3); font-size: 13px;">No notifications.</div>';
     return;
   }
 
-  // SAME FORMAT AS STUDY MATERIAL - SIMPLE <a> TAGS
   feed.innerHTML = myAnnouncements.map((r) => {
     return `
       <div style="padding: 14px 16px; border-bottom: 1px solid var(--border);">
@@ -637,14 +641,13 @@ function populateNotificationDropdown() {
         <div style="font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 6px;">${r.Title}</div>
         <div style="font-size: 12px; color: var(--text2); margin-bottom: 8px;">${r.Description}</div>
         <div style="display:flex; gap:8px;">
-          ${r['Attached Link'] && r['Attached Link'].trim() ? `<a href="${r['Attached Link']}" target="_blank" style="font-size:11px; color:var(--accent); font-weight:600;">Open Link →</a>` : ''}
-          <a href="javascript:void(0);" onclick="showPage('announcements', document.querySelector('.nav-item:nth-child(2)')); document.getElementById('notif-dropdown').style.display='none'; return false;" style="font-size:11px; color:var(--accent); font-weight:600;">View All →</a>
+          ${r['Action Link'] && r['Action Link'].trim() ? `<a href="${r['Action Link']}" target="_blank" style="font-size:11px; color:var(--accent); font-weight:600; text-decoration:underline;">Open Link →</a>` : ''}
+          <a href="javascript:void(0);" onclick="showPage('announcements', document.querySelector('button[onclick=\"showPage(\\'announcements\\',this)\"]')); document.getElementById('notif-dropdown').style.display='none'; return false;" style="font-size:11px; color:var(--accent); font-weight:600; text-decoration:underline;">View All →</a>
         </div>
       </div>
     `;
   }).join('');
-}
-function goToAnnouncements() {
+}function goToAnnouncements() {
   const btn = document.querySelector('button[onclick="showPage(\'announcements\',this)"]');
   showPage('announcements', btn);
   document.getElementById('notif-dropdown').style.display = 'none';
