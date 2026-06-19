@@ -219,16 +219,6 @@ window.CONFIG = {
   SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9maGN4dmVrZnBsaGd6cHh1dGNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDg5MDIsImV4cCI6MjA5NjgyNDkwMn0.0X57t9-4u3TO1tBn1wIkj0R-0RJfvDgolC5nRtQrUlE"
 };
 
-let supabaseClient = null;
-let currentStudent = null;
-
-function initSupabase() {
-  if (window.supabase && !supabaseClient) {
-    supabaseClient = window.supabase.createClient(window.CONFIG.SUPABASE_URL, window.CONFIG.SUPABASE_ANON_KEY);
-    console.log("🔒 Supabase Connected Client Instance Mapped Securely.");
-  }
-}
-
 function loginWithGoogle() {
   initSupabase();
   if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
@@ -241,7 +231,93 @@ function loginWithGoogle() {
   });
   google.accounts.id.prompt();
 }
+// ═══ DECLARE ALL FUNCTIONS FIRST ═══
 
+let supabaseClient = null;
+let currentStudent = null;
+
+function initSupabase() {
+  if (window.supabase && !supabaseClient) {
+    supabaseClient = window.supabase.createClient(window.CONFIG.SUPABASE_URL, window.CONFIG.SUPABASE_ANON_KEY);
+    console.log("🔒 Supabase Connected Successfully.");
+  }
+}
+
+async function querySupabaseStudent(email) {
+  initSupabase();
+  if (!supabaseClient) {
+    alert("❌ Database connection error. Please refresh the page.");
+    return;
+  }
+
+  try {
+    console.log("📡 Querying Supabase for email:", email);
+    
+    const targetUrl = `${window.CONFIG.SUPABASE_URL}students?email=eq.${encodeURIComponent(email)}`;
+    const headers = { 
+      "apikey": window.CONFIG.SUPABASE_ANON_KEY, 
+      "Authorization": `Bearer ${window.CONFIG.SUPABASE_ANON_KEY}`, 
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    };
+    
+    const response = await fetch(targetUrl, { 
+      method: "GET", 
+      headers: headers 
+    });
+
+    console.log("📬 Supabase Response Status:", response.status);
+
+    if (!response.ok) {
+      throw new Error(`Supabase Error: ${response.status} ${response.statusText}`);
+    }
+
+    const profiles = await response.json();
+    console.log("📋 Student Records Found:", profiles.length);
+
+    if (!profiles || profiles.length === 0) {
+      alert(`⚠️ Access Denied:\n\nThe email "${email}" is not registered in the system.\n\nPlease contact your institute administrator.`);
+      return;
+    }
+
+    const matchedProfile = profiles[0];
+    console.log("✅ Student matched:", matchedProfile.name);
+
+    currentStudent = {
+      id: matchedProfile.id || matchedProfile.student_id,
+      name: matchedProfile.name || "Student",
+      email: matchedProfile.email,
+      phone: matchedProfile.phone || "---",
+      batch: matchedProfile.batch || "UNASSIGNED",
+      target_exam: matchedProfile.target_exam || "CAT"
+    };
+
+    sessionStorage.setItem('sp_student', JSON.stringify(currentStudent));
+    console.log("✅ Session saved, launching portal...");
+    launchWorkspaceShell();
+
+  } catch (err) {
+    console.error("💥 Supabase Query Error:", err);
+    alert(`❌ Database Error:\n\n${err.message}\n\nPlease refresh and try again.`);
+  }
+}
+
+function launchWorkspaceShell() {
+  if (!currentStudent) return;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+  renderProfile();
+  
+  setTimeout(async () => {
+    try {
+      await fetchAllData();
+      renderAll();
+    } catch(e) {
+      console.error("Data fetch error:", e);
+      renderAll();
+    }
+  }, 50);
+}
 async function handleGoogleCredential(response) {
   try {
     if (!response || !response.credential) {
