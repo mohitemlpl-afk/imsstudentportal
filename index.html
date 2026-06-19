@@ -8,12 +8,11 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  #notif-dropdown a {
+#notif-dropdown a {
   cursor: pointer;
   position: relative;
   z-index: 1001;
 }
-
 #notif-dropdown a:hover {
   opacity: 0.8;
 }
@@ -45,77 +44,33 @@
   --font-display:'DM Serif Display',serif;
 }
 html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
-
-/* ─── SCROLLBAR ────────────────────────────────────────── */
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
-
-/* ─── LOGIN SCREEN ─────────────────────────────────────── */
-#login-screen{
-  min-height:100vh;display:flex;align-items:center;justify-content:center;
-  background:var(--bg);padding:24px;
-}
-.login-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:20px;
-  padding:48px 44px;max-width:440px;width:100%;text-align:center;
-  box-shadow:var(--shadow);
-}
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:24px;}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:48px 44px;max-width:440px;width:100%;text-align:center;box-shadow:var(--shadow);}
 .login-title{font-family:var(--font-display);font-size:26px;color:var(--text);margin-bottom:6px}
 .login-sub{font-size:14px;color:var(--text2);margin-bottom:32px;line-height:1.5}
-.google-btn{
-  display:flex;align-items:center;justify-content:center;gap:12px;
-  width:100%;padding:13px 20px;border-radius:var(--radius-sm);
-  border:1.5px solid var(--border);background:var(--surface);
-  font-family:var(--font);font-size:15px;font-weight:500;color:var(--text);
-  cursor:pointer;transition:all .15s;
-}
+.google-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:13px 20px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);font-family:var(--font);font-size:15px;font-weight:500;color:var(--text);cursor:pointer;transition:all .15s;}
 .google-btn:hover{background:var(--surface2);border-color:#ccc}
 .google-btn svg{width:20px;height:20px;flex-shrink:0}
-
-/* ─── APP WORKSPACE SHELL ────────────────────────────── */
 #app{display:none;min-height:100vh;flex-direction:column}
 #app.visible{display:flex}
-.topnav{
-  background:var(--surface);border-bottom:1px solid var(--border);
-  padding:0 24px;display:flex;align-items:center;
-  height:60px;position:sticky;top:0;z-index:100;
-}
+.topnav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;height:60px;position:sticky;top:0;z-index:100;}
 .topnav-logo{font-family:var(--font-display);font-size:18px;color:var(--text);margin-right:8px}
 .topnav-spacer{flex:1}
-.topnav-avatar{
-  width:34px;height:34px;border-radius:50%;background:var(--accent);
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:600;color:#fff;flex-shrink:0;
-}
+.topnav-avatar{width:34px;height:34px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;flex-shrink:0;}
 .topnav-name{font-size:14px;font-weight:500;color:var(--text)}
 .topnav-batch{font-size:12px;color:var(--text3)}
-.logout-btn{
-  padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);
-  background:none;font-family:var(--font);font-size:13px;color:var(--text2);
-  cursor:pointer;transition:all .15s;
-}
+.logout-btn{padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:none;font-family:var(--font);font-size:13px;color:var(--text2);cursor:pointer;transition:all .15s;}
 .logout-btn:hover{background:var(--surface2)}
-
 .app-body{display:flex;flex:1;overflow:hidden}
-.sidebar{
-  width:220px;flex-shrink:0;background:var(--surface);
-  border-right:1px solid var(--border);padding:20px 12px;
-  display:flex;flex-direction:column;gap:4px;overflow-y:auto;
-}
-.sidebar-label{font-size:11px;font-weight:600;color:var(--text3);
-  text-transform:uppercase;letter-spacing:.6px;padding:8px 10px 4px;margin-top:8px}
-.nav-item{
-  display:flex;align-items:center;gap:10px;padding:9px 12px;
-  border-radius:var(--radius-sm);border:none;background:none;
-  font-family:var(--font);font-size:14px;font-weight:400;color:var(--text2);
-  cursor:pointer;transition:all .15s;width:100%;text-align:left;
-}
+.sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);padding:20px 12px;display:flex;flex-direction:column;gap:4px;overflow-y:auto;}
+.sidebar-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding:8px 10px 4px;margin-top:8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);border:none;background:none;font-family:var(--font);font-size:14px;font-weight:400;color:var(--text2);cursor:pointer;transition:all .15s;width:100%;text-align:left;}
 .nav-item:hover{background:var(--surface2);color:var(--text)}
 .nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:500}
 .main-content{flex:1;overflow-y:auto;padding:28px 32px}
-
-/* ─── COMPONENT DISPLAY LAYOUTS ───────────────────────── */
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
 .stat-label{font-size:12px;color:var(--text3);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.4px}
@@ -136,8 +91,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .info-row:nth-child(even){padding-left:24px}
 .info-label{font-size:12px;color:var(--text3);margin-bottom:2px;font-weight:500}
 .info-val{font-size:14px;color:var(--text);font-weight:500}
-
-/* ─── ATTENDANCE MODULE ───────────────────────────────── */
 .att-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
 .att-stat{background:var(--surface2);border-radius:var(--radius-sm);padding:14px;text-align:center}
 .att-stat-val{font-size:24px;font-weight:600;color:var(--text);line-height:1}
@@ -155,8 +108,6 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .att-status{font-size:12px;padding:3px 10px;border-radius:20px;font-weight:500;flex-shrink:0}
 .status-present{background:var(--green-light);color:var(--green)}
 .status-absent{background:var(--red-light);color:var(--red)}
-
-/* ─── CHART & PERFORMANCE ELEMS ───────────────────────── */
 .chart-wrap{position:relative;height:220px;margin-bottom:8px}
 .score-list{display:flex;flex-direction:column;gap:0}
 .score-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
@@ -196,69 +147,15 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .tab-btn{flex:1;padding:8px;border-radius:6px;border:none;background:none;font-family:var(--font);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer}
 .tab-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,0.08)}
 .demo-btn{width:100%;padding:11px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:#fff;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer}
-
-/* ─── FORM SPECIFIC RULES ─── */
 .dynamic-fields-container > div { margin-bottom: 12px; }
 .dynamic-fields-container label { font-size: 12px; font-weight: 600; color: var(--text2); display: block; margin-bottom: 4px; }
 .dynamic-fields-container input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font); font-size: 14px; color: var(--text); background: var(--surface); }
 .dynamic-fields-container input:disabled { background: var(--surface2); color: var(--text3); cursor: not-allowed; }
-
 @media(max-width:768px){.sidebar{display:none}.main-content{padding:20px 16px}.two-col{grid-template-columns:1fr}}
 </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-
-<script>
-window.CONFIG = {
-  GOOGLE_CLIENT_ID: '546265155462-daji3rvlhjehu8eipb9pkl07efk1jt6e.apps.googleusercontent.com',
-  SHEETS_API_KEY: 'AIzaSyBy55WhovpXDWRa5O3hiuWsHbvTUtiVpI0',
-  SPREADSHEET_ID: '1s-uywnbanv9mBZO34mNuwZzllemnnHfMkuVPFAPvQn0',
-  CONSOLIDATED_WEBAPP_URL: 'https://script.google.com/macros/s/AKfycbwU7ZVPoNKcmnM-y3uh2c3ViNe9fYl5UODVeYPF1rJ5T1qCHxizzk-O9HHDBoq4AuFh/exec',
-  SUPABASE_URL: "https://ofhcxvekfplhgzpxutce.supabase.co/rest/v1/",
-  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9maGN4dmVrZnBsaGd6cHh1dGNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDg5MDIsImV4cCI6MjA5NjgyNDkwMn0.0X57t9-4u3TO1tBn1wIkj0R-0RJfvDgolC5nRtQrUlE"
-};
-
-let supabaseClient = null;
-let currentStudent = null;
-
-function initSupabase() {
-  if (window.supabase && !supabaseClient) {
-    supabaseClient = window.supabase.createClient(window.CONFIG.SUPABASE_URL, window.CONFIG.SUPABASE_ANON_KEY);
-    console.log("🔒 Supabase Connected Client Instance Mapped Securely.");
-  }
-}
-
-function loginWithGoogle() {
-  initSupabase();
-  if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
-    alert("System core handshakes initializing. Please click again.");
-    return;
-  }
-  google.accounts.id.initialize({
-    client_id: window.CONFIG.GOOGLE_CLIENT_ID,
-    callback: handleGoogleCredential
-  });
-  google.accounts.id.prompt();
-}
-
-async function handleGoogleCredential(response) {
-  try {
-    const base64Url = response.credential.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(c => {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    
-    const payload = JSON.parse(jsonPayload);
-    if (payload && payload.email) {
-      await querySupabaseStudent(payload.email.trim().toLowerCase());
-    }
-  } catch (e) {
-    alert("Authorization parsing fault. Please refresh.");
-  }
-}
-</script>
 
 <div id="login-screen">
   <div class="login-card">
@@ -267,33 +164,27 @@ async function handleGoogleCredential(response) {
     </div>
     <h1 class="login-title">IMS Student Portal</h1>
     <p class="login-sub">Sign in using your registered institutional email</p>
-    <button class="google-btn" onclick="window.loginWithGoogle(); return false;">Continue with Google</button>
+    <button class="google-btn" onclick="loginWithGoogle(); return false;">Continue with Google</button>
   </div>
 </div>
 
 <div id="app">
-  <!-- ─── HEADER BAR CONTAINER LAYOUT WRAPPER ─── -->
   <nav class="topnav">
     <div class="topnav-logo">
       <img src="https://imsgujarat.com/wp-content/uploads/elementor/thumbs/high-low-ims-logo-q88bznzqyw17qyylsbpjt2obvw4pcwyu13wepnvt34.png" style="height:36px; display:block;">
     </div>
-    
     <div class="topnav-spacer"></div>
-
     <div style="display:flex; align-items:center; gap:20px;">
-      <!-- FLOATING BELL ICON SYSTEM DROPDOWN PANEL -->
       <div style="position: relative; display: flex; align-items: center;">
-        <button onclick="toggleAnnouncementsDropdown(event)" style="background: none; border: none; cursor: pointer; position: relative; padding: 6px; display: flex; align-items: center; color: var(--text2);" id="notification-bell-btn">
+        <button id="notification-bell-btn" style="background: none; border: none; cursor: pointer; position: relative; padding: 6px; display: flex; align-items: center; color: var(--text2); z-index: 10;" onclick="toggleNotificationDropdown(event)">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
           <span id="notif-badge" style="display: none; position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background: var(--red); border-radius: 50%;"></span>
         </button>
-        
-        <div id="notif-dropdown" style="display: none; position: absolute; top: 38px; right: 0; width: 320px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); z-index: 1000; max-height: 400px; overflow-y: auto;">
-          <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 14px; color: var(--text);">Institutional Updates</div>
+        <div id="notif-dropdown" style="display: none; position: absolute; top: 45px; right: -50px; width: 360px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 4px 24px rgba(0,0,0,0.12); z-index: 2000; max-height: 420px; overflow-y: auto;">
+          <div style="padding: 14px 16px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 14px; color: var(--text); position: sticky; top: 0; background: var(--surface);">📢 Updates & Notifications</div>
           <div id="notif-dropdown-feed" style="padding: 8px 0;"></div>
         </div>
       </div>
-
       <div style="display:flex; align-items:center; gap:10px;">
         <div class="topnav-avatar" id="nav-avatar">ST</div>
         <div style="display: flex; flex-direction: column; justify-content: center;">
@@ -301,14 +192,13 @@ async function handleGoogleCredential(response) {
           <div class="topnav-batch" id="nav-batch" style="line-height:1.2; margin-top:2px;">---</div>
         </div>
       </div>
-
       <button class="logout-btn" onclick="logout()">Sign out</button>
     </div>
   </nav>
 
   <div class="app-body">
     <aside class="sidebar">
-      <div class="sidebar-label">Dashboard Nav</div>
+      <div class="sidebar-label">Dashboard</div>
       <button class="nav-item active" onclick="showPage('profile',this)">My Profile</button>
       <button class="nav-item" onclick="showPage('attendance',this)">Attendance</button>
       <button class="nav-item" onclick="showPage('scores',this)">Mock Scores</button>
@@ -319,13 +209,12 @@ async function handleGoogleCredential(response) {
     </aside>
 
     <main class="main-content">
-      <!-- DASHBOARD PROFILE OVERVIEW -->
       <div id="page-profile" class="page active">
         <div class="profile-hero">
           <div class="profile-avatar" id="profile-avatar">ST</div>
           <div>
             <div class="profile-name" id="profile-name">---</div>
-            <div class="profile-meta" id="profile-meta">Compiling row mapping matrices...</div>
+            <div class="profile-meta" id="profile-meta">Loading...</div>
             <div class="profile-badges"><span class="badge badge-green">Active Student</span><span class="badge badge-blue" id="profile-exam-badge">CAT</span></div>
           </div>
           <div style="background:#fff; padding:6px; border-radius:6px; margin-left:auto; border:1px solid var(--border); text-align:center;">
@@ -333,21 +222,17 @@ async function handleGoogleCredential(response) {
             <div id="profile-qr-subtext" style="font-size:11px; font-weight:600; font-family:monospace; margin-top:4px;">ID: ----</div>
           </div>
         </div>
-
-        <!-- RE-INITIALIZED ANNOUNCEMENTS BOARD ARCHITECTURE -->
         <div id="announcement-board-container" style="display: none; margin-bottom: 24px;">
           <div class="card" style="border-left:4px solid var(--accent); padding:20px;">
-            <div class="card-title">📢 Important Institutional Updates & Deadlines</div>
+            <div class="card-title">📢 Important Updates</div>
             <div id="announcements-feed" style="display:flex; flex-direction:column; gap:12px; margin-top:12px;"></div>
           </div>
         </div>
-
         <div class="stat-grid">
           <div class="stat-card"><div class="stat-label">Attendance</div><div class="stat-val" id="stat-att">0%</div></div>
           <div class="stat-card"><div class="stat-label">Mock Avg Score</div><div class="stat-val" id="stat-score">0</div></div>
           <div class="stat-card"><div class="stat-label">Topics Done</div><div class="stat-val" id="stat-topics">0/0</div></div>
         </div>
-
         <div class="card">
           <div class="card-title">Personal Details</div>
           <div class="info-grid">
@@ -359,8 +244,6 @@ async function handleGoogleCredential(response) {
         </div>
       </div>
 
-      <!-- ATTENDANCE -->
-      <!-- ATTENDANCE PANEL -->
       <div id="page-attendance" class="page">
         <div class="att-stats">
           <div class="att-stat"><div class="att-stat-val" id="att-present-count" style="color:var(--green)">0</div><div class="att-stat-lbl">Present</div></div>
@@ -368,7 +251,6 @@ async function handleGoogleCredential(response) {
           <div class="att-stat"><div class="att-stat-val" id="att-pct" style="color:var(--accent)">0%</div><div class="att-stat-lbl">Percentage</div></div>
         </div>
         <div class="card">
-          <!-- 🟢 Dynamic Action Click Events Bounded Below -->
           <div class="month-nav">
             <button type="button" onclick="changeCalendarMonth(-1)">&larr;</button>
             <span id="month-label">---</span>
@@ -382,11 +264,10 @@ async function handleGoogleCredential(response) {
         <div class="card"><div class="att-list" id="att-list"></div></div>
       </div>
 
-      <!-- ANALYTICS MOCK SCORES -->
       <div id="page-scores" class="page">
         <div class="tabs">
-          <button class="tab-btn active" onclick="setScoreFilters('SimCAT')">SimCAT Analysis Dashboard</button>
-          <button class="tab-btn" onclick="setScoreFilters('Benchmarking')">Benchmarking Diagnostic Logs</button>
+          <button class="tab-btn active" onclick="setScoreFilters('SimCAT')">SimCAT Analysis</button>
+          <button class="tab-btn" onclick="setScoreFilters('Benchmarking')">Benchmarking Logs</button>
         </div>
         <div class="stat-grid" style="margin-bottom: 24px;">
           <div class="stat-card" style="border-top:3px solid var(--accent);"><div class="stat-label">Overall Accuracy</div><div class="stat-val" id="an-accuracy">0%</div></div>
@@ -400,7 +281,6 @@ async function handleGoogleCredential(response) {
         <div class="card"><div class="score-list" id="score-list"></div></div>
       </div>
 
-      <!-- MY RECORDS ENTRY SHEETS -->
       <div id="page-records" class="page">
         <div class="two-col">
           <div class="card">
@@ -429,18 +309,16 @@ async function handleGoogleCredential(response) {
         </div>
       </div>
 
-      <!-- SCHEDULE -->
-<div id="page-schedule" class="page">
-  <div style="margin-bottom:16px; display:flex; gap:8px;">
-    <button class="schedule-filter-btn schedule-filter-active demo-btn" onclick="filterScheduleBySubject('all', this)" style="flex:1; background:var(--accent); padding:8px;" data-filter="all">All Sessions</button>
-    <button class="schedule-filter-btn demo-btn" onclick="filterScheduleBySubject('QA', this)" style="flex:1; background:var(--green); padding:8px;" data-filter="QA">Quant (QA)</button>
-    <button class="schedule-filter-btn demo-btn" onclick="filterScheduleBySubject('VARC', this)" style="flex:1; background:var(--amber); padding:8px;" data-filter="VARC">VARC</button>
-    <button class="schedule-filter-btn demo-btn" onclick="filterScheduleBySubject('DILR', this)" style="flex:1; background:var(--purple); padding:8px;" data-filter="DILR">DILR</button>
-  </div>
-  <div class="card"><div class="schedule-list" id="schedule-list"></div></div>
-</div>
+      <div id="page-schedule" class="page">
+        <div style="margin-bottom:16px; display:flex; gap:8px;">
+          <button class="schedule-filter-btn schedule-filter-active demo-btn" onclick="filterScheduleBySubject('all', this)" style="flex:1; background:var(--accent); padding:8px;" data-filter="all">All Sessions</button>
+          <button class="schedule-filter-btn demo-btn" onclick="filterScheduleBySubject('QA', this)" style="flex:1; background:var(--green); padding:8px;" data-filter="QA">Quant (QA)</button>
+          <button class="schedule-filter-btn demo-btn" onclick="filterScheduleBySubject('VARC', this)" style="flex:1; background:var(--amber); padding:8px;" data-filter="VARC">VARC</button>
+          <button class="schedule-filter-btn demo-btn" onclick="filterScheduleBySubject('DILR', this)" style="flex:1; background:var(--purple); padding:8px;" data-filter="DILR">DILR</button>
+        </div>
+        <div class="card"><div class="schedule-list" id="schedule-list"></div></div>
+      </div>
 
-      <!-- LEARNING PATH PROGRESS MATRIX -->
       <div id="page-progress" class="page">
         <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
           <div class="stat-card"><div class="stat-label" style="color:var(--green)">Completed</div><div class="stat-val" id="prog-done">0</div></div>
@@ -454,7 +332,6 @@ async function handleGoogleCredential(response) {
         <div id="flow-sections"></div>
       </div>
 
-      <!-- STUDY MATERIAL CORES VAULT -->
       <div id="page-material" class="page">
         <div class="tabs">
           <button class="tab-btn active" onclick="filterMaterial('all', this)">All Handouts</button>
@@ -468,11 +345,23 @@ async function handleGoogleCredential(response) {
   </div>
 </div>
 
-<!-- ─── EXECUTION INFRASTRUCTURE ARCHITECTURE REGISTRY ─── -->
 <script>
+// ═════════════════════════════════════════════════════════════
+// 1. CONFIG & GLOBAL STATE
+// ═════════════════════════════════════════════════════════════
+window.CONFIG = {
+  GOOGLE_CLIENT_ID: '546265155462-daji3rvlhjehu8eipb9pkl07efk1jt6e.apps.googleusercontent.com',
+  SHEETS_API_KEY: 'AIzaSyBy55WhovpXDWRa5O3hiuWsHbvTUtiVpI0',
+  SPREADSHEET_ID: '1s-uywnbanv9mBZO34mNuwZzllemnnHfMkuVPFAPvQn0',
+  CONSOLIDATED_WEBAPP_URL: 'https://script.google.com/macros/s/AKfycbwU7ZVPoNKcmnM-y3uh2c3ViNe9fYl5UODVeYPF1rJ5T1qCHxizzk-O9HHDBoq4AuFh/exec',
+  SUPABASE_URL: "https://ofhcxvekfplhgzpxutce.supabase.co/rest/v1/",
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9maGN4dmVrZnBsaGd6cHh1dGNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDg5MDIsImV4cCI6MjA5NjgyNDkwMn0.0X57t9-4u3TO1tBn1wIkj0R-0RJfvDgolC5nRtQrUlE"
+};
+
+let supabaseClient = null;
+let currentStudent = null;
 let allAttendance = [];
-  // 🟢 Calendar Tracking State Matrices
-let currentCalendarDate = new Date(); // Defaults dynamically to today's date context
+let currentCalendarDate = new Date();
 let allSchedule = [];
 let allScoresSimcat = [];
 let allScoresBenchmark = [];
@@ -482,69 +371,295 @@ let myMaterials = [];
 let scoreChartInstance = null;
 let currentSelectedType = 'SimCAT';
 let studentLoadedOfficialScores = {};
-  // Global memory register to store processed proof file data fragments
 let structuredProofFileBlob = null;
 
-function toggleAnnouncementsDropdown(event) {
-  event.stopPropagation();
-  const dropdown = document.getElementById('notif-dropdown');
-  if (dropdown) dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+// ═════════════════════════════════════════════════════════════
+// 2. UTILITY FUNCTIONS
+// ═════════════════════════════════════════════════════════════
+function initSupabase() {
+  if (window.supabase && !supabaseClient) {
+    supabaseClient = window.supabase.createClient(window.CONFIG.SUPABASE_URL, window.CONFIG.SUPABASE_ANON_KEY);
+    console.log("🔒 Supabase Connected Successfully.");
+  }
 }
 
-document.addEventListener('click', () => {
-  const dropdown = document.getElementById('notif-dropdown');
-  if (dropdown) dropdown.style.display = 'none';
-});
-
-async function querySupabaseStudent(email) {
-  initSupabase();
-  if (!supabaseClient) {
-    alert("Supabase integration error. Please reload layout."); return;
-  }
+function fmtDate(str) {
+  if(!str) return "—";
   try {
-    const targetUrl = `${window.CONFIG.SUPABASE_URL}students?email=eq.${encodeURIComponent(email)}`;
-    const headers = { "apikey": window.CONFIG.SUPABASE_ANON_KEY, "Authorization": `Bearer ${window.CONFIG.SUPABASE_ANON_KEY}`, "Accept": "application/json" };
-    const response = await fetch(targetUrl, { method: "GET", headers: headers });
-    const profiles = await response.json();
-
-    if (!profiles || profiles.length === 0) {
-      alert(`⚠️ Access Denied:\n\nThe email "${email}" is missing from your Supabase table indices.`);
-      return;
-    }
-
-    const matchedProfile = profiles[0];
-    currentStudent = {
-      id: matchedProfile.id || matchedProfile.student_id,
-      name: matchedProfile.name,
-      email: matchedProfile.email,
-      phone: matchedProfile.phone || "---",
-      batch: matchedProfile.batch || "UNASSIGNED",
-      target_exam: matchedProfile.target_exam || "CAT"
-    };
-
-    sessionStorage.setItem('sp_student', JSON.stringify(currentStudent));
-    launchWorkspaceShell();
-  } catch (err) {
-    alert(`💥 Secure Connection Block: ${err.message}`);
+    return new Date(str).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  } catch(e) {
+    return str;
   }
 }
 
-function launchWorkspaceShell() {
-  if (!currentStudent) return;
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').classList.add('visible');
-  renderProfile();
-  
-  setTimeout(async () => {
-    try {
-      await fetchAllData();
-      renderAll();
-    } catch(e) {
-      renderAll();
-    }
-  }, 50);
+// ═════════════════════════════════════════════════════════════
+// 3. RENDER FUNCTIONS (ALL BEFORE LAUNCH)
+// ═════════════════════════════════════════════════════════════
+function renderProfile() {
+  const s = currentStudent;
+  if(!s) return;
+  const initials = String(s.name).split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('nav-avatar').textContent = initials;
+  document.getElementById('profile-avatar').textContent = initials;
+  document.getElementById('nav-name').textContent = s.name;
+  document.getElementById('nav-batch').textContent = s.target_exam + ' · ' + s.batch;
+  document.getElementById('profile-name').textContent = s.name;
+  document.getElementById('profile-meta').textContent = `Track: ${s.target_exam} · Batch: ${s.batch} · ID: ${s.id}`;
+  document.getElementById('profile-exam-badge').textContent = s.target_exam;
+  document.getElementById('d-name').textContent = s.name;
+  document.getElementById('d-email').textContent = s.email;
+  document.getElementById('d-phone').textContent = s.phone;
+  document.getElementById('d-batch').textContent = s.batch;
+  document.getElementById('profile-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(s.id)}`;
+  document.getElementById('profile-qr-subtext').textContent = `ID: ${s.id}`;
 }
 
+function renderAttendanceGrid() {
+  const present = allAttendance.filter(r => r['Status']==='Present').length;
+  const total = allAttendance.length;
+  const pct = total ? Math.round(present/total*100) : 0;
+  
+  document.getElementById('stat-att').textContent = pct + '%';
+  document.getElementById('att-present-count').textContent = present;
+  document.getElementById('att-absent-count').textContent = total - present;
+  document.getElementById('att-pct').textContent = pct + '%';
+
+  const grid = document.getElementById('cal-grid');
+  const label = document.getElementById('month-label');
+  if (!grid || !label) return;
+
+  const targetYear = currentCalendarDate.getFullYear();
+  const targetMonth = currentCalendarDate.getMonth();
+
+  label.textContent = currentCalendarDate.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+  grid.innerHTML = '';
+
+  const recordMap = {};
+  allAttendance.forEach(r => {
+    if (r['Date']) {
+      try {
+        const structuralDate = new Date(r['Date']);
+        const matchKey = `${structuralDate.getFullYear()}-${structuralDate.getMonth()}-${structuralDate.getDate()}`;
+        recordMap[matchKey] = r['Status'];
+      } catch(e) {}
+    }
+  });
+
+  const totalDaysInMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
+  let baseFirstDayIndex = new Date(targetYear, targetMonth, 1).getDay();
+  let normalizedFirstDayOffset = baseFirstDayIndex === 0 ? 6 : baseFirstDayIndex - 1;
+
+  for (let p = 0; p < normalizedFirstDayOffset; p++) {
+    const spaceCell = document.createElement('div');
+    spaceCell.className = 'cal-cell';
+    spaceCell.style.opacity = '0';
+    grid.appendChild(spaceCell);
+  }
+
+  for (let dayCounter = 1; dayCounter <= totalDaysInMonth; dayCounter++) {
+    const dayCell = document.createElement('div');
+    dayCell.className = 'cal-cell';
+    dayCell.textContent = dayCounter;
+    const lookupKey = `${targetYear}-${targetMonth}-${dayCounter}`;
+    const status = recordMap[lookupKey];
+    if (status === 'Present') dayCell.className += ' cal-present';
+    else if (status === 'Absent') dayCell.className += ' cal-absent';
+    else dayCell.className += ' cal-holiday';
+    grid.appendChild(dayCell);
+  }
+
+  const list = document.getElementById('att-list');
+  if (list) {
+    const filteredLogs = allAttendance.filter(r => {
+      if (!r.Date) return false;
+      const d = new Date(r.Date);
+      return d.getFullYear() === targetYear && d.getMonth() === targetMonth;
+    });
+    if (filteredLogs.length === 0) {
+      list.innerHTML = '<div style="padding:16px; text-align:center; color:var(--text3); font-size:13px;">No records for this month.</div>';
+    } else {
+      list.innerHTML = filteredLogs.map(r => `
+        <div class="att-row">
+          <div class="att-date">${fmtDate(r.Date)}</div>
+          <div class="att-subject" style="font-weight:500;">${r.Subject || 'Session'}</div>
+          <span class="att-status ${r.Status==='Present'?'status-present':'status-absent'}">${r.Status}</span>
+        </div>
+      `).join('');
+    }
+  }
+}
+
+function renderScores() {
+  const targetDataset = currentSelectedType === 'SimCAT' ? allScoresSimcat : allScoresBenchmark;
+  const listContainer = document.getElementById('score-list');
+  const subjectBars = document.getElementById('subject-bars-container');
+
+  let totalAcc = 0, peak = 0, count = targetDataset.length;
+  targetDataset.forEach(r => {
+    totalAcc += parseFloat(r['Overall Accuracy']||r['Accuracy']||0);
+    const p = parseFloat(r['Overall Percentile']||r['Percentile']||0);
+    if(p>peak) peak = p;
+  });
+
+  document.getElementById('an-accuracy').textContent = count ? Math.round(totalAcc/count)+'%' : '0%';
+  document.getElementById('an-peak-pct').textContent = peak ? peak.toFixed(2) : '0.00';
+  document.getElementById('an-efficiency').textContent = '0%ile';
+
+  if (typeof Chart !== 'undefined') {
+    const ctx = document.getElementById('scoreChart')?.getContext('2d');
+    if (ctx) {
+      if(scoreChartInstance) scoreChartInstance.destroy();
+      scoreChartInstance = new Chart(ctx, {
+        type:'line',
+        data: {
+          labels: targetDataset.map(r=>r['Test Name']),
+          datasets:[{label:'Score', data: targetDataset.map(r=>parseFloat(r['Total Score']||r['Score Obtained']||0)), borderColor:'#2B4EFF', tension:0.3, fill:false}]
+        },
+        options: {responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}}
+      });
+    }
+  }
+
+  if(listContainer) {
+    listContainer.innerHTML = targetDataset.length ? targetDataset.map(r=>`
+      <div class="score-row">
+        <div class="score-test" style="font-weight:600;">${r['Test Name']} <span style="font-size:11px; font-weight:400; color:var(--text3);">(${r.Date||'Recent'})</span></div>
+        <div class="score-pills"><span class="score-pill pill-t">Score: ${r['Total Score']||r['Score Obtained']}</span></div>
+      </div>`).join('') : '<div style="padding:16px; text-align:center; color:var(--text3);">No data.</div>';
+  }
+}
+
+function renderSchedule() {
+  const list = document.getElementById('schedule-list');
+  if(!list) return;
+  let filtered = [...allSchedule];
+  const currentFilter = document.querySelector('.schedule-filter-active')?.dataset.filter || 'all';
+  if(currentFilter !== 'all') {
+    filtered = filtered.filter(r => r['Subject'] === currentFilter);
+  }
+  if(!filtered.length) {
+    list.innerHTML = '<div style="padding:24px; text-align:center; color:var(--text3);">No sessions scheduled.</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(r => {
+    const hasJoinLink = r['Join Link'] && r['Join Link'].trim();
+    const joinButton = hasJoinLink 
+      ? `<a href="${r['Join Link']}" target="_blank" class="demo-btn" style="width:auto; padding:6px 14px; font-size:11px; margin-top:8px; display:inline-block; text-decoration:none;">Join Live →</a>`
+      : '';
+    return `
+      <div class="sched-item">
+        <div class="sched-time-col"><div class="sched-time">${r.Time}</div><div class="sched-date">${r.Date}</div></div>
+        <div class="sched-dot-col"><div class="sched-dot" style="background:var(--accent)"></div><div class="sched-line"></div></div>
+        <div class="sched-info"><div class="sched-topic" style="font-weight:600;">${r.Topic} [${r.Subject}]</div><div class="sched-meta">${r['Room / Mode']}</div>${joinButton}</div>
+      </div>`;
+  }).join('');
+}
+
+function renderLearningFlow() {
+  const done = allProgress.filter(r => r['Status']==='Done').length;
+  document.getElementById('prog-done').textContent = done;
+  document.getElementById('prog-active').textContent = allProgress.filter(r => r['Status']==='In Progress').length;
+  document.getElementById('prog-pending').textContent = allProgress.filter(r => r['Status']==='Not Started').length;
+  document.getElementById('stat-topics').textContent = `${done}/${allProgress.length}`;
+
+  const bars = document.getElementById('overall-prog-bars');
+  const sections = document.getElementById('flow-sections');
+  if(!bars || !sections) return;
+  
+  const subs = [...new Set(allProgress.map(r => r['Subject']))];
+  bars.innerHTML = subs.map(sub => {
+    const items = allProgress.filter(r => r['Subject']===sub);
+    const d = items.filter(r => r['Status']==='Done').length;
+    const pct = items.length ? Math.round(d/items.length*100) : 0;
+    return `<div class="prog-row"><div class="prog-label"><span>${sub}</span><span>${d}/${items.length}</span></div><div class="prog-track"><div class="prog-fill" style="width:${pct}%; background:var(--accent);"></div></div></div>`;
+  }).join('');
+
+  sections.innerHTML = subs.map(sub => {
+    const items = allProgress.filter(r => r['Subject']===sub);
+    return `<div class="card"><div class="card-title" style="color:var(--accent);">${sub} Timeline</div>
+      ${items.map((r,i)=>`
+        <div class="flow-item ${r.Status==='Done'?'flow-done':r.Status==='In Progress'?'flow-active':'flow-pending'}">
+          <div class="flow-dot-col"><div class="flow-dot"></div>${i<items.length-1?'<div class="flow-connector"></div>':''}</div>
+          <div class="flow-content"><div class="flow-name">${r['Topic Name']}</div></div>
+        </div>`).join('')}</div>`;
+  }).join('');
+}
+
+function renderAnnouncementsFeed() {
+  const badge = document.getElementById('notif-badge');
+  const boardBox = document.getElementById('announcement-board-container');
+  const boardFeed = document.getElementById('announcements-feed');
+  
+  if (!myAnnouncements || !myAnnouncements.length) {
+    if (badge) badge.style.display = 'none';
+    if (boardBox) boardBox.style.display = 'none';
+    return;
+  }
+
+  if (badge) badge.style.display = 'block';
+  if (boardBox && boardFeed) {
+    boardBox.style.display = 'block';
+    boardFeed.innerHTML = myAnnouncements.map(r => {
+      const actionLink = r['Attached Link'] && r['Attached Link'].trim() ? r['Attached Link'].trim() : '';
+      return `
+        <div style="background:var(--surface2); border-left:4px solid var(--accent); padding:16px; border-radius:var(--radius-sm); margin-bottom:12px;">
+          <div style="font-weight:600; color:var(--text); font-size:14px; margin-bottom:4px;">${r.Title}</div>
+          <div style="font-size:13px; color:var(--text2); margin-bottom:10px;">${r.Description}</div>
+          ${actionLink ? `<a href="${actionLink}" target="_blank" rel="noopener noreferrer" style="display:inline-block; padding:8px 14px; background:var(--accent); color:white; border-radius:var(--radius-sm); font-size:12px; font-weight:600; text-decoration:none;" onmouseover="this.style.background='var(--accent-dark)'" onmouseout="this.style.background='var(--accent)'">Open Link →</a>` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+function populateNotificationDropdown() {
+  const feed = document.getElementById('notif-dropdown-feed');
+  if (!feed || !myAnnouncements || myAnnouncements.length === 0) {
+    if(feed) feed.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text3); font-size: 13px;">No notifications.</div>';
+    return;
+  }
+  feed.innerHTML = myAnnouncements.map((r) => {
+    const actionLink = r['Attached Link'] && r['Attached Link'].trim() ? r['Attached Link'].trim() : '';
+    return `
+      <div style="padding: 14px 16px; border-bottom: 1px solid var(--border);">
+        <div style="font-size: 11px; color: var(--text3); margin-bottom: 4px;">${r.Timestamp || 'Recent'}</div>
+        <div style="font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 6px;">${r.Title}</div>
+        <div style="font-size: 12px; color: var(--text2); margin-bottom: 8px;">${r.Description}</div>
+        ${actionLink ? `
+          <a href="${actionLink}" target="_blank" rel="noopener noreferrer" style="display:inline-block; padding:6px 12px; background:var(--accent); color:white; border-radius:var(--radius-sm); font-size:11px; font-weight:600; text-decoration:none;" onmouseover="this.style.background='var(--accent-dark)'" onmouseout="this.style.background='var(--accent)'">
+            Open Link →
+          </a>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function renderStudyMaterialsVault(filter) {
+  const container = document.getElementById('material-grid-container');
+  if(!container) return;
+  let data = [...myMaterials];
+  if(filter!=='all') data = data.filter(r => r['Subject']===filter);
+  container.innerHTML = data.length ? data.map(r=>`
+    <div class="card" style="margin-bottom:0;">
+      <div><span class="badge badge-blue">${r.Subject}</span><h4 style="font-size:15px; font-weight:600; margin-top:8px;">${r.Title}</h4></div>
+      <div style="border-top:1px solid var(--border); padding-top:12px; margin-top:16px;"><a href="${r['Download Link']}" target="_blank" style="font-size:12px; color:var(--accent); font-weight:600;">Download →</a></div>
+    </div>`).join('') : '<div style="text-align:center; color:var(--text3); padding:40px;">No materials.</div>';
+}
+
+function renderAll() {
+  renderProfile();
+  renderAttendanceGrid();
+  renderScores();
+  renderSchedule();
+  renderLearningFlow();
+  renderAnnouncementsFeed();
+  renderStudyMaterialsVault('all');
+}
+
+// ═════════════════════════════════════════════════════════════
+// 4. DATA FETCHING
+// ═════════════════════════════════════════════════════════════
 async function fetchSheetData(sheetName) {
   try {
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${window.CONFIG.SPREADSHEET_ID}/values/${encodeURIComponent(sheetName)}!A:Z?key=${window.CONFIG.SHEETS_API_KEY}`;
@@ -559,7 +674,10 @@ async function fetchSheetData(sheetName) {
       headers.forEach((h, i) => obj[h] = r[i] !== undefined ? String(r[i]).trim() : '');
       return obj;
     });
-  } catch (e) { return []; }
+  } catch (e) {
+    console.error("Sheet fetch error:", e);
+    return [];
+  }
 }
 
 async function fetchAllData() {
@@ -589,16 +707,133 @@ async function fetchAllData() {
   if (Array.isArray(snap)) { const mSnap = snap.find(r => String(r['StudentID']).trim() == sid); if(mSnap) studentLoadedOfficialScores["SNAP"] = { english: mSnap['General English'], reasoning: mSnap['Analytical Reasoning'], quant: mSnap['Quantitative'], total: mSnap['Total Score'], lockStatus: mSnap['Lock Status'] }; }
 }
 
-function renderAll() {
+// ═════════════════════════════════════════════════════════════
+// 5. LAUNCH FUNCTION
+// ═════════════════════════════════════════════════════════════
+function launchWorkspaceShell() {
+  if (!currentStudent) return;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
   renderProfile();
-  renderAttendanceGrid();
-  renderScores();
-  renderSchedule();
-  renderLearningFlow();
-  renderAnnouncementsFeed();
-  renderStudyMaterialsVault('all');
+  
+  setTimeout(async () => {
+    try {
+      await fetchAllData();
+      renderAll();
+    } catch(e) {
+      console.error("Data fetch error:", e);
+      renderAll();
+    }
+  }, 50);
 }
 
+// ═════════════════════════════════════════════════════════════
+// 6. SUPABASE & AUTH FUNCTIONS
+// ═════════════════════════════════════════════════════════════
+async function querySupabaseStudent(email) {
+  initSupabase();
+  if (!supabaseClient) {
+    alert("❌ Database error. Please refresh.");
+    return;
+  }
+
+  try {
+    console.log("📡 Looking up:", email);
+    
+    const targetUrl = `${window.CONFIG.SUPABASE_URL}students?email=eq.${encodeURIComponent(email)}`;
+    const headers = { 
+      "apikey": window.CONFIG.SUPABASE_ANON_KEY, 
+      "Authorization": `Bearer ${window.CONFIG.SUPABASE_ANON_KEY}`, 
+      "Accept": "application/json"
+    };
+    
+    const response = await fetch(targetUrl, { method: "GET", headers });
+
+    if (!response.ok) {
+      throw new Error(`Status ${response.status}`);
+    }
+
+    const profiles = await response.json();
+
+    if (!profiles || profiles.length === 0) {
+      alert(`❌ Email not found: "${email}"\n\nContact admin.`);
+      return;
+    }
+
+    const matchedProfile = profiles[0];
+
+    currentStudent = {
+      id: matchedProfile.id || matchedProfile.student_id,
+      name: matchedProfile.name || "Student",
+      email: matchedProfile.email,
+      phone: matchedProfile.phone || "---",
+      batch: matchedProfile.batch || "UNASSIGNED",
+      target_exam: matchedProfile.target_exam || "CAT"
+    };
+
+    sessionStorage.setItem('sp_student', JSON.stringify(currentStudent));
+    console.log("✅ Logged in as:", currentStudent.name);
+    launchWorkspaceShell();
+
+  } catch (err) {
+    console.error("DB Error:", err);
+    alert(`❌ Error: ${err.message}`);
+  }
+}
+
+function loginWithGoogle() {
+  initSupabase();
+  if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
+    alert("Initializing. Please try again.");
+    return;
+  }
+  google.accounts.id.initialize({
+    client_id: window.CONFIG.GOOGLE_CLIENT_ID,
+    callback: handleGoogleCredential
+  });
+  google.accounts.id.prompt();
+}
+
+async function handleGoogleCredential(response) {
+  try {
+    if (!response || !response.credential) {
+      alert("❌ No credential from Google.");
+      return;
+    }
+
+    console.log("🔐 JWT Token received, parsing...");
+    
+    const parts = response.credential.split('.');
+    if (parts.length !== 3) {
+      alert("❌ Invalid token format.");
+      return;
+    }
+
+    let base64 = parts[1];
+    const padding = 4 - (base64.length % 4);
+    if (padding !== 4) base64 += '='.repeat(padding);
+    base64 = base64.replace(/-/g, '+').replace(/_/g, '/');
+    
+    const decoded = atob(base64);
+    const payload = JSON.parse(decoded);
+
+    if (!payload || !payload.email) {
+      alert("❌ No email in account.");
+      return;
+    }
+
+    console.log("✅ Email found:", payload.email);
+    await querySupabaseStudent(payload.email.trim().toLowerCase());
+
+  } catch (error) {
+    console.error("Auth Error:", error);
+    alert(`❌ Error: ${error.message}`);
+  }
+}
+
+// ═════════════════════════════════════════════════════════════
+// 7. UI FUNCTIONS
+// ═════════════════════════════════════════════════════════════
 function showPage(pageId, element) {
   document.querySelectorAll('.page').forEach(p => p.style.display='none');
   const target = document.getElementById('page-' + pageId);
@@ -609,334 +844,71 @@ function showPage(pageId, element) {
   if(pageId === 'records') { const s = document.getElementById('master-exam-selector'); if(s) switchExamFormFields(s.value); }
 }
 
-function renderProfile() {
-  const s = currentStudent; if(!s) return;
-  const initials = String(s.name).split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-  document.getElementById('nav-avatar').textContent = initials;
-  document.getElementById('profile-avatar').textContent = initials;
-  document.getElementById('nav-name').textContent = s.name;
-  document.getElementById('nav-batch').textContent = s.target_exam + ' · ' + s.batch;
-  document.getElementById('profile-name').textContent = s.name;
-  document.getElementById('profile-meta').textContent = `Track: ${s.target_exam} · Batch: ${s.batch} · ID: ${s.id}`;
-  document.getElementById('profile-exam-badge').textContent = s.target_exam;
-  document.getElementById('d-name').textContent = s.name;
-  document.getElementById('d-email').textContent = s.email;
-  document.getElementById('d-phone').textContent = s.phone;
-  document.getElementById('d-batch').textContent = s.batch;
-  document.getElementById('profile-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(s.id)}`;
-  document.getElementById('profile-qr-subtext').textContent = `ID: ${s.id}`;
-}
-
-// 🟢 Handle Month Navigation Actions
 function changeCalendarMonth(directionModifier) {
   currentCalendarDate.setMonth(currentCalendarDate.getMonth() + directionModifier);
   renderAttendanceGrid();
 }
 
-// 🟢 Fully Core Realized Calendar Matrix Engine
-function renderAttendanceGrid() {
-  const present = allAttendance.filter(r => r['Status']==='Present').length;
-  const total = allAttendance.length;
-  const pct = total ? Math.round(present/total*100) : 0;
-  
-  document.getElementById('stat-att').textContent = pct + '%';
-  document.getElementById('att-present-count').textContent = present;
-  document.getElementById('att-absent-count').textContent = total - present;
-  document.getElementById('att-pct').textContent = pct + '%';
-
-  const grid = document.getElementById('cal-grid');
-  const label = document.getElementById('month-label');
-  if (!grid || !label) return;
-
-  const targetYear = currentCalendarDate.getFullYear();
-  const targetMonth = currentCalendarDate.getMonth(); // 0-indexed (Jan=0, Jun=5)
-
-  // Update calendar header text panel interface string dynamically
-  label.textContent = currentCalendarDate.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
-
-  grid.innerHTML = '';
-
-  // Step A: Build a look-up dictionary of student attendance rows for fast access
-  const recordMap = {};
-  allAttendance.forEach(r => {
-    if (r['Date']) {
-      // Formats sheet date strings safely to isolate date tokens cleanly
-      try {
-        const structuralDate = new Date(r['Date']);
-        const matchKey = `${structuralDate.getFullYear()}-${structuralDate.getMonth()}-${structuralDate.getDate()}`;
-        recordMap[matchKey] = r['Status'];
-      } catch(e) { console.warn("Date normalization skip:", r['Date']); }
-    }
-  });
-
-  // Step B: Calculate layout parameters for target calendar matrix grid
-  const totalDaysInMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
-  
-  // Find weekday index of the first day of the month (Convert Sunday=0 to Monday=0 layout)
-  let baseFirstDayIndex = new Date(targetYear, targetMonth, 1).getDay();
-  let normalizedFirstDayOffset = baseFirstDayIndex === 0 ? 6 : baseFirstDayIndex - 1;
-
-  // Render blank padding cells for empty calendar offset margins
-  for (let p = 0; p < normalizedFirstDayOffset; p++) {
-    const spaceCell = document.createElement('div');
-    spaceCell.className = 'cal-cell';
-    spaceCell.style.opacity = '0';
-    grid.appendChild(spaceCell);
-  }
-
-  // Step C: Render actual data matrix blocks
-  for (let dayCounter = 1; dayCounter <= totalDaysInMonth; dayCounter++) {
-    const dayCell = document.createElement('div');
-    dayCell.className = 'cal-cell';
-    dayCell.textContent = dayCounter;
-
-    const lookupKey = `${targetYear}-${targetMonth}-${dayCounter}`;
-    const status = recordMap[lookupKey];
-
-    if (status === 'Present') dayCell.className += ' cal-present';
-    else if (status === 'Absent') dayCell.className += ' cal-absent';
-    else dayCell.className += ' cal-holiday'; // Unmarked days display as standard rest blocks
-
-    grid.appendChild(dayCell);
-  }
-
-  // Step D: Render chronological full listing overview panel matching rows entries below
-  const list = document.getElementById('att-list');
-  if (list) {
-    // Show only the logs matching our currently selected calendar month scope view
-    const filteredLogs = allAttendance.filter(r => {
-      if (!r.Date) return false;
-      const d = new Date(r.Date);
-      return d.getFullYear() === targetYear && d.getMonth() === targetMonth;
-    });
-
-    if (filteredLogs.length === 0) {
-      list.innerHTML = '<div style="padding:16px; text-align:center; color:var(--text3); font-size:13px;">No session metrics captured inside this month range block.</div>';
-    } else {
-      list.innerHTML = filteredLogs.map(r => `
-        <div class="att-row">
-          <div class="att-date">${fmtDate(r.Date)}</div>
-          <div class="att-subject" style="font-weight:500;">${r.Subject || r.Topic || 'Lecture Session'}</div>
-          <span class="att-status ${r.Status==='Present'?'status-present':'status-absent'}">${r.Status}</span>
-        </div>
-      `).join('');
-    }
-  }
+function setScoreFilters(type) {
+  currentSelectedType = type;
+  renderScores();
 }
 
-function setScoreFilters(type) { currentSelectedType = type; renderScores(); }
-
-function renderScores() {
-  const targetDataset = currentSelectedType === 'SimCAT' ? allScoresSimcat : allScoresBenchmark;
-  const listContainer = document.getElementById('score-list');
-  const subjectBars = document.getElementById('subject-bars-container');
-
-  let totalAcc = 0, peak = 0, count = targetDataset.length;
-  let tVarc=0, tDilr=0, tQa=0;
-
-  targetDataset.forEach(r => {
-    totalAcc += parseFloat(r['Overall Accuracy']||r['Accuracy']||0);
-    const p = parseFloat(r['Overall Percentile']||r['Percentile']||0); if(p>peak) peak = p;
-    tVarc += parseFloat(r['VARC Pct'] || r['Percentile'] || 0);
-    tDilr += parseFloat(r['DILR Pct'] || r['Percentile'] || 0);
-    tQa += parseFloat(r['QA Pct'] || r['Percentile'] || 0);
-  });
-
-  document.getElementById('an-accuracy').textContent = count ? Math.round(totalAcc/count)+'%' : '0%';
-  document.getElementById('an-peak-pct').textContent = peak ? peak.toFixed(2) : '0.00';
-  document.getElementById('an-efficiency').textContent = count ? Math.round((tVarc+tDilr+tQa)/(count*3)) + '%ile Avg' : '0%ile';
-
-  if (typeof Chart !== 'undefined') {
-    const ctx = document.getElementById('scoreChart')?.getContext('2d');
-    if (ctx) {
-      if(scoreChartInstance) scoreChartInstance.destroy();
-      scoreChartInstance = new Chart(ctx, {
-        type:'line',
-        data: {
-          labels: targetDataset.map(r=>r['Test Name']),
-          datasets:[{label:'Evaluation Metrics', data: targetDataset.map(r=>parseFloat(r['Total Score']||r['Score Obtained']||0)), borderColor:'#2B4EFF', tension:0.3, fill:false}]
-        },
-        options: {responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}}
-      });
-    }
+function toggleNotificationDropdown(event) {
+  event.stopPropagation();
+  const dropdown = document.getElementById('notif-dropdown');
+  if (!dropdown) return;
+  
+  const isVisible = dropdown.style.display === 'block';
+  dropdown.style.display = isVisible ? 'none' : 'block';
+  
+  if (!isVisible) {
+    populateNotificationDropdown();
   }
-
-  const aV = count ? Math.round(tVarc/count) : 0; const aD = count ? Math.round(tDilr/count) : 0; const aQ = count ? Math.round(tQa/count) : 0;
-  if(subjectBars) {
-    subjectBars.innerHTML = `
-      <div class="prog-row"><div class="prog-label"><span>Verbal Ability (VARC)</span><span>${aV}% Sectional Avg</span></div><div class="prog-track"><div class="prog-fill" style="width:${aV}%; background:var(--amber);"></div></div></div>
-      <div class="prog-row"><div class="prog-label"><span>Data Interpretation & LR</span><span>${aD}% Sectional Avg</span></div><div class="prog-track"><div class="prog-fill" style="width:${aD}%; background:var(--purple);"></div></div></div>
-      <div class="prog-row"><div class="prog-label"><span>Quantitative Aptitude (QA)</span><span>${aQ}% Sectional Avg</span></div><div class="prog-track"><div class="prog-fill" style="width:${aQ}%; background:var(--green);"></div></div></div>`;
-  }
-  if(listContainer) {
-    listContainer.innerHTML = targetDataset.map(r=>`
-      <div class="score-row">
-        <div class="score-test" style="font-weight:600;">${r['Test Name']} <span style="font-size:11px; font-weight:400; color:var(--text3);">(${r.Date||'Recent'})</span></div>
-        <div class="score-pills"><span class="score-pill pill-t">Score: ${r['Total Score']||r['Score Obtained']}</span><span class="score-pill pill-q">${r['Overall Percentile']||r['Percentile']||'0'} %ile</span></div>
-      </div>`).join('');
-  }
-}
-
-function renderSchedule() {
-  const list = document.getElementById('schedule-list');
-  if(!list) return;
-
-  // Filter schedule by subject
-  let filtered = [...allSchedule];
-  const currentFilter = document.querySelector('.schedule-filter-active')?.dataset.filter || 'all';
-  if(currentFilter !== 'all') {
-    filtered = filtered.filter(r => r['Subject'] === currentFilter);
-  }
-
-  if(!filtered.length) {
-    list.innerHTML = '<div style="padding:24px; text-align:center; color:var(--text3);">No sessions scheduled for this category.</div>';
-    return;
-  }
-
-  list.innerHTML = filtered.map(r => {
-    const hasJoinLink = r['Join Link'] && r['Join Link'].trim();
-    const joinButton = hasJoinLink 
-      ? `<a href="${r['Join Link']}" target="_blank" class="demo-btn" style="width:auto; padding:6px 14px; font-size:11px; margin-top:8px; display:inline-block; text-decoration:none;">Join Live Session →</a>`
-      : '';
-
-    return `
-      <div class="sched-item">
-        <div class="sched-time-col">
-          <div class="sched-time">${r.Time}</div>
-          <div class="sched-date">${r.Date}</div>
-        </div>
-        <div class="sched-dot-col">
-          <div class="sched-dot" style="background:var(--accent)"></div>
-          <div class="sched-line"></div>
-        </div>
-        <div class="sched-info">
-          <div class="sched-topic" style="font-weight:600;">${r.Topic} [${r.Subject}]</div>
-          <div class="sched-meta">${r['Room / Mode']} &middot; ${r.Faculty}</div>
-          ${joinButton}
-        </div>
-      </div>`;
-  }).join('');
 }
 
 function filterScheduleBySubject(subject, btnElement) {
-  // Remove active class from all filter buttons
   document.querySelectorAll('.schedule-filter-btn').forEach(btn => btn.classList.remove('schedule-filter-active'));
-  // Add active class to clicked button
   btnElement.classList.add('schedule-filter-active');
   btnElement.dataset.filter = subject;
-  // Re-render schedule
   renderSchedule();
 }
 
-function renderLearningFlow() {
-  const done = allProgress.filter(r => r['Status']==='Done').length;
-  document.getElementById('prog-done').textContent = done;
-  document.getElementById('prog-active').textContent = allProgress.filter(r => r['Status']==='In Progress').length;
-  document.getElementById('prog-pending').textContent = allProgress.filter(r => r['Status']==='Not Started').length;
-  document.getElementById('stat-topics').textContent = `${done}/${allProgress.length}`;
-
-  const bars = document.getElementById('overall-prog-bars'); const sections = document.getElementById('flow-sections'); if(!bars || !sections) return;
-  const subs = [...new Set(allProgress.map(r => r['Subject']))];
-  bars.innerHTML = subs.map(sub => {
-    const items = allProgress.filter(r => r['Subject']===sub); const d = items.filter(r => r['Status']==='Done').length; const pct = items.length ? Math.round(d/items.length*100) : 0;
-    return `<div class="prog-row"><div class="prog-label"><span>${sub} Modules</span><span>${d}/${items.length} Done</span></div><div class="prog-track"><div class="prog-fill" style="width:${pct}%; background:var(--accent);"></div></div></div>`;
-  }).join('');
-
-  sections.innerHTML = subs.map(sub => {
-    const items = allProgress.filter(r => r['Subject']===sub);
-    return `<div class="card"><div class="card-title" style="color:var(--accent); font-weight:600;">${sub} Syllabus Core Timeline</div>
-      ${items.map((r,i)=>`
-        <div class="flow-item ${r.Status==='Done'?'flow-done':r.Status==='In Progress'?'flow-active':'flow-pending'}">
-          <div class="flow-dot-col"><div class="flow-dot"></div>${i<items.length-1?'<div class="flow-connector"></div>':''}</div>
-          <div class="flow-content"><div class="flow-name" style="font-weight:500;">${r['Topic Name']} <span style="font-size:11px; font-weight:600; opacity:0.6;">(${r['Completion Date'] || 'Pending'})</span></div></div>
-        </div>`).join('')}</div>`;
-  }).join('');
-}
-
-// ─── STABLE, RE-ENGINEERED ANNOUNCEMENT URL PROCESSING LINKIFIER ENGINE ───
-function renderAnnouncementsFeed() {
-  const badge = document.getElementById('notif-badge');
-  const dropdownFeed = document.getElementById('notif-dropdown-feed');
-  const boardBox = document.getElementById('announcement-board-container');
-  const boardFeed = document.getElementById('announcements-feed');
-  
-  if (!myAnnouncements || !myAnnouncements.length) {
-    if (badge) badge.style.display = 'none';
-    if (dropdownFeed) dropdownFeed.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text3); font-size: 13px;">No new notifications posted.</div>';
-    if (boardBox) boardBox.style.display = 'none';
-    return;
-  }
-
-  if (badge) badge.style.display = 'block';
-  
-  // Clean link builder modeled exactly after your study materials engine
-  const createActionLink = (itemRow) => {
-    const url = itemRow['Attached Link'] ? String(itemRow['Attached Link']).trim() : '';
-    if (!url) return '';
-    return `<div style="margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px;">
-              <a href="${url}" target="_blank" style="color: var(--accent); font-weight: 600; text-decoration: none; font-size: 12px; display: inline-flex; align-items: center;">
-                Open Attached Link &rarr;
-              </a>
-            </div>`;
-  };
-  
-  // 1. Populates the floating bell notification dropdown tray
-  const dropdownHtml = myAnnouncements.map(r => `
-    <div style="padding: 12px 16px; border-bottom: 1px solid var(--border);">
-      <div style="font-size: 11px; color: var(--text3); margin-bottom: 2px;">${r.Timestamp||'Recent'}</div>
-      <div style="font-weight: 600; font-size: 13px; color: var(--text); line-height: 1.4;">${r.Title}</div>
-      <div style="font-size: 12px; color: var(--text2); margin-top: 2px; line-height: 1.5; white-space: pre-line;">${r.Description}</div>
-      ${createActionLink(r)}
-    </div>
-  `).join('');
-  
-  if (dropdownFeed) dropdownFeed.innerHTML = dropdownHtml;
-
-  // 2. Populates the main greeting profile card panel mirror layout
-  const boardHtml = myAnnouncements.map(r => `
-    <div style="background:var(--surface2); border-left:4px solid var(--accent); padding:16px; border-radius:var(--radius-sm); margin-bottom:12px;">
-      <div style="font-size:11px; color:var(--text3); float:right; font-weight:500;">${r.Timestamp||''}</div>
-      <div style="font-weight:600; color:var(--text); font-size:14px; margin-bottom:4px;">${r.Title}</div>
-      <div style="font-size:13px; color:var(--text2); line-height:1.5; white-space: pre-line;">${r.Description}</div>
-      ${createActionLink(r)}
-    </div>
-  `).join('');
-
-  if (boardBox && boardFeed) {
-    boardBox.style.display = 'block';
-    boardFeed.innerHTML = boardHtml;
-  }
-}
-
-function renderStudyMaterialsVault(filter) {
-  const container = document.getElementById('material-grid-container'); if(!container) return;
-  let data = [...myMaterials]; if(filter!=='all') data = data.filter(r => r['Subject']===filter);
-  if(!data.length) { container.innerHTML = '<div class="card" style="grid-column:1/-1; text-align:center; color:var(--text3); padding:40px;">📂 No resource files registered inside your batch array rules.</div>'; return; }
-  container.innerHTML = data.map(r=>`
-    <div class="card" style="margin-bottom:0; box-shadow:var(--shadow); display:flex; flex-direction:column; justify-content:space-between; padding:18px 20px;">
-      <div><span class="badge badge-blue" style="margin-bottom:8px; font-weight:600;">${r.Subject}</span><h4 style="font-size:15px; font-weight:600; line-height:1.4;">${r.Title}</h4><p style="font-size:13px; color:var(--text2); margin-top:4px; line-height:1.5;">${r.Description||'Lecture preparation resource handouts.'}</p></div>
-      <div style="border-top:1px solid var(--border); padding-top:12px; margin-top:16px; display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-size:11px; color:var(--text3);">Uploaded: ${r['Uploaded Date']||'---'}</span><a href="${r['Download Link']}" target="_blank" style="font-size:12px; color:var(--accent); font-weight:600; text-decoration:none;">Download PDF &rarr;</a>
-      </div>
-    </div>`).join('');
-}
-
 function filterMaterial(sub, btn) {
-  btn.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+  btn.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
   renderStudyMaterialsVault(sub);
 }
 
+function logout() {
+  sessionStorage.removeItem('sp_student');
+  location.reload();
+}
+
+// ═════════════════════════════════════════════════════════════
+// 8. FORM & DATA SUBMISSION
+// ═════════════════════════════════════════════════════════════
 async function writeDataToCentralSheet(payload) {
   try {
     await fetch(window.CONFIG.CONSOLIDATED_WEBAPP_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
     return true;
-  } catch (e) { return false; }
+  } catch (e) {
+    return false;
+  }
 }
 
 async function handleCallSubmission(event) {
-  event.preventDefault(); const b = event.target.querySelector('button'); b.disabled=true; b.textContent = "Writing logs...";
+  event.preventDefault();
+  const b = event.target.querySelector('button');
+  b.disabled=true;
+  b.textContent = "Saving...";
   const success = await writeDataToCentralSheet({ action: "logCall", studentId: currentStudent.id, collegeName: document.getElementById('form-coll-name').value, stage: document.getElementById('form-coll-stage').value, notes: document.getElementById('form-coll-notes').value });
-  if(success) { alert("College Application tracker entry synchronized successfully!"); event.target.reset(); } b.disabled=false; b.textContent = "Log Tracker Entry";
+  if(success) {
+    alert("Saved successfully!");
+    event.target.reset();
+  }
+  b.disabled=false;
+  b.textContent = "Log entry Tracker";
 }
 
 async function processOfficialScoreFormSubmit(event) {
@@ -945,7 +917,7 @@ async function processOfficialScoreFormSubmit(event) {
   const b = document.getElementById('master-score-submit-btn'); 
   
   b.disabled = true; 
-  b.textContent = "Uploading assets pipeline syncing...";
+  b.textContent = "Saving...";
   
   let scores = {};
   if (exam === "CAT") {
@@ -958,28 +930,25 @@ async function processOfficialScoreFormSubmit(event) {
     scores = { english: document.getElementById('inp-english').value, reasoning: document.getElementById('inp-reasoning').value, quant: document.getElementById('inp-quant').value, total: document.getElementById('inp-total').value };
   }
   
-  // Package centralized framework transaction object metrics configuration variables
   const payload = { 
     action: "updateOfficialScore", 
     examName: exam, 
     studentId: currentStudent.id, 
     scores: scores,
-    // 🟢 PASS THE ATTACHED FILE DATA DOWN STREAM
     proofFile: structuredProofFileBlob 
   };
   
   const success = await writeDataToCentralSheet(payload);
   
   if (success) {
-    alert(`Success! Your official ${exam} metrics and proof documents have been synchronized cleanly to your master Google Sheet database row positions.`); 
-    // Clear out input indicators
+    alert(`Success! ${exam} saved.`);
     const fileSelector = document.getElementById('inp-proof-file');
     if (fileSelector) fileSelector.value = '';
     const successDiv = document.getElementById('proof-upload-success');
     if (successDiv) successDiv.style.display = 'none';
     structuredProofFileBlob = null;
   } else {
-    alert("System write exception error detected. Checking sheet schema bounds entries.");
+    alert("Error saving.");
   }
   
   b.disabled = false; 
@@ -987,19 +956,31 @@ async function processOfficialScoreFormSubmit(event) {
 }
 
 function switchExamFormFields(exam) {
-  const container = document.getElementById('dynamic-fields-container'); const submitBtn = document.getElementById('master-score-submit-btn'); const lockNotice = document.getElementById('exam-lock-notice'); if(!container) return;
+  const container = document.getElementById('dynamic-fields-container');
+  const submitBtn = document.getElementById('master-score-submit-btn');
+  const lockNotice = document.getElementById('exam-lock-notice');
+  if(!container) return;
+
   const savedData = studentLoadedOfficialScores[exam]; 
   const currentData = savedData || { varc:'', dilr:'', qa:'', total:'', percentile:'', lang:'', quant:'', logic:'', valr:'', dm:'', qadi:'', english:'', reasoning:'', lockStatus:'' };
   const isLocked = currentData.lockStatus === "LOCKED";
   
   if (isLocked) {
-    lockNotice.style.display = "block"; lockNotice.style.background = "var(--red-light)"; lockNotice.style.color = "var(--red)";
-    lockNotice.innerHTML = "🔒 <b>Verification Frozen:</b> This entry has been validated and locked by IMS Admin. Changes are disabled.";
-    submitBtn.disabled = true; submitBtn.style.background = "var(--text3)"; submitBtn.textContent = "Locked Profile Matrix";
+    lockNotice.style.display = "block";
+    lockNotice.style.background = "var(--red-light)";
+    lockNotice.style.color = "var(--red)";
+    lockNotice.innerHTML = "🔒 <b>Locked:</b> Admin has locked this entry.";
+    submitBtn.disabled = true;
+    submitBtn.style.background = "var(--text3)";
+    submitBtn.textContent = "Locked";
   } else {
-    lockNotice.style.display = "block"; lockNotice.style.background = "var(--green-light)"; lockNotice.style.color = "var(--green)";
-    lockNotice.innerHTML = savedData ? "🟢 <b>Active Logs Found:</b> Records loaded. Saving updates your spreadsheet cells." : "⏳ No entries logged inside your sheet row for this exam sequence yet.";
-    submitBtn.disabled = false; submitBtn.style.background = "var(--accent)"; submitBtn.textContent = "Save Verification Records";
+    lockNotice.style.display = "block";
+    lockNotice.style.background = "var(--green-light)";
+    lockNotice.style.color = "var(--green)";
+    lockNotice.innerHTML = savedData ? "🟢 <b>Records found:</b> You can update." : "⏳ No entries yet.";
+    submitBtn.disabled = false;
+    submitBtn.style.background = "var(--accent)";
+    submitBtn.textContent = "Save Verification Records";
   }
 
   let html = "";
@@ -1026,12 +1007,10 @@ function switchExamFormFields(exam) {
             <div><label>Quantitative, DI & DS</label><input type="number" step="0.01" id="inp-quant" value="${currentData.quant||''}" required ${isLocked?'disabled':''}></div>
             <div><label>Total Cumulative Score</label><input type="number" step="0.01" id="inp-total" value="${currentData.total||''}" required ${isLocked?'disabled':''}></div>`;
   }
- // Append the Unified Proof Upload form fields onto the generated layout sequence
+ 
   html += `
     <div style="margin-top: 16px; border-top: 1px dashed var(--border); padding-top: 14px;">
-      <label style="font-size:12px; font-weight:600; color:var(--text2); display:block; margin-bottom:4px;">
-        Upload Verification Document Proof <span style="color:var(--text3); font-weight:400;">(Max 2MB — PDF, PNG, JPG)</span>
-      </label>
+      <label style="font-size:12px; font-weight:600; color:var(--text2); display:block; margin-bottom:4px;">Upload Proof (Max 2MB)</label>
       <input type="file" id="inp-proof-file" accept=".pdf,.png,.jpg,.jpeg" onchange="validateAndProcessProofFile(this)" style="padding:4px; font-size:13px; border:none; background:none;">
       <div id="proof-upload-error" style="font-size:11px; color:var(--red); font-weight:500; margin-top:4px; display:none;"></div>
       <div id="proof-upload-success" style="font-size:11px; color:var(--green); font-weight:500; margin-top:4px; display:none;"></div>
@@ -1039,17 +1018,9 @@ function switchExamFormFields(exam) {
   `;
 
   container.innerHTML = html;
-  // Reset the loaded file memory slot each time a student switches the active exam selector track
   structuredProofFileBlob = null;
 }
 
-window.onload = async () => {
-  initSupabase(); const saved = sessionStorage.getItem('sp_student');
-  if (saved) { currentStudent = JSON.parse(saved); launchWorkspaceShell(); }
-};
-function logout() { sessionStorage.removeItem('sp_student'); location.reload(); }
-function fmtDate(str) { if(!str) return "—"; try { return new Date(str).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){return str;} }
-  // 🟢 Real-time file processing and binary serialization validator engine
 function validateAndProcessProofFile(inputElement) {
   const errorDiv = document.getElementById('proof-upload-error');
   const successDiv = document.getElementById('proof-upload-success');
@@ -1061,17 +1032,15 @@ function validateAndProcessProofFile(inputElement) {
   if (!inputElement.files || inputElement.files.length === 0) return;
 
   const selectedFile = inputElement.files[0];
-  const maxByteLimit = 2 * 1024 * 1024; // Strict Calculation: 2 Megabytes in bytes
+  const maxByteLimit = 2 * 1024 * 1024;
 
-  // Step A: Intercept file weight constraint breaches
   if (selectedFile.size > maxByteLimit) {
-    errorDiv.textContent = `❌ Upload Blocked: This file size is ${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB. It must be strictly less than 2.00 MB.`;
+    errorDiv.textContent = `❌ File is ${(selectedFile.size / (1024 * 1024)).toFixed(2)} MB. Must be < 2 MB.`;
     errorDiv.style.display = 'block';
-    inputElement.value = ''; // Flush input channel element memory clear
+    inputElement.value = '';
     return;
   }
 
-  // Step B: Serialize file stream into transaction data blocks
   const streamReader = new FileReader();
   streamReader.onload = function(event) {
     structuredProofFileBlob = {
@@ -1079,11 +1048,31 @@ function validateAndProcessProofFile(inputElement) {
       mimeType: selectedFile.type,
       fileName: selectedFile.name
     };
-    successDiv.textContent = `⚡ Attached Successfully: ${selectedFile.name} ready for sheet verification mapping tracking columns.`;
+    successDiv.textContent = `⚡ Ready: ${selectedFile.name}`;
     successDiv.style.display = 'block';
   };
   streamReader.readAsDataURL(selectedFile);
 }
+
+// ═════════════════════════════════════════════════════════════
+// 9. WINDOW LOAD & LISTENERS
+// ═════════════════════════════════════════════════════════════
+window.onload = async () => {
+  initSupabase();
+  const saved = sessionStorage.getItem('sp_student');
+  if (saved) {
+    currentStudent = JSON.parse(saved);
+    launchWorkspaceShell();
+  }
+};
+
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('notif-dropdown');
+  const bell = document.getElementById('notification-bell-btn');
+  if (dropdown && !dropdown.contains(e.target) && !bell.contains(e.target)) {
+    dropdown.style.display = 'none';
+  }
+});
 </script>
 </body>
 </html>
