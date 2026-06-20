@@ -72,10 +72,89 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .app-body{display:flex;flex:1;overflow:hidden}
 .sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);padding:20px 12px;display:flex;flex-direction:column;gap:4px;overflow-y:auto;}
 .sidebar-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding:8px 10px 4px;margin-top:8px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);border:none;background:none;font-family:var(--font);font-size:14px;font-weight:400;color:var(--text2);cursor:pointer;transition:all .15s;width:100%;text-align:left;}
-.nav-item:hover{background:var(--surface2);color:var(--text)}
-.nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:500}
-.main-content{flex:1;overflow-y:auto;padding:28px 32px}
+/* Expandable Menu Styles */
+  .nav-parent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    color: var(--text2);
+    font-size: 14px;
+    transition: all 0.2s;
+    user-select: none;
+  }
+ 
+  .nav-parent:hover {
+    background: var(--surface2);
+    color: var(--text);
+  }
+ 
+  .nav-parent.active {
+    background: var(--surface2);
+    color: var(--accent);
+    font-weight: 600;
+  }
+ 
+  .nav-parent-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+  }
+ 
+  .nav-expand-indicator {
+    font-size: 12px;
+    transition: transform 0.3s;
+    color: var(--text3);
+  }
+ 
+  .nav-expand-indicator.expanded {
+    transform: rotate(90deg);
+  }
+ 
+  /* Submenu Container */
+  .nav-submenu {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 4px;
+    padding-left: 8px;
+    border-left: 2px solid var(--border);
+    margin-left: 16px;
+  }
+ 
+  .nav-submenu.show {
+    display: flex;
+  }
+ 
+  .nav-subitem {
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    color: var(--text2);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+ 
+  .nav-subitem:hover {
+    background: var(--surface2);
+    color: var(--text);
+  }
+ 
+  .nav-subitem.active {
+    background: var(--accent);
+    color: white;
+    font-weight: 600;
+  }
+ 
+  .nav-subitem-icon {
+    font-size: 13px;
+  }.main-content{flex:1;overflow-y:auto;padding:28px 32px}
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
 .stat-label{font-size:12px;color:var(--text3);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.4px}
@@ -204,14 +283,65 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
   <div class="app-body">
 <aside class="sidebar">
   <div class="sidebar-label">Dashboard</div>
-  <button class="nav-item active" onclick="showPage('profile',this)">My Profile</button>
-  <button class="nav-item" onclick="showPage('announcements',this)">📢 Announcements</button>
-  <button class="nav-item" onclick="showPage('attendance',this)">Attendance</button>
-  <button class="nav-item" onclick="showPage('scores',this)">Mock Scores</button>
-  <button class="nav-item" onclick="showPage('records',this)">My Records</button>
-  <button class="nav-item" onclick="showPage('schedule',this)">Schedule</button>
-  <button class="nav-item" onclick="showPage('progress',this)">Learning Flow</button>
-  <button class="nav-item" onclick="showPage('material',this)">Study Material</button>
+  
+  <!-- Profile -->
+  <button class="nav-item active" onclick="showPage('profile', this)">
+    👤 My Profile
+  </button>
+  
+  <!-- Announcements -->
+  <button class="nav-item" onclick="showPage('announcements', this)">
+    📢 Announcements
+  </button>
+  
+  <!-- Attendance -->
+  <button class="nav-item" onclick="showPage('attendance', this)">
+    📅 Attendance
+  </button>
+  
+  <!-- TEST SCORES - EXPANDABLE PARENT -->
+  <div class="nav-parent" onclick="toggleTestScoresMenu(this)">
+    <div class="nav-parent-icon">
+      📊 Test Scores
+    </div>
+    <span class="nav-expand-indicator">›</span>
+  </div>
+  
+  <!-- Submenu for Test Types -->
+  <div class="nav-submenu" id="test-scores-submenu">
+    <button class="nav-subitem" onclick="showTestType('simcat', this)">
+      <span class="nav-subitem-icon">🎯</span>
+      <span>SimCAT Analysis</span>
+    </button>
+    <button class="nav-subitem" onclick="showTestType('benchmarking', this)">
+      <span class="nav-subitem-icon">📋</span>
+      <span>Benchmarking Logs</span>
+    </button>
+    <button class="nav-subitem" onclick="showTestType('module', this)">
+      <span class="nav-subitem-icon">📚</span>
+      <span>Module Tests</span>
+    </button>
+  </div>
+  
+  <!-- My Records -->
+  <button class="nav-item" onclick="showPage('records', this)">
+    🏆 My Records
+  </button>
+  
+  <!-- Schedule -->
+  <button class="nav-item" onclick="showPage('schedule', this)">
+    📍 Schedule
+  </button>
+  
+  <!-- Learning Flow -->
+  <button class="nav-item" onclick="showPage('progress', this)">
+    📈 Learning Flow
+  </button>
+  
+  <!-- Study Material -->
+  <button class="nav-item" onclick="showPage('material', this)">
+    📚 Study Material
+  </button>
 </aside>
 
     <main class="main-content">
@@ -288,6 +418,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
       <div id="subject-bars-container" style="margin-top:20px;"></div>
     </div>
     <div class="card"><div class="score-list" id="score-list"></div></div>
+    <div id="test-type-container"></div>
   </div>
 
   <div id="page-records" class="page">
@@ -498,44 +629,15 @@ function renderAttendanceGrid() {
   }
 }
 
-function renderScores() {
-  const targetDataset = currentSelectedType === 'SimCAT' ? allScoresSimcat : allScoresBenchmark;
-  const listContainer = document.getElementById('score-list');
+async function renderScores() {
+  const scoreList = document.getElementById('score-list');
   const subjectBars = document.getElementById('subject-bars-container');
-
-  let totalAcc = 0, peak = 0, count = targetDataset.length;
-  targetDataset.forEach(r => {
-    totalAcc += parseFloat(r['Overall Accuracy']||r['Accuracy']||0);
-    const p = parseFloat(r['Overall Percentile']||r['Percentile']||0);
-    if(p>peak) peak = p;
-  });
-
-  document.getElementById('an-accuracy').textContent = count ? Math.round(totalAcc/count)+'%' : '0%';
-  document.getElementById('an-peak-pct').textContent = peak ? peak.toFixed(2) : '0.00';
-  document.getElementById('an-efficiency').textContent = '0%ile';
-
-  if (typeof Chart !== 'undefined') {
-    const ctx = document.getElementById('scoreChart')?.getContext('2d');
-    if (ctx) {
-      if(scoreChartInstance) scoreChartInstance.destroy();
-      scoreChartInstance = new Chart(ctx, {
-        type:'line',
-        data: {
-          labels: targetDataset.map(r=>r['Test Name']),
-          datasets:[{label:'Score', data: targetDataset.map(r=>parseFloat(r['Total Score']||r['Score Obtained']||0)), borderColor:'#2B4EFF', tension:0.3, fill:false}]
-        },
-        options: {responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}}
-      });
-    }
-  }
-
-  if(listContainer) {
-    listContainer.innerHTML = targetDataset.length ? targetDataset.map(r=>`
-      <div class="score-row">
-        <div class="score-test" style="font-weight:600;">${r['Test Name']} <span style="font-size:11px; font-weight:400; color:var(--text3);">(${r.Date||'Recent'})</span></div>
-        <div class="score-pills"><span class="score-pill pill-t">Score: ${r['Total Score']||r['Score Obtained']}</span></div>
-      </div>`).join('') : '<div style="padding:16px; text-align:center; color:var(--text3);">No data.</div>';
-  }
+  
+  if (!scoreList || !subjectBars) return;
+  
+  // Fetch SimCAT from Supabase
+  await fetchSimCATPscores();
+  renderSimCATPanalyticsDashboard();
 }
 
 function renderSchedule() {
@@ -668,10 +770,13 @@ function renderAll() {
   renderProfile();
   renderAnnouncementsFeed();
   renderAttendanceGrid();
-  renderScores();
+  // NOTE: Test scores loaded dynamically when menu clicked
   renderSchedule();
   renderLearningFlow();
   renderStudyMaterialsVault('all');
+  
+  // Fetch data for all test types (background)
+  fetchAllTestData();
 }
 
 // ═════════════════════════════════════════════════════════════
@@ -1071,6 +1176,647 @@ function validateAndProcessProofFile(inputElement) {
   streamReader.readAsDataURL(selectedFile);
 }
 
+
+  // ============================================================================
+// SIMCAT ANALYTICS FUNCTIONS - SUPABASE INTEGRATION
+// ============================================================================
+
+// Global variable to store SimCAT data
+let simcatScores = [];
+let simcatAnalytics = {};
+
+// ============================================================================
+// 1. FETCH SIMCAT DATA FROM SUPABASE
+// ============================================================================
+
+async function fetchSimCATPscores() {
+  if (!currentStudent || !currentStudent.id) {
+    console.log("No student logged in");
+    return;
+  }
+
+  try {
+    console.log("Fetching SimCAT scores for student:", currentStudent.id);
+    
+    // Query Supabase for this student's SimCAT scores
+    const response = await fetch(
+      `${window.CONFIG.SUPABASE_URL}simcat_scores?student_id=eq.${currentStudent.id}&order=test_date.desc`,
+      {
+        method: 'GET',
+        headers: {
+          'apikey': window.CONFIG.SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("SimCAT scores fetched:", data);
+    
+    simcatScores = data || [];
+    calculateSimCATPanalytics();
+    return simcatScores;
+
+  } catch (err) {
+    console.error("Error fetching SimCAT scores:", err);
+    simcatScores = [];
+    return [];
+  }
+}
+
+// ============================================================================
+// 2. CALCULATE ADVANCED ANALYTICS
+// ============================================================================
+
+function calculateSimCATPanalytics() {
+  if (simcatScores.length === 0) {
+    simcatAnalytics = {};
+    return;
+  }
+
+  // OVERALL METRICS
+  const sortedByPercentile = [...simcatScores].sort((a, b) => (b.overall_percentile || 0) - (a.overall_percentile || 0));
+  const sortedByScore = [...simcatScores].sort((a, b) => (b.marks_obtained || 0) - (a.marks_obtained || 0));
+  
+  simcatAnalytics = {
+    // COUNT METRICS
+    total_tests: simcatScores.length,
+    
+    // PERCENTILE METRICS
+    peak_percentile: sortedByPercentile[0]?.overall_percentile || 0,
+    avg_percentile: (simcatScores.reduce((sum, s) => sum + (s.overall_percentile || 0), 0) / simcatScores.length).toFixed(2),
+    latest_percentile: simcatScores[0]?.overall_percentile || 0,
+    percentile_trend: calculateTrend(simcatScores.map(s => s.overall_percentile || 0).reverse()),
+    
+    // SCORE METRICS
+    peak_score: sortedByScore[0]?.marks_obtained || 0,
+    avg_score: (simcatScores.reduce((sum, s) => sum + (s.marks_obtained || 0), 0) / simcatScores.length).toFixed(2),
+    latest_score: simcatScores[0]?.marks_obtained || 0,
+    score_trend: calculateTrend(simcatScores.map(s => s.marks_obtained || 0).reverse()),
+    
+    // ACCURACY METRICS
+    peak_accuracy: (simcatScores.reduce((max, s) => Math.max(max, s.overall_accuracy || 0), 0)).toFixed(2),
+    avg_accuracy: (simcatScores.reduce((sum, s) => sum + (s.overall_accuracy || 0), 0) / simcatScores.length).toFixed(2),
+    latest_accuracy: simcatScores[0]?.overall_accuracy || 0,
+    
+    // SECTION WISE AVERAGES
+    avg_varc_accuracy: (simcatScores.reduce((sum, s) => sum + (s.varc_accuracy || 0), 0) / simcatScores.length).toFixed(2),
+    avg_dilr_accuracy: (simcatScores.reduce((sum, s) => sum + (s.dilr_accuracy || 0), 0) / simcatScores.length).toFixed(2),
+    avg_qa_accuracy: (simcatScores.reduce((sum, s) => sum + (s.qa_accuracy || 0), 0) / simcatScores.length).toFixed(2),
+    
+    // SECTION WISE BEST PERCENTILES
+    best_varc_percentile: (simcatScores.reduce((max, s) => Math.max(max, s.varc_percentile || 0), 0)).toFixed(2),
+    best_dilr_percentile: (simcatScores.reduce((max, s) => Math.max(max, s.dilr_percentile || 0), 0)).toFixed(2),
+    best_qa_percentile: (simcatScores.reduce((max, s) => Math.max(max, s.qa_percentile || 0), 0)).toFixed(2),
+    
+    // TIME EFFICIENCY
+    avg_time_minutes: ((simcatScores.reduce((sum, s) => sum + (s.time_taken_seconds || 0), 0) / simcatScores.length) / 60).toFixed(1),
+    
+    // SECTION WISE PERFORMANCE
+    section_performance: calculateSectionWisePerformance()
+  };
+
+  console.log("SimCAT Analytics Calculated:", simcatAnalytics);
+}
+
+// Helper: Calculate trend (improving/declining/stable)
+function calculateTrend(values) {
+  if (values.length < 2) return 'stable';
+  const first = values[0];
+  const last = values[values.length - 1];
+  const diff = last - first;
+  
+  if (Math.abs(diff) < 2) return 'stable';
+  return diff > 0 ? 'improving' : 'declining';
+}
+
+// Helper: Section-wise performance metrics
+function calculateSectionWisePerformance() {
+  return {
+    varc: {
+      avg_marks: (simcatScores.reduce((sum, s) => sum + (s.varc_marks_obtained || 0), 0) / simcatScores.length).toFixed(1),
+      avg_accuracy: simcatAnalytics.avg_varc_accuracy,
+      best_percentile: simcatAnalytics.best_varc_percentile,
+      scores: simcatScores.map(s => s.varc_marks_obtained || 0)
+    },
+    dilr: {
+      avg_marks: (simcatScores.reduce((sum, s) => sum + (s.dilr_marks_obtained || 0), 0) / simcatScores.length).toFixed(1),
+      avg_accuracy: simcatAnalytics.avg_dilr_accuracy,
+      best_percentile: simcatAnalytics.best_dilr_percentile,
+      scores: simcatScores.map(s => s.dilr_marks_obtained || 0)
+    },
+    qa: {
+      avg_marks: (simcatScores.reduce((sum, s) => sum + (s.qa_marks_obtained || 0), 0) / simcatScores.length).toFixed(1),
+      avg_accuracy: simcatAnalytics.avg_qa_accuracy,
+      best_percentile: simcatAnalytics.best_qa_percentile,
+      scores: simcatScores.map(s => s.qa_marks_obtained || 0)
+    }
+  };
+}
+
+// ============================================================================
+// 3. RENDER ADVANCED ANALYTICS DASHBOARD
+// ============================================================================
+ // Track current test type
+  let currentTestType = 'simcat';
+ 
+  // Toggle Test Scores menu expansion
+  function toggleTestScoresMenu(element) {
+    const submenu = document.getElementById('test-scores-submenu');
+    const indicator = element.querySelector('.nav-expand-indicator');
+    
+    submenu.classList.toggle('show');
+    indicator.classList.toggle('expanded');
+    element.classList.toggle('active');
+  }
+ 
+  // Show specific test type analytics
+  function showTestType(testType, buttonElement) {
+    currentTestType = testType;
+    
+    // Update active button
+    document.querySelectorAll('.nav-subitem').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    buttonElement.classList.add('active');
+    
+    // Show main page
+    showPage('scores', null);
+    
+    // Load analytics for this test type
+    loadTestTypeAnalytics(testType);
+  }
+ 
+  // Load appropriate analytics based on test type
+  function loadTestTypeAnalytics(testType) {
+    const container = document.getElementById('test-type-container');
+    
+    if (!container) return;
+    
+    // Clear previous content
+    container.innerHTML = '';
+    
+    if (testType === 'simcat') {
+      renderSimCATPpage();
+    } else if (testType === 'benchmarking') {
+      renderBenchmarkingPage();
+    } else if (testType === 'module') {
+      renderModuleTestsPage();
+    }
+  }
+ 
+  // SimCAT Page Structure
+  function renderSimCATPpage() {
+    const container = document.getElementById('test-type-container');
+    
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-title">🎯 SimCAT Analysis</div>
+        
+        <!-- Stats Cards -->
+        <div class="stat-grid" style="margin-bottom: 24px;">
+          <div class="stat-card" style="border-top:3px solid var(--accent);">
+            <div class="stat-label">Overall Accuracy</div>
+            <div class="stat-val" id="simcat-accuracy">0%</div>
+          </div>
+          <div class="stat-card" style="border-top:3px solid var(--green);">
+            <div class="stat-label">Peak Percentile</div>
+            <div class="stat-val" id="simcat-peak-pct">0.00</div>
+          </div>
+          <div class="stat-card" style="border-top:3px solid var(--purple);">
+            <div class="stat-label">Average Percentile</div>
+            <div class="stat-val" id="simcat-avg-pct">0%ile</div>
+          </div>
+        </div>
+        
+        <!-- Chart -->
+        <div class="chart-wrap"><canvas id="simcatChart"></canvas></div>
+        
+        <!-- Section Performance -->
+        <div id="simcat-section-performance" style="margin-top: 20px;"></div>
+        
+        <!-- Test History -->
+        <div id="simcat-test-history" style="margin-top: 20px;"></div>
+      </div>
+    `;
+    
+    // Fetch and render SimCAT analytics
+    fetchSimCATPscores().then(() => {
+      renderSimCATPanalyticsDashboard();
+    });
+  }
+ 
+  // Benchmarking Page Structure
+  function renderBenchmarkingPage() {
+    const container = document.getElementById('test-type-container');
+    
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-title">📋 Benchmarking Logs</div>
+        
+        <!-- Stats Cards -->
+        <div class="stat-grid" style="margin-bottom: 24px;">
+          <div class="stat-card">
+            <div class="stat-label">Tests Taken</div>
+            <div class="stat-val" id="bench-total">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Average Score</div>
+            <div class="stat-val" id="bench-avg-score">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Best Score</div>
+            <div class="stat-val" id="bench-best-score">0</div>
+          </div>
+        </div>
+        
+        <!-- Subject Tabs -->
+        <div class="tabs">
+          <button class="tab-btn active" onclick="filterBenchmarking('all', this)">All Subjects</button>
+          <button class="tab-btn" onclick="filterBenchmarking('QA', this)">Quant (QA)</button>
+          <button class="tab-btn" onclick="filterBenchmarking('VARC', this)">VARC</button>
+          <button class="tab-btn" onclick="filterBenchmarking('DILR', this)">DILR</button>
+        </div>
+        
+        <!-- Benchmarking List -->
+        <div id="benchmarking-list"></div>
+      </div>
+    `;
+    
+    renderBenchmarkingScores();
+  }
+ 
+  // Module Tests Page Structure
+  function renderModuleTestsPage() {
+    const container = document.getElementById('test-type-container');
+    
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-title">📚 Module Tests Analytics</div>
+        
+        <!-- Stats Cards -->
+        <div class="stat-grid" style="margin-bottom: 24px;">
+          <div class="stat-card">
+            <div class="stat-label">Modules Completed</div>
+            <div class="stat-val" id="module-completed">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Average Score</div>
+            <div class="stat-val" id="module-avg-score">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Best Score</div>
+            <div class="stat-val" id="module-best-score">0</div>
+          </div>
+        </div>
+        
+        <!-- Subject Filter -->
+        <div class="tabs">
+          <button class="tab-btn active" onclick="filterModuleTests('all', this)">All Modules</button>
+          <button class="tab-btn" onclick="filterModuleTests('QA', this)">Quant (QA)</button>
+          <button class="tab-btn" onclick="filterModuleTests('VARC', this)">VARC</button>
+          <button class="tab-btn" onclick="filterModuleTests('DILR', this)">DILR</button>
+        </div>
+        
+        <!-- Module Tests List -->
+        <div id="module-tests-list"></div>
+      </div>
+    `;
+    
+    renderModuleTests();
+  }
+ 
+  // Default: Show SimCAT when clicking Test Scores
+  function showPage(pageId, buttonElement) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(page => {
+      page.classList.remove('active');
+    });
+    
+    // Show selected page
+    const page = document.getElementById('page-' + pageId);
+    if (page) {
+      page.classList.add('active');
+      
+      // If scores page, load current test type
+      if (pageId === 'scores') {
+        loadTestTypeAnalytics(currentTestType);
+      }
+    }
+    
+    // Update nav buttons
+    if (buttonElement) {
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      buttonElement.classList.add('active');
+    }
+  }
+ 
+  // Module Tests rendering function
+  function renderModuleTests() {
+    // To be implemented based on your module test data structure
+    const list = document.getElementById('module-tests-list');
+    if (list) {
+      list.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text3);">Module test data coming soon</div>';
+    }
+  }
+ 
+  // Filter module tests
+  function filterModuleTests(subject, buttonElement) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    buttonElement.classList.add('active');
+    // Add filtering logic here
+  }
+ 
+  // Benchmarking rendering (existing function, just organized)
+  function renderBenchmarkingScores() {
+    // Update stats
+    document.getElementById('bench-total').textContent = myBenchmarks?.length || 0;
+    
+    if (myBenchmarks && myBenchmarks.length > 0) {
+      const scores = myBenchmarks.map(b => b['Score Obtained'] || 0);
+      const avgScore = (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(1);
+      const bestScore = Math.max(...scores);
+      
+      document.getElementById('bench-avg-score').textContent = avgScore;
+      document.getElementById('bench-best-score').textContent = bestScore;
+    }
+    
+    const list = document.getElementById('benchmarking-list');
+    if (list) {
+      list.innerHTML = `
+        <div style="margin-top: 20px;">
+          ${myBenchmarks?.map((b, idx) => `
+            <div style="background:var(--surface2); padding:12px; border-radius:var(--radius-sm); margin-bottom:8px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                <span style="font-weight:600; color:var(--text);">${b['Test Name']}</span>
+                <span style="color:var(--green); font-weight:600;">${b['Score Obtained']}/${b['Max Score']}</span>
+              </div>
+              <div style="font-size:11px; color:var(--text3);">${b.Subject} • ${b['Percentile']}%ile • Accuracy: ${b.Accuracy}%</div>
+            </div>
+          `).join('') || '<div style="padding:20px; text-align:center; color:var(--text3);">No benchmarking data yet</div>'
+        }
+        </div>
+      `;
+    }
+  }
+ 
+  // Filter benchmarking
+  function filterBenchmarking(subject, buttonElement) {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    buttonElement.classList.add('active');
+    // Add filtering logic
+  }
+function renderSimCATPanalyticsDashboard() {
+  // Update stat cards
+  document.getElementById('an-accuracy').textContent = simcatAnalytics.avg_accuracy + '%';
+  document.getElementById('an-peak-pct').textContent = simcatAnalytics.peak_percentile + '.00';
+  document.getElementById('an-efficiency').textContent = simcatAnalytics.avg_percentile + '%ile';
+  
+  // Render test progression chart
+  renderTestProgressionChart();
+  
+  // Render section-wise comparison
+  renderSectionWiseComparison();
+  
+  // Render detailed score list
+  renderDetailedScoreList();
+}
+
+// ============================================================================
+// 4. CHARTS & VISUALIZATIONS
+// ============================================================================
+
+function renderTestProgressionChart() {
+  const ctx = document.getElementById('scoreChart');
+  if (!ctx || simcatScores.length === 0) return;
+
+  // Destroy existing chart if it exists
+  if (window.scoreChartInstance) {
+    window.scoreChartInstance.destroy();
+  }
+
+  const labels = simcatScores.reverse().map(s => s.test_name.replace('SimCAT ', 'S'));
+  
+  window.scoreChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Total Score',
+          data: simcatScores.map(s => s.marks_obtained || 0),
+          borderColor: 'var(--accent)',
+          backgroundColor: 'rgba(79, 172, 254, 0.1)',
+          tension: 0.4,
+          fill: true,
+          pointRadius: 5,
+          pointBackgroundColor: 'var(--accent)'
+        },
+        {
+          label: 'Percentile',
+          data: simcatScores.map(s => (s.overall_percentile || 0) / 10), // Scale down for visibility
+          borderColor: 'var(--green)',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          tension: 0.4,
+          fill: true,
+          pointRadius: 5,
+          pointBackgroundColor: 'var(--green)',
+          yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      interaction: {
+        mode: 'index',
+        intersect: false
+      },
+      plugins: {
+        legend: {
+          labels: {
+            color: 'var(--text2)',
+            font: { family: 'var(--font)', size: 12 }
+          }
+        },
+        tooltip: {
+          backgroundColor: 'var(--surface2)',
+          titleColor: 'var(--text)',
+          bodyColor: 'var(--text2)',
+          borderColor: 'var(--border)',
+          borderWidth: 1
+        }
+      },
+      scales: {
+        y: {
+          type: 'linear',
+          display: true,
+          position: 'left',
+          ticks: { color: 'var(--text3)', font: { size: 11 } },
+          grid: { color: 'var(--border)', drawBorder: false },
+          title: { display: true, text: 'Score (out of 204)', color: 'var(--text2)', font: { size: 11 } }
+        },
+        y1: {
+          type: 'linear',
+          display: true,
+          position: 'right',
+          ticks: { color: 'var(--text3)', font: { size: 11 } },
+          grid: { drawOnChartArea: false },
+          title: { display: true, text: 'Percentile (÷10)', color: 'var(--text2)', font: { size: 11 } }
+        },
+        x: {
+          ticks: { color: 'var(--text3)', font: { size: 11 } },
+          grid: { color: 'var(--border)', drawBorder: false }
+        }
+      }
+    }
+  });
+}
+
+function renderSectionWiseComparison() {
+  const container = document.getElementById('subject-bars-container');
+  if (!container || !simcatAnalytics.section_performance) return;
+
+  const sp = simcatAnalytics.section_performance;
+  
+  container.innerHTML = `
+    <div style="margin-bottom: 24px;">
+      <div style="font-weight: 600; font-size: 13px; margin-bottom: 16px; color: var(--text);">📊 Section-wise Performance</div>
+      
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
+        <!-- VARC -->
+        <div style="background: var(--surface2); padding: 12px; border-radius: var(--radius-sm);">
+          <div style="font-size: 11px; font-weight: 600; color: var(--text3); margin-bottom: 4px;">VERBAL & RC</div>
+          <div style="font-size: 18px; font-weight: 700; color: var(--amber);">${sp.varc.avg_marks}</div>
+          <div style="font-size: 11px; color: var(--text2); margin-top: 4px;">Accuracy: ${sp.varc.avg_accuracy}%</div>
+          <div style="font-size: 10px; color: var(--text3); margin-top: 2px;">Best: ${sp.varc.best_percentile}%ile</div>
+        </div>
+        
+        <!-- DILR -->
+        <div style="background: var(--surface2); padding: 12px; border-radius: var(--radius-sm);">
+          <div style="font-size: 11px; font-weight: 600; color: var(--text3); margin-bottom: 4px;">DILR</div>
+          <div style="font-size: 18px; font-weight: 700; color: var(--purple);">${sp.dilr.avg_marks}</div>
+          <div style="font-size: 11px; color: var(--text2); margin-top: 4px;">Accuracy: ${sp.dilr.avg_accuracy}%</div>
+          <div style="font-size: 10px; color: var(--text3); margin-top: 2px;">Best: ${sp.dilr.best_percentile}%ile</div>
+        </div>
+        
+        <!-- QA -->
+        <div style="background: var(--surface2); padding: 12px; border-radius: var(--radius-sm);">
+          <div style="font-size: 11px; font-weight: 600; color: var(--text3); margin-bottom: 4px;">QUANT</div>
+          <div style="font-size: 18px; font-weight: 700; color: var(--green);">${sp.qa.avg_marks}</div>
+          <div style="font-size: 11px; color: var(--text2); margin-top: 4px;">Accuracy: ${sp.qa.avg_accuracy}%</div>
+          <div style="font-size: 10px; color: var(--text3); margin-top: 2px;">Best: ${sp.qa.best_percentile}%ile</div>
+        </div>
+      </div>
+      
+      <!-- PROGRESS BARS -->
+      <div style="display: grid; gap: 12px;">
+        ${['varc', 'dilr', 'qa'].map(section => {
+          const label = section === 'varc' ? 'Verbal & RC' : section.toUpperCase();
+          const maxMarks = section === 'varc' ? 72 : 66;
+          const avgMarks = sp[section].avg_marks;
+          const percentage = ((avgMarks / maxMarks) * 100).toFixed(0);
+          const color = section === 'varc' ? 'var(--amber)' : section === 'dilr' ? 'var(--purple)' : 'var(--green)';
+          
+          return `
+            <div>
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="font-size: 11px; font-weight: 600; color: var(--text2);">${label}</span>
+                <span style="font-size: 11px; color: var(--text3);">${avgMarks}/${maxMarks}</span>
+              </div>
+              <div style="background: var(--surface); border-radius: 4px; height: 6px; overflow: hidden;">
+                <div style="background: ${color}; width: ${percentage}%; height: 100%; transition: width 0.3s;"></div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderDetailedScoreList() {
+  const container = document.getElementById('score-list');
+  if (!container || simcatScores.length === 0) return;
+
+  container.innerHTML = `
+    <div style="font-weight: 600; font-size: 13px; margin-bottom: 12px; color: var(--text);">📋 Test History</div>
+    ${simcatScores.map((score, idx) => {
+      const improvement = idx < simcatScores.length - 1 
+        ? score.marks_obtained - simcatScores[idx + 1].marks_obtained
+        : 0;
+      const improvementIcon = improvement > 0 ? '📈' : improvement < 0 ? '📉' : '➡️';
+      
+      return `
+        <div style="background: var(--surface2); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+            <div>
+              <div style="font-weight: 600; font-size: 12px; color: var(--text);">${score.test_name}</div>
+              <div style="font-size: 11px; color: var(--text3);">${fmtDate(new Date(score.test_date))}</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 14px; font-weight: 700; color: var(--accent);">${score.marks_obtained}/204</div>
+              <div style="font-size: 11px; color: var(--green);">${score.overall_percentile.toFixed(2)}%ile ${improvementIcon}</div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 11px;">
+            <div><span style="color: var(--text3);">VARC:</span> <span style="font-weight: 600; color: var(--amber);">${score.varc_marks_obtained}/72</span></div>
+            <div><span style="color: var(--text3);">DILR:</span> <span style="font-weight: 600; color: var(--purple);">${score.dilr_marks_obtained}/66</span></div>
+            <div><span style="color: var(--text3);">QA:</span> <span style="font-weight: 600; color: var(--green);">${score.qa_marks_obtained}/66</span></div>
+          </div>
+          <div style="margin-top: 8px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; font-size: 10px; color: var(--text3);">
+            <div>Acc: ${score.overall_accuracy.toFixed(1)}%</div>
+            <div>Time: ${(score.time_taken_seconds / 60).toFixed(0)}m</div>
+            <div>Rank: ${score.student_rank || '—'}</div>
+          </div>
+        </div>
+      `;
+    }).join('')}
+  `;
+}
+
+// ============================================================================
+// 5. INTEGRATION WITH EXISTING CODE
+// ============================================================================
+
+// Call this in renderScores() when fetching SimCAT data
+async function setScoreFilters(filter) {
+  const tabs = document.querySelectorAll('.tab-btn');
+  tabs.forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  if (filter === 'SimCAT') {
+    // Fetch from Supabase instead of Google Sheets
+    await fetchSimCATPscores();
+    renderSimCATPanalyticsDashboard();
+  } else if (filter === 'Benchmarking') {
+    // Keep existing benchmarking code
+    renderBenchmarkingScores();
+  }
+}
+
+// ============================================================================
+// HELPER: Format date
+// ============================================================================
+
+function fmtDateSimCAT(d) {
+  if (!d) return '—';
+  const date = new Date(d);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+}
 // ═════════════════════════════════════════════════════════════
 // 9. WINDOW LOAD & LISTENERS
 // ═════════════════════════════════════════════════════════════
