@@ -1037,7 +1037,28 @@ async function fetchAllData() {
 async function fetchSimcatScores() {
   if (!currentStudent) return;
   try {
-    const data = await supabaseFetch(`simcat_scores?student_id=eq.${currentStudent.id}&order=test_date.asc`);
+    const sid = String(currentStudent.id).trim();
+    console.log('Fetching SimCAT for student_id:', sid, '| email:', currentStudent.email);
+
+    // Primary: filter by student_id
+    let data = await supabaseFetch('simcat_scores?student_id=eq.' + encodeURIComponent(sid) + '&order=test_date.asc');
+    console.log('SimCAT rows (by student_id):', data ? data.length : 0, data);
+
+    // Fallback: fetch all rows and filter client-side (catches RLS issues or type mismatches)
+    if (!data || data.length === 0) {
+      console.warn('No rows via student_id filter - trying full table + client-side filter');
+      const all = await supabaseFetch('simcat_scores?order=test_date.asc');
+      console.log('All SimCAT rows in table:', all ? all.length : 0);
+      if (all && all.length > 0) {
+        console.log('Sample row student_id:', all[0].student_id, '| type:', typeof all[0].student_id);
+        data = all.filter(r =>
+          String(r.student_id).trim() === sid ||
+          (r.student_email && String(r.student_email).trim().toLowerCase() === String(currentStudent.email).trim().toLowerCase())
+        );
+        console.log('After client filter:', data.length, 'rows matched');
+      }
+    }
+
     simcatScores = data || [];
     calculateSimcatAnalytics();
   } catch(err) {
