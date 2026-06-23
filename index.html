@@ -620,6 +620,8 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
           <div class="page-title">My Profile</div>
           <div class="page-sub">Your academic identity and overview</div>
         </div>
+
+        <!-- HERO: unchanged as requested -->
         <div class="profile-hero">
           <div class="profile-avatar" id="profile-avatar">ST</div>
           <div style="flex:1;min-width:0;">
@@ -635,24 +637,87 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
             <div id="profile-qr-subtext" style="font-size:10px;font-weight:700;font-family:monospace;margin-top:4px;color:var(--text3);">ID: ----</div>
           </div>
         </div>
-        <div class="stat-grid">
+
+        <!-- SECTION 1: Quick Stats -->
+        <div class="stat-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));">
           <div class="stat-card" style="border-top:2px solid var(--accent);">
             <div class="stat-label">Attendance</div>
             <div class="stat-val" id="stat-att">—</div>
-          </div>
-          <div class="stat-card" style="border-top:2px solid var(--purple);">
-            <div class="stat-label">Mock Avg Score</div>
-            <div class="stat-val" id="stat-score">—</div>
+            <div class="stat-delta" id="stat-att-sub" style="color:var(--text3);font-size:11px;margin-top:4px;">— sessions</div>
           </div>
           <div class="stat-card" style="border-top:2px solid var(--green);">
             <div class="stat-label">Topics Done</div>
             <div class="stat-val" id="stat-topics">—</div>
+            <div class="stat-delta" id="stat-topics-sub" style="color:var(--text3);font-size:11px;margin-top:4px;">of syllabus</div>
+          </div>
+          <div class="stat-card" style="border-top:2px solid var(--purple);">
+            <div class="stat-label">SimCATs Given</div>
+            <div class="stat-val" id="stat-simcat-count">—</div>
+            <div class="stat-delta" id="stat-simcat-sub" style="color:var(--text3);font-size:11px;margin-top:4px;">mock tests</div>
           </div>
           <div class="stat-card" style="border-top:2px solid var(--amber);">
-            <div class="stat-label">Peak Percentile</div>
-            <div class="stat-val" id="stat-peak-pct">—</div>
+            <div class="stat-label">Benchmarking</div>
+            <div class="stat-val" id="stat-bench-count">—</div>
+            <div class="stat-delta" style="color:var(--text3);font-size:11px;margin-top:4px;">tests given</div>
+          </div>
+          <div class="stat-card" style="border-top:2px solid var(--cyan);">
+            <div class="stat-label">Module Tests</div>
+            <div class="stat-val" id="stat-module-count">—</div>
+            <div class="stat-delta" style="color:var(--text3);font-size:11px;margin-top:4px;">completed</div>
           </div>
         </div>
+
+        <!-- SECTION 2: Performance Snapshot -->
+        <div class="card">
+          <div class="card-title">📊 Performance Snapshot</div>
+          <div class="card-sub">Based on all SimCAT attempts</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px;">
+            <div style="background:var(--surface2);border-radius:var(--radius);padding:14px;border:1px solid var(--border);">
+              <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Avg Score</div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--accent);" id="stat-score">—</div>
+              <div style="font-size:10px;color:var(--text3);margin-top:2px;">out of 204</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:var(--radius);padding:14px;border:1px solid var(--border);">
+              <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Peak Percentile</div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--green);" id="stat-peak-pct">—</div>
+              <div style="font-size:10px;color:var(--text3);margin-top:2px;" id="stat-peak-test">personal best</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:var(--radius);padding:14px;border:1px solid var(--border);">
+              <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Avg Percentile</div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--purple);" id="stat-avg-pct">—</div>
+              <div style="font-size:10px;color:var(--text3);margin-top:2px;">%ile average</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:var(--radius);padding:14px;border:1px solid var(--border);">
+              <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Avg Accuracy</div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--amber);" id="stat-accuracy">—</div>
+              <div style="font-size:10px;color:var(--text3);margin-top:2px;">overall</div>
+            </div>
+            <div style="background:var(--surface2);border-radius:var(--radius);padding:14px;border:1px solid var(--border);">
+              <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Attempt Rate</div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--cyan);" id="stat-attempt-rate">—</div>
+              <div style="font-size:10px;color:var(--text3);margin-top:2px;">avg attempted</div>
+            </div>
+          </div>
+
+          <!-- Section strength mini bar chart -->
+          <div style="border-top:1px solid var(--border);padding-top:16px;">
+            <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:12px;">Section-wise Strength <span id="stat-strongest" style="font-size:11px;font-weight:600;margin-left:8px;"></span></div>
+            <div style="display:grid;gap:10px;" id="profile-section-bars">
+              <!-- filled by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 3: Syllabus Progress -->
+        <div class="card">
+          <div class="card-title">📈 Syllabus Progress</div>
+          <div class="card-sub">Topic completion across all subjects</div>
+          <div id="profile-progress-bars">
+            <div style="color:var(--text3);font-size:13px;text-align:center;padding:20px;">Loading...</div>
+          </div>
+        </div>
+
+        <!-- SECTION 4: Personal Details (unchanged) -->
         <div class="card">
           <div class="card-title">Personal Details</div>
           <div class="info-grid">
@@ -1156,7 +1221,13 @@ function calculateSimcatAnalytics() {
 // ═══════════════════════════════════════════════════════════════
 // RENDER ALL
 // ═══════════════════════════════════════════════════════════════
-function renderAll() {
+async function renderAll() {
+  // Fetch all test data in parallel so profile counts are accurate
+  await Promise.all([
+    fetchSimcatScores(),
+    fetchBenchmarkScores(),
+    fetchModuleTestScores()
+  ]);
   renderProfile();
   renderAnnouncementsFeed();
   renderAttendanceGrid();
@@ -1171,29 +1242,129 @@ function renderAll() {
 function renderProfile() {
   const s = currentStudent;
   if (!s) return;
+
+  // ── Identity ──────────────────────────────────────────
   const initials = getInitials(s.name);
   document.getElementById('nav-avatar').textContent = initials;
   document.getElementById('profile-avatar').textContent = initials;
   document.getElementById('nav-name').textContent = s.name;
-  document.getElementById('nav-batch').textContent = `${s.target_exam} · ${s.batch}`;
+  document.getElementById('nav-batch').textContent = s.target_exam + ' · ' + s.batch;
   document.getElementById('profile-name').textContent = s.name;
-  document.getElementById('profile-meta').textContent = `${s.target_exam} Track · Batch: ${s.batch} · ID: ${s.id}`;
+  document.getElementById('profile-meta').textContent = s.target_exam + ' Track · Batch: ' + s.batch + ' · ID: ' + s.id;
   document.getElementById('profile-exam-badge').textContent = s.target_exam;
   document.getElementById('d-name').textContent = s.name;
   document.getElementById('d-email').textContent = s.email;
   document.getElementById('d-phone').textContent = s.phone;
   document.getElementById('d-batch').textContent = s.batch;
-  document.getElementById('profile-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&bgcolor=16191f&color=4f7cff&data=${encodeURIComponent(s.id)}`;
-  document.getElementById('profile-qr-subtext').textContent = `ID: ${s.id}`;
+  document.getElementById('profile-qr-code').src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&bgcolor=16191f&color=4f7cff&data=' + encodeURIComponent(s.id);
+  document.getElementById('profile-qr-subtext').textContent = 'ID: ' + s.id;
 
-  // Stats
+  // ── Section 1: Quick Stats ────────────────────────────
   const pres = allAttendance.filter(r => r['Status'] === 'Present').length;
-  const tot = allAttendance.length;
-  document.getElementById('stat-att').textContent = tot ? `${Math.round(pres / tot * 100)}%` : '—';
-  document.getElementById('stat-score').textContent = simcatAnalytics.avg_score || '—';
+  const tot  = allAttendance.length;
+  const attPct = tot ? Math.round(pres / tot * 100) : 0;
+  document.getElementById('stat-att').textContent = tot ? attPct + '%' : '—';
+  document.getElementById('stat-att-sub').textContent = tot ? pres + ' present / ' + tot + ' sessions' : '— sessions';
+
   const done = allProgress.filter(r => r['Status'] === 'Done').length;
-  document.getElementById('stat-topics').textContent = `${done}/${allProgress.length}`;
-  document.getElementById('stat-peak-pct').textContent = simcatAnalytics.peak_percentile ? `${simcatAnalytics.peak_percentile}%` : '—';
+  document.getElementById('stat-topics').textContent = allProgress.length ? done + '/' + allProgress.length : '—';
+  document.getElementById('stat-topics-sub').textContent = allProgress.length ? Math.round(done / allProgress.length * 100) + '% of syllabus' : 'of syllabus';
+
+  document.getElementById('stat-simcat-count').textContent = simcatScores.length || '0';
+  document.getElementById('stat-simcat-sub').textContent = simcatScores.length === 1 ? 'mock test' : 'mock tests';
+
+  document.getElementById('stat-bench-count').textContent = benchmarkScores.length || '0';
+  document.getElementById('stat-module-count').textContent = moduleTestScores.length || '0';
+
+  // ── Section 2: Performance Snapshot ──────────────────
+  const a = simcatAnalytics;
+  const hasSimcat = simcatScores.length > 0;
+
+  document.getElementById('stat-score').textContent = hasSimcat ? a.avg_score : '—';
+  document.getElementById('stat-accuracy').textContent = hasSimcat ? a.avg_accuracy + '%' : '—';
+  document.getElementById('stat-avg-pct').textContent = hasSimcat ? a.avg_percentile + '%ile' : '—';
+  document.getElementById('stat-attempt-rate').textContent = hasSimcat ? a.avg_attempt_rate + '%' : '—';
+
+  if (hasSimcat) {
+    document.getElementById('stat-peak-pct').textContent = parseFloat(a.peak_percentile).toFixed(2) + '%ile';
+    // find which test had peak percentile
+    const peakTest = simcatScores.reduce((best, s) =>
+      parseFloat(s.overall_percentile) > parseFloat(best.overall_percentile) ? s : best
+    , simcatScores[0]);
+    document.getElementById('stat-peak-test').textContent = peakTest ? 'in ' + peakTest.test_name : 'personal best';
+  } else {
+    document.getElementById('stat-peak-pct').textContent = '—';
+    document.getElementById('stat-peak-test').textContent = 'no tests yet';
+  }
+
+  // ── Section-wise strength mini bar chart ─────────────
+  const barsEl = document.getElementById('profile-section-bars');
+  const strongEl = document.getElementById('stat-strongest');
+  if (barsEl) {
+    if (!hasSimcat) {
+      barsEl.innerHTML = '<div style="color:var(--text3);font-size:12px;text-align:center;padding:12px;">No SimCAT data yet</div>';
+      if (strongEl) strongEl.textContent = '';
+    } else {
+      const sections = [
+        { key: 'varc', label: 'VARC',  marks: parseFloat(a.avg_varc_marks), max: 72,  acc: parseFloat(a.avg_varc_accuracy), pct: parseFloat(a.best_varc_pct), color: 'var(--amber)'  },
+        { key: 'dilr', label: 'DILR',  marks: parseFloat(a.avg_dilr_marks), max: 66,  acc: parseFloat(a.avg_dilr_accuracy), pct: parseFloat(a.best_dilr_pct), color: 'var(--purple)' },
+        { key: 'qa',   label: 'Quant', marks: parseFloat(a.avg_qa_marks),   max: 66,  acc: parseFloat(a.avg_qa_accuracy),   pct: parseFloat(a.best_qa_pct),   color: 'var(--green)'  },
+      ];
+
+      // determine strongest by avg accuracy
+      const strongest = sections.reduce((b, s) => s.acc > b.acc ? s : b, sections[0]);
+      if (strongEl) {
+        strongEl.innerHTML = '💪 Strongest: <span style="color:' + strongest.color + ';font-weight:700;">' + strongest.label + '</span>';
+      }
+
+      barsEl.innerHTML = sections.map(sec => {
+        const fillPct = ((sec.marks / sec.max) * 100).toFixed(1);
+        return '<div style="display:grid;grid-template-columns:60px 1fr 90px;align-items:center;gap:12px;">' +
+          '<div style="font-size:12px;font-weight:700;color:' + sec.color + ';">' + sec.label + '</div>' +
+          '<div>' +
+            '<div style="background:var(--surface3);border-radius:4px;height:8px;overflow:hidden;">' +
+              '<div style="width:' + fillPct + '%;height:100%;background:' + sec.color + ';border-radius:4px;transition:width .8s;"></div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="font-size:11px;color:var(--text2);text-align:right;">' +
+            '<span style="font-weight:700;color:' + sec.color + ';">' + sec.marks.toFixed(1) + '</span>' +
+            '<span style="color:var(--text3);">/' + sec.max + '</span>' +
+            ' &nbsp;' +
+            '<span style="color:var(--text3);">' + sec.acc.toFixed(1) + '%</span>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+  }
+
+  // ── Section 3: Syllabus progress bars ────────────────
+  const progEl = document.getElementById('profile-progress-bars');
+  if (progEl) {
+    if (!allProgress.length) {
+      progEl.innerHTML = '<div style="color:var(--text3);font-size:12px;text-align:center;padding:20px;">No syllabus data</div>';
+    } else {
+      const subs = [...new Set(allProgress.map(r => r['Subject']))];
+      progEl.innerHTML = subs.map(sub => {
+        const items = allProgress.filter(r => r['Subject'] === sub);
+        const d     = items.filter(r => r['Status'] === 'Done').length;
+        const inProg = items.filter(r => r['Status'] === 'In Progress').length;
+        const pct   = items.length ? Math.round(d / items.length * 100) : 0;
+        const color = sub === 'QA' ? 'var(--green)' : sub === 'VARC' ? 'var(--amber)' : 'var(--purple)';
+        return '<div style="margin-bottom:14px;">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
+            '<div style="display:flex;align-items:center;gap:8px;">' +
+              '<span style="font-size:12px;font-weight:700;color:' + color + ';">' + sub + '</span>' +
+              (inProg > 0 ? '<span style="font-size:10px;background:rgba(79,124,255,0.1);color:var(--accent2);padding:2px 6px;border-radius:10px;">' + inProg + ' in progress</span>' : '') +
+            '</div>' +
+            '<span style="font-size:11px;color:var(--text3);">' + d + '/' + items.length + ' · ' + pct + '%</span>' +
+          '</div>' +
+          '<div style="background:var(--surface3);border-radius:4px;height:8px;overflow:hidden;">' +
+            '<div style="width:' + pct + '%;height:100%;background:' + color + ';border-radius:4px;transition:width .8s;"></div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════
