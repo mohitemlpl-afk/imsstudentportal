@@ -1074,27 +1074,61 @@ async function fetchModuleTestScores() {
 function calculateSimcatAnalytics() {
   if (!simcatScores.length) { simcatAnalytics = {}; return; }
 
-  const avg = (arr, key) => arr.reduce((s, r) => s + (parseFloat(r[key]) || 0), 0) / arr.length;
-  const max = (arr, key) => arr.reduce((m, r) => Math.max(m, parseFloat(r[key]) || 0), 0);
+  const avg  = (arr, key) => arr.reduce((s, r) => s + (parseFloat(r[key]) || 0), 0) / arr.length;
+  const maxV = (arr, key) => arr.reduce((m, r) => Math.max(m, parseFloat(r[key]) || 0), 0);
+  const sum  = (arr, key) => arr.reduce((s, r) => s + (parseInt(r[key]) || 0), 0);
+
+  // Attempt rate = attempted / total_questions
+  const avgAttemptRate = simcatScores.map(s => {
+    const t = parseInt(s.total_questions) || 68;
+    const a = parseInt(s.questions_attempted) || 0;
+    return t ? (a / t * 100) : 0;
+  }).reduce((s, v) => s + v, 0) / simcatScores.length;
 
   simcatAnalytics = {
-    total_tests: simcatScores.length,
-    peak_percentile: max(simcatScores, 'overall_percentile'),
-    avg_percentile: avg(simcatScores, 'overall_percentile').toFixed(2),
-    latest_percentile: parseFloat(simcatScores[simcatScores.length - 1]?.overall_percentile || 0),
-    peak_score: max(simcatScores, 'marks_obtained'),
-    avg_score: avg(simcatScores, 'marks_obtained').toFixed(1),
-    avg_accuracy: avg(simcatScores, 'overall_accuracy').toFixed(1),
+    total_tests      : simcatScores.length,
+
+    // OVERALL
+    peak_percentile  : maxV(simcatScores, 'overall_percentile'),
+    avg_percentile   : avg(simcatScores, 'overall_percentile').toFixed(2),
+    peak_score       : maxV(simcatScores, 'marks_obtained'),
+    avg_score        : avg(simcatScores, 'marks_obtained').toFixed(1),
+    avg_accuracy     : avg(simcatScores, 'overall_accuracy').toFixed(1),
+    avg_attempt_rate : avgAttemptRate.toFixed(1),
+    avg_time_min     : (avg(simcatScores, 'time_taken_seconds') / 60).toFixed(0),
+
+    // TOTALS across all tests
+    total_correct    : sum(simcatScores, 'questions_correct'),
+    total_incorrect  : sum(simcatScores, 'questions_incorrect'),
+    total_skipped    : sum(simcatScores, 'questions_skipped'),
+    total_attempted  : sum(simcatScores, 'questions_attempted'),
+
+    // VARC
+    avg_varc_marks   : avg(simcatScores, 'varc_marks_obtained').toFixed(1),
     avg_varc_accuracy: avg(simcatScores, 'varc_accuracy').toFixed(1),
+    best_varc_pct    : maxV(simcatScores, 'varc_percentile').toFixed(2),
+    avg_varc_correct : avg(simcatScores, 'varc_questions_correct').toFixed(1),
+    avg_varc_wrong   : avg(simcatScores, 'varc_questions_incorrect').toFixed(1),
+    avg_varc_skip    : avg(simcatScores, 'varc_questions_skipped').toFixed(1),
+    avg_varc_time    : (avg(simcatScores, 'varc_time_seconds') / 60).toFixed(0),
+
+    // DILR
+    avg_dilr_marks   : avg(simcatScores, 'dilr_marks_obtained').toFixed(1),
     avg_dilr_accuracy: avg(simcatScores, 'dilr_accuracy').toFixed(1),
-    avg_qa_accuracy: avg(simcatScores, 'qa_accuracy').toFixed(1),
-    best_varc_pct: max(simcatScores, 'varc_percentile').toFixed(2),
-    best_dilr_pct: max(simcatScores, 'dilr_percentile').toFixed(2),
-    best_qa_pct: max(simcatScores, 'qa_percentile').toFixed(2),
-    avg_varc_marks: avg(simcatScores, 'varc_marks_obtained').toFixed(1),
-    avg_dilr_marks: avg(simcatScores, 'dilr_marks_obtained').toFixed(1),
-    avg_qa_marks: avg(simcatScores, 'qa_marks_obtained').toFixed(1),
-    avg_time_min: (avg(simcatScores, 'time_taken_seconds') / 60).toFixed(0),
+    best_dilr_pct    : maxV(simcatScores, 'dilr_percentile').toFixed(2),
+    avg_dilr_correct : avg(simcatScores, 'dilr_questions_correct').toFixed(1),
+    avg_dilr_wrong   : avg(simcatScores, 'dilr_questions_incorrect').toFixed(1),
+    avg_dilr_skip    : avg(simcatScores, 'dilr_questions_skipped').toFixed(1),
+    avg_dilr_time    : (avg(simcatScores, 'dilr_time_seconds') / 60).toFixed(0),
+
+    // QA
+    avg_qa_marks     : avg(simcatScores, 'qa_marks_obtained').toFixed(1),
+    avg_qa_accuracy  : avg(simcatScores, 'qa_accuracy').toFixed(1),
+    best_qa_pct      : maxV(simcatScores, 'qa_percentile').toFixed(2),
+    avg_qa_correct   : avg(simcatScores, 'qa_questions_correct').toFixed(1),
+    avg_qa_wrong     : avg(simcatScores, 'qa_questions_incorrect').toFixed(1),
+    avg_qa_skip      : avg(simcatScores, 'qa_questions_skipped').toFixed(1),
+    avg_qa_time      : (avg(simcatScores, 'qa_time_seconds') / 60).toFixed(0),
   };
 }
 
@@ -1420,13 +1454,50 @@ function renderSimcatPage() {
   const a = simcatAnalytics;
   const hasData = simcatScores.length > 0;
 
+  // helper: mini question pill
+  const qpill = (val, color, label) =>
+    `<div style="text-align:center;padding:4px 0;">
+      <div style="font-size:13px;font-weight:700;color:${color};">${val}</div>
+      <div style="font-size:9px;color:var(--text3);margin-top:1px;">${label}</div>
+    </div>`;
+
+  // helper: section breakdown block for a test
+  const sectionBlock = (label, marks, maxM, correct, wrong, skip, acc, pct, timeSec, colorVar) => {
+    const timeMin = timeSec ? `${(timeSec/60).toFixed(0)}m` : '—';
+    const fillPct = maxM ? (marks / maxM * 100).toFixed(0) : 0;
+    return `
+      <div style="background:${colorVar}14;border:1px solid ${colorVar}30;border-radius:8px;padding:10px 12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div style="font-size:10px;font-weight:700;color:${colorVar};text-transform:uppercase;letter-spacing:.6px;">${label}</div>
+          <div style="font-size:11px;font-weight:700;color:var(--text);">${marks}<span style="color:var(--text3);font-weight:400;">/${maxM}</span></div>
+        </div>
+        <div style="background:var(--surface3);border-radius:3px;height:4px;margin-bottom:8px;overflow:hidden;">
+          <div style="width:${fillPct}%;height:100%;background:${colorVar};border-radius:3px;"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;">
+          ${qpill(correct, 'var(--green-text)', '✓ Correct')}
+          ${qpill(wrong, 'var(--red)', '✗ Wrong')}
+          ${qpill(skip, 'var(--text3)', '— Skipped')}
+          ${qpill(timeMin, colorVar, '⏱ Time')}
+        </div>
+        <div style="margin-top:6px;display:flex;justify-content:space-between;font-size:10px;color:var(--text3);">
+          <span>Accuracy: <b style="color:${colorVar};">${parseFloat(acc||0).toFixed(1)}%</b></span>
+          <span>Percentile: <b style="color:var(--text);">${parseFloat(pct||0).toFixed(2)}%ile</b></span>
+        </div>
+      </div>`;
+  };
+
   container.innerHTML = `
     <div class="page-header">
       <div class="page-title">SimCAT Analysis</div>
-      <div class="page-sub">${hasData ? `${a.total_tests} test${a.total_tests > 1 ? 's' : ''} taken · Last updated ${fmtDate(simcatScores[simcatScores.length-1]?.test_date)}` : 'No SimCAT data yet'}</div>
+      <div class="page-sub">${hasData
+        ? `${a.total_tests} test${a.total_tests > 1 ? 's' : ''} · Last: ${fmtDate(simcatScores[simcatScores.length-1]?.test_date)} · Avg time: ${a.avg_time_min}m`
+        : 'No SimCAT data yet'}</div>
     </div>
 
     ${hasData ? `
+
+    <!-- ── TOP STATS ── -->
     <div class="stat-grid">
       <div class="stat-card" style="border-top:2px solid var(--accent);">
         <div class="stat-label">Avg Accuracy</div>
@@ -1436,7 +1507,7 @@ function renderSimcatPage() {
       <div class="stat-card" style="border-top:2px solid var(--green);">
         <div class="stat-label">Peak Percentile</div>
         <div class="stat-val">${parseFloat(a.peak_percentile).toFixed(2)}</div>
-        <div class="stat-delta" style="color:var(--green-text);">Personal best</div>
+        <div class="stat-delta" style="color:var(--green-text);">Personal best 🏆</div>
       </div>
       <div class="stat-card" style="border-top:2px solid var(--purple);">
         <div class="stat-label">Avg Percentile</div>
@@ -1448,86 +1519,141 @@ function renderSimcatPage() {
         <div class="stat-val">${a.avg_score}</div>
         <div class="stat-delta" style="color:var(--text3);">Out of 204</div>
       </div>
+      <div class="stat-card" style="border-top:2px solid var(--cyan);">
+        <div class="stat-label">Attempt Rate</div>
+        <div class="stat-val">${a.avg_attempt_rate}%</div>
+        <div class="stat-delta" style="color:var(--text3);">Avg questions tried</div>
+      </div>
+      <div class="stat-card" style="border-top:2px solid var(--green);">
+        <div class="stat-label">Total Correct</div>
+        <div class="stat-val">${a.total_correct}</div>
+        <div class="stat-delta" style="color:var(--red);">${a.total_incorrect} wrong · ${a.total_skipped} skipped</div>
+      </div>
     </div>
 
+    <!-- ── CHART ── -->
     <div class="card">
       <div class="card-title">Score & Percentile Progression</div>
       <div class="chart-wrap"><canvas id="simcatChart"></canvas></div>
     </div>
 
+    <!-- ── SECTION AVERAGES ── -->
     <div class="card">
-      <div class="card-title">Section Performance Breakdown</div>
-      <div class="section-perf-grid">
+      <div class="card-title">Section Performance Averages</div>
+      <div class="card-sub">Averages across all ${a.total_tests} tests</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
         <div class="section-card">
-          <div class="section-card-label">Verbal & RC</div>
-          <div class="section-card-val" style="color:var(--amber);">${a.avg_varc_marks}/72</div>
-          <div class="section-card-sub">Accuracy: ${a.avg_varc_accuracy}%</div>
-          <div class="section-card-sub" style="margin-top:2px;">Best %ile: ${a.best_varc_pct}</div>
+          <div class="section-card-label" style="color:var(--amber);">VARC</div>
+          <div class="section-card-val" style="color:var(--amber);">${a.avg_varc_marks}<span style="font-size:13px;color:var(--text3);">/72</span></div>
+          <div style="margin:8px 0 4px;"><div class="prog-track"><div class="prog-fill" style="width:${(a.avg_varc_marks/72*100).toFixed(0)}%;background:var(--amber);"></div></div></div>
+          <div class="section-card-sub">Accuracy: <b style="color:var(--amber);">${a.avg_varc_accuracy}%</b></div>
+          <div class="section-card-sub">Best %ile: <b style="color:var(--text);">${a.best_varc_pct}</b></div>
+          <div style="margin-top:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;font-size:10px;text-align:center;">
+            <div style="background:var(--green-dim);border-radius:4px;padding:3px;color:var(--green-text);">✓ ${a.avg_varc_correct}</div>
+            <div style="background:var(--red-dim);border-radius:4px;padding:3px;color:var(--red);">✗ ${a.avg_varc_wrong}</div>
+            <div style="background:var(--surface3);border-radius:4px;padding:3px;color:var(--text3);">— ${a.avg_varc_skip}</div>
+          </div>
+          <div style="font-size:10px;color:var(--text3);margin-top:6px;">⏱ Avg ${a.avg_varc_time}m per test</div>
         </div>
         <div class="section-card">
-          <div class="section-card-label">DILR</div>
-          <div class="section-card-val" style="color:var(--purple);">${a.avg_dilr_marks}/66</div>
-          <div class="section-card-sub">Accuracy: ${a.avg_dilr_accuracy}%</div>
-          <div class="section-card-sub" style="margin-top:2px;">Best %ile: ${a.best_dilr_pct}</div>
+          <div class="section-card-label" style="color:var(--purple);">DILR</div>
+          <div class="section-card-val" style="color:var(--purple);">${a.avg_dilr_marks}<span style="font-size:13px;color:var(--text3);">/66</span></div>
+          <div style="margin:8px 0 4px;"><div class="prog-track"><div class="prog-fill" style="width:${(a.avg_dilr_marks/66*100).toFixed(0)}%;background:var(--purple);"></div></div></div>
+          <div class="section-card-sub">Accuracy: <b style="color:var(--purple);">${a.avg_dilr_accuracy}%</b></div>
+          <div class="section-card-sub">Best %ile: <b style="color:var(--text);">${a.best_dilr_pct}</b></div>
+          <div style="margin-top:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;font-size:10px;text-align:center;">
+            <div style="background:var(--green-dim);border-radius:4px;padding:3px;color:var(--green-text);">✓ ${a.avg_dilr_correct}</div>
+            <div style="background:var(--red-dim);border-radius:4px;padding:3px;color:var(--red);">✗ ${a.avg_dilr_wrong}</div>
+            <div style="background:var(--surface3);border-radius:4px;padding:3px;color:var(--text3);">— ${a.avg_dilr_skip}</div>
+          </div>
+          <div style="font-size:10px;color:var(--text3);margin-top:6px;">⏱ Avg ${a.avg_dilr_time}m per test</div>
         </div>
         <div class="section-card">
-          <div class="section-card-label">Quant</div>
-          <div class="section-card-val" style="color:var(--green);">${a.avg_qa_marks}/66</div>
-          <div class="section-card-sub">Accuracy: ${a.avg_qa_accuracy}%</div>
-          <div class="section-card-sub" style="margin-top:2px;">Best %ile: ${a.best_qa_pct}</div>
+          <div class="section-card-label" style="color:var(--green);">Quant (QA)</div>
+          <div class="section-card-val" style="color:var(--green);">${a.avg_qa_marks}<span style="font-size:13px;color:var(--text3);">/66</span></div>
+          <div style="margin:8px 0 4px;"><div class="prog-track"><div class="prog-fill" style="width:${(a.avg_qa_marks/66*100).toFixed(0)}%;background:var(--green);"></div></div></div>
+          <div class="section-card-sub">Accuracy: <b style="color:var(--green);">${a.avg_qa_accuracy}%</b></div>
+          <div class="section-card-sub">Best %ile: <b style="color:var(--text);">${a.best_qa_pct}</b></div>
+          <div style="margin-top:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;font-size:10px;text-align:center;">
+            <div style="background:var(--green-dim);border-radius:4px;padding:3px;color:var(--green-text);">✓ ${a.avg_qa_correct}</div>
+            <div style="background:var(--red-dim);border-radius:4px;padding:3px;color:var(--red);">✗ ${a.avg_qa_wrong}</div>
+            <div style="background:var(--surface3);border-radius:4px;padding:3px;color:var(--text3);">— ${a.avg_qa_skip}</div>
+          </div>
+          <div style="font-size:10px;color:var(--text3);margin-top:6px;">⏱ Avg ${a.avg_qa_time}m per test</div>
         </div>
-      </div>
-      <div style="display:grid;gap:10px;margin-top:4px;">
-        ${[['varc','Verbal & RC',72,'var(--amber)'],['dilr','DILR',66,'var(--purple)'],['qa','Quant',66,'var(--green)']].map(([k,label,max,color]) => `
-          <div class="prog-row" style="margin-bottom:0;">
-            <div class="prog-label">
-              <span style="color:var(--text2);font-size:12px;">${label}</span>
-              <span style="color:var(--text3);font-size:11px;">${a[`avg_${k}_marks`]}/${max}</span>
-            </div>
-            <div class="prog-track">
-              <div class="prog-fill" style="width:${(a[`avg_${k}_marks`]/max*100).toFixed(0)}%;background:${color};"></div>
-            </div>
-          </div>`).join('')}
       </div>
     </div>
 
+    <!-- ── TEST HISTORY ── -->
     <div class="card">
-      <div class="card-title">Test History</div>
+      <div class="card-title">Test-by-Test History</div>
+      <div class="card-sub">Full breakdown per test — scores, accuracy, attempt rate, time</div>
       ${simcatScores.map((s, idx) => {
         const prev = idx > 0 ? simcatScores[idx - 1] : null;
-        const diff = prev ? (s.marks_obtained - prev.marks_obtained) : 0;
+        const scoreDiff = prev ? (s.marks_obtained - prev.marks_obtained) : 0;
+        const pctDiff   = prev ? (parseFloat(s.overall_percentile) - parseFloat(prev.overall_percentile)) : 0;
+        const totalQ    = parseInt(s.total_questions) || 68;
+        const attempted = parseInt(s.questions_attempted) || 0;
+        const attemptPct = totalQ ? (attempted / totalQ * 100).toFixed(0) : 0;
+        const timeUsed  = s.time_taken_seconds ? `${(s.time_taken_seconds/60).toFixed(0)}m` : '—';
+        const totalTime = s.total_time_seconds ? `${(s.total_time_seconds/60).toFixed(0)}m` : '120m';
         return `
           <div class="score-row">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+
+            <!-- Header row -->
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
               <div>
-                <div style="font-weight:700;font-size:13px;color:var(--text);">${s.test_name}</div>
-                <div style="font-size:11px;color:var(--text3);">${fmtDate(s.test_date)} · ${(s.time_taken_seconds/60).toFixed(0)}m used</div>
+                <div style="font-weight:700;font-size:14px;color:var(--text);">${s.test_name}</div>
+                <div style="font-size:11px;color:var(--text3);margin-top:2px;">
+                  ${fmtDate(s.test_date)} &nbsp;·&nbsp; ⏱ ${timeUsed} / ${totalTime} &nbsp;·&nbsp; Rank: <b style="color:var(--text);">${s.student_rank || '—'}</b>
+                </div>
               </div>
               <div style="text-align:right;">
-                <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--accent);">${s.marks_obtained}<span style="font-size:11px;font-weight:400;color:var(--text3);">/204</span></div>
-                <div style="font-size:11px;color:var(--green-text);font-weight:600;">${parseFloat(s.overall_percentile).toFixed(2)}%ile ${prev ? trendIcon(diff) : ''}</div>
+                <div style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--accent);">
+                  ${s.marks_obtained}<span style="font-size:12px;font-weight:400;color:var(--text3);">/${s.total_marks || 204}</span>
+                </div>
+                <div style="font-size:12px;color:var(--green-text);font-weight:600;">
+                  ${parseFloat(s.overall_percentile).toFixed(2)}%ile
+                  ${prev ? `<span style="font-size:10px;margin-left:4px;">${pctDiff >= 0 ? '<span style=\'color:var(--green)\'>▲' : '<span style=\'color:var(--red)\'>▼'}${Math.abs(pctDiff).toFixed(2)}</span>` : ''}
+                </div>
               </div>
             </div>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:11px;">
-              <div style="background:rgba(255,183,64,0.08);border-radius:6px;padding:6px 8px;">
-                <div style="color:var(--text3);margin-bottom:1px;">VARC</div>
-                <div style="font-weight:700;color:var(--amber);">${s.varc_marks_obtained}/72</div>
-                <div style="color:var(--text3);">${parseFloat(s.varc_accuracy||0).toFixed(0)}% acc</div>
+
+            <!-- Overall quick stats -->
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px;">
+              <div style="background:var(--surface3);border-radius:6px;padding:7px 6px;text-align:center;">
+                <div style="font-size:13px;font-weight:700;color:var(--accent);">${s.overall_accuracy ? parseFloat(s.overall_accuracy).toFixed(1) : '—'}%</div>
+                <div style="font-size:9px;color:var(--text3);margin-top:2px;">Accuracy</div>
               </div>
-              <div style="background:rgba(155,109,255,0.08);border-radius:6px;padding:6px 8px;">
-                <div style="color:var(--text3);margin-bottom:1px;">DILR</div>
-                <div style="font-weight:700;color:var(--purple);">${s.dilr_marks_obtained}/66</div>
-                <div style="color:var(--text3);">${parseFloat(s.dilr_accuracy||0).toFixed(0)}% acc</div>
+              <div style="background:var(--surface3);border-radius:6px;padding:7px 6px;text-align:center;">
+                <div style="font-size:13px;font-weight:700;color:var(--cyan);">${attemptPct}%</div>
+                <div style="font-size:9px;color:var(--text3);margin-top:2px;">Attempted</div>
               </div>
-              <div style="background:rgba(16,217,139,0.08);border-radius:6px;padding:6px 8px;">
-                <div style="color:var(--text3);margin-bottom:1px;">QA</div>
-                <div style="font-weight:700;color:var(--green);">${s.qa_marks_obtained}/66</div>
-                <div style="color:var(--text3);">${parseFloat(s.qa_accuracy||0).toFixed(0)}% acc</div>
+              <div style="background:var(--green-dim);border-radius:6px;padding:7px 6px;text-align:center;">
+                <div style="font-size:13px;font-weight:700;color:var(--green-text);">${s.questions_correct || 0}</div>
+                <div style="font-size:9px;color:var(--text3);margin-top:2px;">✓ Correct</div>
+              </div>
+              <div style="background:var(--red-dim);border-radius:6px;padding:7px 6px;text-align:center;">
+                <div style="font-size:13px;font-weight:700;color:var(--red);">${s.questions_incorrect || 0}</div>
+                <div style="font-size:9px;color:var(--text3);margin-top:2px;">✗ Wrong</div>
+              </div>
+              <div style="background:var(--surface3);border-radius:6px;padding:7px 6px;text-align:center;">
+                <div style="font-size:13px;font-weight:700;color:var(--text3);">${s.questions_skipped || 0}</div>
+                <div style="font-size:9px;color:var(--text3);margin-top:2px;">— Skipped</div>
               </div>
             </div>
+
+            <!-- Section breakdown -->
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+              ${sectionBlock('VARC', s.varc_marks_obtained, s.varc_marks_total||72, s.varc_questions_correct||0, s.varc_questions_incorrect||0, s.varc_questions_skipped||0, s.varc_accuracy, s.varc_percentile, s.varc_time_seconds, '#FFB740')}
+              ${sectionBlock('DILR', s.dilr_marks_obtained, s.dilr_marks_total||66, s.dilr_questions_correct||0, s.dilr_questions_incorrect||0, s.dilr_questions_skipped||0, s.dilr_accuracy, s.dilr_percentile, s.dilr_time_seconds, '#9B6DFF')}
+              ${sectionBlock('QA', s.qa_marks_obtained, s.qa_marks_total||66, s.qa_questions_correct||0, s.qa_questions_incorrect||0, s.qa_questions_skipped||0, s.qa_accuracy, s.qa_percentile, s.qa_time_seconds, '#10D98B')}
+            </div>
+
           </div>`;
       }).join('')}
     </div>
+
     ` : '<div class="card"><div class="empty-state"><div class="empty-state-icon">🎯</div><div class="empty-state-text">No SimCAT scores found. Contact admin if scores have been uploaded.</div></div></div>'}
   `;
 
