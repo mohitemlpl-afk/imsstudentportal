@@ -1276,62 +1276,131 @@ function renderProfile() {
   document.getElementById('stat-bench-count').textContent = benchmarkScores.length || '0';
   document.getElementById('stat-module-count').textContent = moduleTestScores.length || '0';
 
-  // ── Section 2: Performance Snapshot ──────────────────
-  const a = simcatAnalytics;
-  const hasSimcat = simcatScores.length > 0;
+  // ── Section 2: Performance Snapshot (ALL 3 test types) ──────
+  // Combine SimCAT + Benchmarking + Module Tests
+  const allTestRows = [
+    ...simcatScores.map(r => ({
+      accuracy: parseFloat(r.overall_accuracy) || 0,
+      score_pct: r.total_marks ? (parseFloat(r.marks_obtained) / parseFloat(r.total_marks) * 100) : 0,
+      percentile: parseFloat(r.overall_percentile) || 0,
+      attempted: r.total_questions ? (parseInt(r.questions_attempted) / parseInt(r.total_questions) * 100) : 0,
+      varc_acc: parseFloat(r.varc_accuracy) || 0,
+      dilr_acc: parseFloat(r.dilr_accuracy) || 0,
+      qa_acc:   parseFloat(r.qa_accuracy)   || 0,
+      varc_marks: parseFloat(r.varc_marks_obtained) || 0,
+      dilr_marks: parseFloat(r.dilr_marks_obtained) || 0,
+      qa_marks:   parseFloat(r.qa_marks_obtained)   || 0,
+      source: 'simcat', name: r.test_name
+    })),
+    ...benchmarkScores.map(r => ({
+      accuracy: parseFloat(r.accuracy) || 0,
+      score_pct: r.max_score ? (parseFloat(r.score_obtained) / parseFloat(r.max_score) * 100) : 0,
+      percentile: parseFloat(r.percentile) || 0,
+      attempted: 0,
+      varc_acc: r.subject === 'VARC' ? (parseFloat(r.accuracy) || 0) : 0,
+      dilr_acc: r.subject === 'DILR' ? (parseFloat(r.accuracy) || 0) : 0,
+      qa_acc:   r.subject === 'QA'   ? (parseFloat(r.accuracy) || 0) : 0,
+      varc_marks: 0, dilr_marks: 0, qa_marks: 0,
+      source: 'bench', name: r.test_name
+    })),
+    ...moduleTestScores.map(r => ({
+      accuracy: parseFloat(r.accuracy) || 0,
+      score_pct: r.max_marks ? (parseFloat(r.marks_obtained) / parseFloat(r.max_marks) * 100) : 0,
+      percentile: 0,
+      attempted: r.total_questions ? (parseInt(r.questions_attempted) / parseInt(r.total_questions) * 100) : 0,
+      varc_acc: r.subject === 'VARC' ? (parseFloat(r.accuracy) || 0) : 0,
+      dilr_acc: r.subject === 'DILR' ? (parseFloat(r.accuracy) || 0) : 0,
+      qa_acc:   r.subject === 'QA'   ? (parseFloat(r.accuracy) || 0) : 0,
+      varc_marks: 0, dilr_marks: 0, qa_marks: 0,
+      source: 'module', name: r.test_name
+    }))
+  ];
 
-  document.getElementById('stat-score').textContent = hasSimcat ? a.avg_score : '—';
-  document.getElementById('stat-accuracy').textContent = hasSimcat ? a.avg_accuracy + '%' : '—';
-  document.getElementById('stat-avg-pct').textContent = hasSimcat ? a.avg_percentile + '%ile' : '—';
-  document.getElementById('stat-attempt-rate').textContent = hasSimcat ? a.avg_attempt_rate + '%' : '—';
+  const totalTests = allTestRows.length;
+  const hasAny = totalTests > 0;
 
-  if (hasSimcat) {
-    document.getElementById('stat-peak-pct').textContent = parseFloat(a.peak_percentile).toFixed(2) + '%ile';
-    // find which test had peak percentile
-    const peakTest = simcatScores.reduce((best, s) =>
-      parseFloat(s.overall_percentile) > parseFloat(best.overall_percentile) ? s : best
-    , simcatScores[0]);
-    document.getElementById('stat-peak-test').textContent = peakTest ? 'in ' + peakTest.test_name : 'personal best';
+  const avgOf = (key) => hasAny
+    ? (allTestRows.reduce((s, r) => s + r[key], 0) / totalTests).toFixed(1)
+    : null;
+
+  // Avg score % across all tests
+  const avgScorePct = avgOf('score_pct');
+  document.getElementById('stat-score').textContent = hasAny ? avgScorePct + '%' : '—';
+
+  // Avg accuracy across all tests
+  const avgAcc = avgOf('accuracy');
+  document.getElementById('stat-accuracy').textContent = hasAny ? avgAcc + '%' : '—';
+
+  // Avg percentile — only from tests that have percentile (simcat + bench)
+  const pctRows = allTestRows.filter(r => r.percentile > 0);
+  const avgPct = pctRows.length
+    ? (pctRows.reduce((s, r) => s + r.percentile, 0) / pctRows.length).toFixed(2)
+    : null;
+  document.getElementById('stat-avg-pct').textContent = avgPct ? avgPct + '%ile' : '—';
+
+  // Avg attempt rate — from tests that have it
+  const attRows = allTestRows.filter(r => r.attempted > 0);
+  const avgAtt = attRows.length
+    ? (attRows.reduce((s, r) => s + r.attempted, 0) / attRows.length).toFixed(1)
+    : null;
+  document.getElementById('stat-attempt-rate').textContent = avgAtt ? avgAtt + '%' : '—';
+
+  // Peak percentile — best across simcat + bench
+  if (pctRows.length) {
+    const peakRow = pctRows.reduce((best, r) => r.percentile > best.percentile ? r : best, pctRows[0]);
+    document.getElementById('stat-peak-pct').textContent = peakRow.percentile.toFixed(2) + '%ile';
+    document.getElementById('stat-peak-test').textContent = 'in ' + peakRow.name;
   } else {
     document.getElementById('stat-peak-pct').textContent = '—';
     document.getElementById('stat-peak-test').textContent = 'no tests yet';
   }
 
   // ── Section-wise strength mini bar chart ─────────────
+  // Avg accuracy per section combining all 3 sources
   const barsEl = document.getElementById('profile-section-bars');
   const strongEl = document.getElementById('stat-strongest');
   if (barsEl) {
-    if (!hasSimcat) {
-      barsEl.innerHTML = '<div style="color:var(--text3);font-size:12px;text-align:center;padding:12px;">No SimCAT data yet</div>';
+    if (!hasAny) {
+      barsEl.innerHTML = '<div style="color:var(--text3);font-size:12px;text-align:center;padding:12px;">No test data yet</div>';
       if (strongEl) strongEl.textContent = '';
     } else {
+      // For section bars, use simcat avg marks where available, else just accuracy
+      const a = simcatAnalytics;
+      const hasSimcat = simcatScores.length > 0;
+
+      // VARC accuracy: simcat rows + bench/module VARC rows
+      const varcRows = allTestRows.filter(r => r.varc_acc > 0);
+      const dilrRows = allTestRows.filter(r => r.dilr_acc > 0);
+      const qaRows   = allTestRows.filter(r => r.qa_acc   > 0);
+
+      const varcAcc = varcRows.length ? (varcRows.reduce((s,r) => s + r.varc_acc, 0) / varcRows.length) : 0;
+      const dilrAcc = dilrRows.length ? (dilrRows.reduce((s,r) => s + r.dilr_acc, 0) / dilrRows.length) : 0;
+      const qaAcc   = qaRows.length   ? (qaRows.reduce((s,r)   => s + r.qa_acc,   0) / qaRows.length)   : 0;
+
       const sections = [
-        { key: 'varc', label: 'VARC',  marks: parseFloat(a.avg_varc_marks), max: 72,  acc: parseFloat(a.avg_varc_accuracy), pct: parseFloat(a.best_varc_pct), color: 'var(--amber)'  },
-        { key: 'dilr', label: 'DILR',  marks: parseFloat(a.avg_dilr_marks), max: 66,  acc: parseFloat(a.avg_dilr_accuracy), pct: parseFloat(a.best_dilr_pct), color: 'var(--purple)' },
-        { key: 'qa',   label: 'Quant', marks: parseFloat(a.avg_qa_marks),   max: 66,  acc: parseFloat(a.avg_qa_accuracy),   pct: parseFloat(a.best_qa_pct),   color: 'var(--green)'  },
+        { label: 'VARC',  acc: varcAcc, marks: hasSimcat ? parseFloat(a.avg_varc_marks) : null, max: 72, color: 'var(--amber)'  },
+        { label: 'DILR',  acc: dilrAcc, marks: hasSimcat ? parseFloat(a.avg_dilr_marks) : null, max: 66, color: 'var(--purple)' },
+        { label: 'Quant', acc: qaAcc,   marks: hasSimcat ? parseFloat(a.avg_qa_marks)   : null, max: 66, color: 'var(--green)'  },
       ];
 
-      // determine strongest by avg accuracy
       const strongest = sections.reduce((b, s) => s.acc > b.acc ? s : b, sections[0]);
       if (strongEl) {
         strongEl.innerHTML = '💪 Strongest: <span style="color:' + strongest.color + ';font-weight:700;">' + strongest.label + '</span>';
       }
 
       barsEl.innerHTML = sections.map(sec => {
-        const fillPct = ((sec.marks / sec.max) * 100).toFixed(1);
-        return '<div style="display:grid;grid-template-columns:60px 1fr 90px;align-items:center;gap:12px;">' +
+        const fillPct = sec.max && sec.marks !== null
+          ? ((sec.marks / sec.max) * 100).toFixed(1)
+          : sec.acc.toFixed(1);
+        const rightLabel = sec.marks !== null
+          ? '<span style="font-weight:700;color:' + sec.color + ';">' + sec.marks.toFixed(1) + '</span><span style="color:var(--text3);">/' + sec.max + '</span> &nbsp;<span style="color:var(--text3);">' + sec.acc.toFixed(1) + '%</span>'
+          : '<span style="font-weight:700;color:' + sec.color + ';">' + sec.acc.toFixed(1) + '%</span><span style="color:var(--text3);"> acc</span>';
+        return '<div style="display:grid;grid-template-columns:60px 1fr 110px;align-items:center;gap:12px;">' +
           '<div style="font-size:12px;font-weight:700;color:' + sec.color + ';">' + sec.label + '</div>' +
-          '<div>' +
-            '<div style="background:var(--surface3);border-radius:4px;height:8px;overflow:hidden;">' +
-              '<div style="width:' + fillPct + '%;height:100%;background:' + sec.color + ';border-radius:4px;transition:width .8s;"></div>' +
-            '</div>' +
-          '</div>' +
-          '<div style="font-size:11px;color:var(--text2);text-align:right;">' +
-            '<span style="font-weight:700;color:' + sec.color + ';">' + sec.marks.toFixed(1) + '</span>' +
-            '<span style="color:var(--text3);">/' + sec.max + '</span>' +
-            ' &nbsp;' +
-            '<span style="color:var(--text3);">' + sec.acc.toFixed(1) + '%</span>' +
-          '</div>' +
+          '<div><div style="background:var(--surface3);border-radius:4px;height:8px;overflow:hidden;">' +
+            '<div style="width:' + fillPct + '%;height:100%;background:' + sec.color + ';border-radius:4px;transition:width .8s;"></div>' +
+          '</div></div>' +
+          '<div style="font-size:11px;color:var(--text2);text-align:right;">' + rightLabel + '</div>' +
         '</div>';
       }).join('');
     }
@@ -1454,6 +1523,16 @@ function renderSchedule() {
   if (!list) return;
   const currentFilter = document.querySelector('.filter-pill.active')?.dataset.filter || 'all';
   let filtered = currentFilter === 'all' ? [...allSchedule] : allSchedule.filter(r => r['Subject'] === currentFilter);
+
+  // Sort by date ascending, then by time
+  filtered.sort((a, b) => {
+    const dateA = new Date((a['Date'] || '') + ' ' + (a['Time'] || '00:00'));
+    const dateB = new Date((b['Date'] || '') + ' ' + (b['Time'] || '00:00'));
+    if (isNaN(dateA)) return 1;
+    if (isNaN(dateB)) return -1;
+    return dateA - dateB;
+  });
+
   if (!filtered.length) {
     list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🗓️</div><div class="empty-state-text">No sessions scheduled</div></div>';
     return;
