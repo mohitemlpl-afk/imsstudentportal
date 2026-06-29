@@ -953,14 +953,39 @@ async function assignBatch() {
 
   btn.disabled = true; btn.textContent = 'Assigning...';
   try {
+    // Check if mapping already exists
+    const existing = allBatchMappings.find(m =>
+      m.batch_id === batch && m.mentor_id === mentorId
+    );
+    if (existing) {
+      if (existing.is_active) {
+        showNotice('assign-msg','⚠️ This batch is already assigned to this mentor.','warn');
+        btn.disabled = false; btn.textContent = 'Assign Batch'; return;
+      } else {
+        // Reactivate if previously removed
+        await sbUpdate('batch_mentor_mapping', `?batch_id=eq.${encodeURIComponent(batch)}&mentor_id=eq.${mentorId}`, { is_active: true, course });
+        existing.is_active = true;
+        existing.course = course;
+        renderBatchMappings();
+        showNotice('assign-msg','✅ Batch reassigned successfully!','success');
+        btn.disabled = false; btn.textContent = 'Assign Batch'; return;
+      }
+    }
+
     await sbInsert('batch_mentor_mapping', { mentor_id: mentorId, batch_id: batch, course, is_active: true });
-    const newMapping = { mentor_id: mentorId, batch_id: batch, course, is_active: true, id: Date.now() };
-    allBatchMappings.push(newMapping);
+    allBatchMappings.push({ mentor_id: mentorId, batch_id: batch, course, is_active: true, id: Date.now() });
     renderBatchMappings();
     document.getElementById('assign-batch').value = '';
     document.getElementById('assign-course').value = '';
     showNotice('assign-msg','✅ Batch assigned successfully!','success');
-  } catch(err) { showNotice('assign-msg','❌ ' + err.message,'error'); }
+  } catch(err) {
+    // Handle duplicate key gracefully
+    if (err.message.includes('23505') || err.message.includes('duplicate')) {
+      showNotice('assign-msg','⚠️ This batch-mentor combination already exists. Check Current Assignments below.','warn');
+    } else {
+      showNotice('assign-msg','❌ ' + err.message,'error');
+    }
+  }
   btn.disabled = false; btn.textContent = 'Assign Batch';
 }
 
