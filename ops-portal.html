@@ -178,6 +178,10 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
       <button class="nav-item" onclick="showPage('add-mentor',this)"><span class="nav-icon">➕</span>Add Mentor</button>
       <button class="nav-item" onclick="showPage('batch-mapping',this)"><span class="nav-icon">🔗</span>Batch Assignments</button>
 
+      <div class="sidebar-label">Schedule</div>
+      <button class="nav-item" onclick="showPage('schedule',this)"><span class="nav-icon">📍</span>Manage Schedule</button>
+      <button class="nav-item" onclick="showPage('add-session',this)"><span class="nav-icon">➕</span>Add Session</button>
+
       <div class="sidebar-label">Exports</div>
       <button class="nav-item" onclick="showPage('exports',this)"><span class="nav-icon">⬇️</span>Export Data</button>
     </aside>
@@ -378,6 +382,108 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
         </div>
       </div>
 
+      <!-- SCHEDULE -->
+      <div id="page-schedule" class="page">
+        <div class="page-header">
+          <div class="page-title">Manage Schedule</div>
+          <div class="page-sub">View, edit, and delete sessions across all courses and batches</div>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+          <input type="text" class="search-bar" id="sched-search" placeholder="🔍  Search topic, faculty, batch..." oninput="renderScheduleTable()" style="flex:1;min-width:180px;">
+          <select class="form-select" id="sched-batch-f" onchange="renderScheduleTable()" style="width:150px;">
+            <option value="all">All Batches</option>
+          </select>
+          <select class="form-select" id="sched-mode-f" onchange="renderScheduleTable()" style="width:140px;">
+            <option value="all">All Modes</option>
+            <option value="Online">Online</option>
+            <option value="Offline">Offline</option>
+          </select>
+          <select class="form-select" id="sched-course-f" onchange="renderScheduleTable()" style="width:140px;">
+            <option value="all">All Courses</option>
+          </select>
+        </div>
+        <div style="margin-bottom:12px;font-size:12px;color:var(--text3);" id="sched-count"></div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Date</th><th>Time</th><th>Course</th><th>Batch</th>
+                  <th>Section</th><th>Topic</th><th>Faculty</th>
+                  <th>Mode</th><th>Join Link</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="schedule-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="sched-pagination" style="display:flex;gap:8px;align-items:center;margin-top:12px;font-size:12px;color:var(--text3);"></div>
+      </div>
+
+      <!-- ADD SESSION -->
+      <div id="page-add-session" class="page">
+        <div class="page-header">
+          <div class="page-title">Add New Session</div>
+          <div class="page-sub">Schedule a new lecture or workshop</div>
+        </div>
+        <div class="card" style="max-width:600px;">
+          <div id="add-sesh-msg" style="display:none;" class="notice"></div>
+          <div class="two-col">
+            <div class="form-group">
+              <label class="form-label">Course *</label>
+              <input type="text" id="as-course" class="form-input" placeholder="e.g. CAT26">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Batch *</label>
+              <input type="text" id="as-batch" class="form-input" placeholder="e.g. CAT2601">
+            </div>
+          </div>
+          <div class="two-col">
+            <div class="form-group">
+              <label class="form-label">Date *</label>
+              <input type="date" id="as-date" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Time *</label>
+              <input type="text" id="as-time" class="form-input" placeholder="e.g. 4:30 pm to 6:30 pm">
+            </div>
+          </div>
+          <div class="two-col">
+            <div class="form-group">
+              <label class="form-label">Section / Workshop</label>
+              <input type="text" id="as-section" class="form-input" placeholder="e.g. Achievers Workshop">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Mode *</label>
+              <select id="as-mode" class="form-select">
+                <option value="Offline">Offline</option>
+                <option value="Online">Online</option>
+                <option value="Hybrid">Hybrid</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Topic *</label>
+            <input type="text" id="as-topic" class="form-input" placeholder="e.g. Math Reboot 1">
+          </div>
+          <div class="two-col">
+            <div class="form-group">
+              <label class="form-label">Faculty</label>
+              <input type="text" id="as-faculty" class="form-input" placeholder="Faculty code or name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Mentor</label>
+              <input type="text" id="as-mentor" class="form-input" placeholder="Mentor name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Online Join Link</label>
+            <input type="url" id="as-link" class="form-input" placeholder="https://zoom.us/j/... (optional)">
+          </div>
+          <button class="btn-full" onclick="addSession()" id="add-sesh-btn">Add Session</button>
+        </div>
+      </div>
+
       <!-- EXPORTS -->
       <div id="page-exports" class="page">
         <div class="page-header">
@@ -432,6 +538,84 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
       </div>
 
     </main>
+  </div>
+</div>
+
+<!-- EDIT SESSION MODAL -->
+<div class="modal-overlay" id="edit-session-modal">
+  <div class="modal" style="max-width:600px;">
+    <button class="modal-close" onclick="closeModal('edit-session-modal')">✕</button>
+    <div class="modal-title">Edit Session</div>
+    <div class="modal-sub">Update session details</div>
+    <div id="edit-sesh-msg" style="display:none;" class="notice"></div>
+    <input type="hidden" id="edit-sesh-id">
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label">Course *</label>
+        <input type="text" id="es-course" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Batch *</label>
+        <input type="text" id="es-batch" class="form-input">
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label">Date *</label>
+        <input type="date" id="es-date" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Time *</label>
+        <input type="text" id="es-time" class="form-input">
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label">Section / Workshop</label>
+        <input type="text" id="es-section" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mode *</label>
+        <select id="es-mode" class="form-select">
+          <option value="Offline">Offline</option>
+          <option value="Online">Online</option>
+          <option value="Hybrid">Hybrid</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Topic *</label>
+      <input type="text" id="es-topic" class="form-input">
+    </div>
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label">Faculty</label>
+        <input type="text" id="es-faculty" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mentor</label>
+        <input type="text" id="es-mentor" class="form-input">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Online Join Link</label>
+      <input type="url" id="es-link" class="form-input" placeholder="https://zoom.us/j/...">
+    </div>
+    <button class="btn-full" onclick="saveSessionEdit()" id="edit-sesh-btn">Save Changes</button>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="delete-confirm-modal">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-title" style="color:var(--red);">⚠️ Delete Session</div>
+    <div class="modal-sub">This action cannot be undone.</div>
+    <input type="hidden" id="delete-sesh-id">
+    <div id="delete-sesh-info" style="background:var(--red-dim);border:1px solid rgba(255,92,92,0.2);border-radius:var(--radius-sm);padding:14px;margin-bottom:20px;font-size:13px;color:var(--text2);"></div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="closeModal('delete-confirm-modal')" style="flex:1;padding:11px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
+      <button onclick="confirmDeleteSession()" id="delete-confirm-btn" style="flex:1;padding:11px;border-radius:var(--radius-sm);border:none;background:var(--red);color:#fff;font-size:13px;font-weight:700;cursor:pointer;">Yes, Delete</button>
+    </div>
   </div>
 </div>
 
@@ -1052,6 +1236,253 @@ function downloadCSV(content, filename) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// SCHEDULE — STATE
+// ═══════════════════════════════════════════════════════════════
+let allSchedule = [];
+let filteredSchedule = [];
+let schedPage = 0;
+const SCHED_PAGE_SIZE = 30;
+
+// ═══════════════════════════════════════════════════════════════
+// SCHEDULE — LOAD
+// ═══════════════════════════════════════════════════════════════
+async function loadSchedule() {
+  try {
+    allSchedule = await sbFetch('schedule', '?order=date.asc,time.asc');
+    filteredSchedule = [...allSchedule];
+    populateScheduleFilters();
+  } catch(err) {
+    console.error('Schedule load error:', err);
+    allSchedule = [];
+  }
+}
+
+function populateScheduleFilters() {
+  const batches  = [...new Set(allSchedule.map(s => s.batch).filter(Boolean))].sort();
+  const courses  = [...new Set(allSchedule.map(s => s.course).filter(Boolean))].sort();
+
+  const batchSel  = document.getElementById('sched-batch-f');
+  const courseSel = document.getElementById('sched-course-f');
+  if (batchSel) {
+    batchSel.innerHTML = '<option value="all">All Batches</option>';
+    batches.forEach(b => { const o=document.createElement('option'); o.value=b; o.textContent=b; batchSel.appendChild(o); });
+  }
+  if (courseSel) {
+    courseSel.innerHTML = '<option value="all">All Courses</option>';
+    courses.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; courseSel.appendChild(o); });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SCHEDULE — RENDER TABLE
+// ═══════════════════════════════════════════════════════════════
+function renderScheduleTable() {
+  const q      = (document.getElementById('sched-search')?.value || '').toLowerCase();
+  const batch  = document.getElementById('sched-batch-f')?.value  || 'all';
+  const mode   = document.getElementById('sched-mode-f')?.value   || 'all';
+  const course = document.getElementById('sched-course-f')?.value || 'all';
+
+  filteredSchedule = allSchedule.filter(s => {
+    const mQ = !q || [s.topic,s.faculty,s.batch,s.course,s.section,s.mentor]
+                     .some(v => String(v||'').toLowerCase().includes(q));
+    const mB = batch  === 'all' || s.batch  === batch;
+    const mM = mode   === 'all' || s.mode   === mode;
+    const mC = course === 'all' || s.course === course;
+    return mQ && mB && mM && mC;
+  });
+
+  schedPage = 0;
+  renderSchedulePageData();
+}
+
+function renderSchedulePageData() {
+  const tbody = document.getElementById('schedule-table-body');
+  const countEl = document.getElementById('sched-count');
+  if (!tbody) return;
+
+  const start    = schedPage * SCHED_PAGE_SIZE;
+  const pageData = filteredSchedule.slice(start, start + SCHED_PAGE_SIZE);
+  const total    = filteredSchedule.length;
+
+  if (countEl) countEl.textContent = total + ' session' + (total !== 1 ? 's' : '') + ' found';
+
+  if (!pageData.length) {
+    tbody.innerHTML = '<tr><td colspan="10"><div class="empty-state"><div style="font-size:13px;">No sessions found</div></div></td></tr>';
+  } else {
+    tbody.innerHTML = pageData.map(s => {
+      const isOnline  = s.mode && s.mode.toLowerCase().includes('online');
+      const hasLink   = s.join_link && s.join_link.trim();
+      const modeColor = isOnline ? 'var(--green-text)' : s.mode === 'Hybrid' ? 'var(--purple)' : 'var(--amber)';
+
+      const linkCell = isOnline
+        ? (hasLink
+            ? '<a href="' + s.join_link + '" target="_blank" style="font-size:10px;color:var(--accent2);font-weight:600;text-decoration:none;white-space:nowrap;">🔗 Link ✓</a>'
+            : '<span style="font-size:10px;color:var(--red);">No link</span>')
+        : '<span style="font-size:10px;color:var(--text3);">—</span>';
+
+      return '<tr>'
+        + '<td style="white-space:nowrap;font-size:11px;">' + fmtDate(s.date) + '</td>'
+        + '<td style="font-size:10px;color:var(--text2);white-space:nowrap;">' + (s.time || '—') + '</td>'
+        + '<td style="font-size:11px;"><span class="badge badge-amber">' + (s.course || '—') + '</span></td>'
+        + '<td><span class="badge badge-blue">' + (s.batch || '—') + '</span></td>'
+        + '<td style="font-size:10px;color:var(--text3);">' + (s.section || '—') + '</td>'
+        + '<td style="max-width:180px;font-size:12px;font-weight:600;color:var(--text);">' + (s.topic || '—') + '</td>'
+        + '<td style="font-size:11px;color:var(--text3);">' + (s.faculty || '—') + '</td>'
+        + '<td><span style="font-size:10px;font-weight:600;color:' + modeColor + ';">' + (s.mode || '—') + '</span></td>'
+        + '<td>' + linkCell + '</td>'
+        + '<td><div style="display:flex;gap:4px;">'
+        + '<button class="btn-sm btn-sm-primary" onclick="openEditSession(' + s.id + ')">✏️</button>'
+        + '<button class="btn-sm btn-sm-danger" onclick="openDeleteSession(' + s.id + ')">🗑️</button>'
+        + '</div></td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  // Pagination
+  const totalPages = Math.ceil(total / SCHED_PAGE_SIZE);
+  const pagEl = document.getElementById('sched-pagination');
+  if (pagEl) {
+    pagEl.innerHTML = total > SCHED_PAGE_SIZE
+      ? '<span style="flex:1;">Showing ' + (start+1) + '–' + Math.min(start+SCHED_PAGE_SIZE,total) + ' of ' + total + '</span>'
+        + '<button class="btn-sm" onclick="schedPage=Math.max(0,schedPage-1);renderSchedulePageData();" ' + (schedPage===0?'disabled':'') + '>‹ Prev</button>'
+        + '<button class="btn-sm" onclick="schedPage=Math.min(' + (totalPages-1) + ',schedPage+1);renderSchedulePageData();" ' + (schedPage>=totalPages-1?'disabled':'') + '>Next ›</button>'
+      : '';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SCHEDULE — ADD SESSION
+// ═══════════════════════════════════════════════════════════════
+async function addSession() {
+  const btn = document.getElementById('add-sesh-btn');
+  const course  = document.getElementById('as-course').value.trim();
+  const batch   = document.getElementById('as-batch').value.trim();
+  const date    = document.getElementById('as-date').value;
+  const time    = document.getElementById('as-time').value.trim();
+  const section = document.getElementById('as-section').value.trim();
+  const mode    = document.getElementById('as-mode').value;
+  const topic   = document.getElementById('as-topic').value.trim();
+  const faculty = document.getElementById('as-faculty').value.trim();
+  const mentor  = document.getElementById('as-mentor').value.trim();
+  const link    = document.getElementById('as-link').value.trim();
+
+  if (!course || !batch || !date || !time || !topic || !mode) {
+    showNotice('add-sesh-msg', 'Please fill all required fields (Course, Batch, Date, Time, Topic, Mode).', 'warn');
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Adding...';
+  try {
+    const payload = { course, batch, date, time, section: section||null, mode, topic, faculty: faculty||null, mentor: mentor||null, join_link: link||null };
+    const res = await fetch(CONFIG.SUPABASE_URL + 'schedule', {
+      method: 'POST',
+      headers: { 'apikey': CONFIG.SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + CONFIG.SUPABASE_ANON_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const newRows = await res.json();
+    if (newRows && newRows.length) allSchedule.push(newRows[0]);
+    allSchedule.sort((a,b) => (a.date > b.date ? 1 : a.date < b.date ? -1 : 0));
+    populateScheduleFilters();
+    showNotice('add-sesh-msg', '✅ Session added successfully!', 'success');
+    ['as-course','as-batch','as-time','as-section','as-topic','as-faculty','as-mentor','as-link'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+    });
+    document.getElementById('as-date').value = '';
+  } catch(err) {
+    showNotice('add-sesh-msg', '❌ ' + err.message, 'error');
+  }
+  btn.disabled = false; btn.textContent = 'Add Session';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SCHEDULE — EDIT SESSION
+// ═══════════════════════════════════════════════════════════════
+function openEditSession(id) {
+  const s = allSchedule.find(r => r.id === id);
+  if (!s) return;
+  document.getElementById('edit-sesh-id').value  = id;
+  document.getElementById('es-course').value      = s.course   || '';
+  document.getElementById('es-batch').value       = s.batch    || '';
+  document.getElementById('es-date').value        = s.date     || '';
+  document.getElementById('es-time').value        = s.time     || '';
+  document.getElementById('es-section').value     = s.section  || '';
+  document.getElementById('es-mode').value        = s.mode     || 'Offline';
+  document.getElementById('es-topic').value       = s.topic    || '';
+  document.getElementById('es-faculty').value     = s.faculty  || '';
+  document.getElementById('es-mentor').value      = s.mentor   || '';
+  document.getElementById('es-link').value        = s.join_link|| '';
+  document.getElementById('edit-sesh-msg').style.display = 'none';
+  document.getElementById('edit-session-modal').classList.add('show');
+}
+
+async function saveSessionEdit() {
+  const id  = document.getElementById('edit-sesh-id').value;
+  const btn = document.getElementById('edit-sesh-btn');
+  const course   = document.getElementById('es-course').value.trim();
+  const batch    = document.getElementById('es-batch').value.trim();
+  const date     = document.getElementById('es-date').value;
+  const time     = document.getElementById('es-time').value.trim();
+  const section  = document.getElementById('es-section').value.trim();
+  const mode     = document.getElementById('es-mode').value;
+  const topic    = document.getElementById('es-topic').value.trim();
+  const faculty  = document.getElementById('es-faculty').value.trim();
+  const mentor   = document.getElementById('es-mentor').value.trim();
+  const link     = document.getElementById('es-link').value.trim();
+
+  if (!course || !batch || !date || !time || !topic || !mode) {
+    showNotice('edit-sesh-msg', 'Please fill all required fields.', 'warn'); return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Saving...';
+  try {
+    const updates = { course, batch, date, time, section: section||null, mode, topic, faculty: faculty||null, mentor: mentor||null, join_link: link||null };
+    await sbUpdate('schedule', '?id=eq.' + id, updates);
+    const idx = allSchedule.findIndex(r => r.id === parseInt(id));
+    if (idx !== -1) allSchedule[idx] = { ...allSchedule[idx], ...updates };
+    filteredSchedule = [...allSchedule];
+    populateScheduleFilters();
+    renderSchedulePageData();
+    showNotice('edit-sesh-msg', '✅ Session updated!', 'success');
+    setTimeout(() => closeModal('edit-session-modal'), 1200);
+  } catch(err) {
+    showNotice('edit-sesh-msg', '❌ ' + err.message, 'error');
+  }
+  btn.disabled = false; btn.textContent = 'Save Changes';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SCHEDULE — DELETE SESSION
+// ═══════════════════════════════════════════════════════════════
+function openDeleteSession(id) {
+  const s = allSchedule.find(r => r.id === id);
+  if (!s) return;
+  document.getElementById('delete-sesh-id').value = id;
+  document.getElementById('delete-sesh-info').innerHTML =
+    '<b>' + (s.topic || 'Unnamed') + '</b><br>'
+    + fmtDate(s.date) + ' · ' + (s.time || '') + '<br>'
+    + 'Batch: ' + s.batch + ' · ' + (s.course || '') + ' · ' + (s.faculty || '');
+  document.getElementById('delete-confirm-modal').classList.add('show');
+}
+
+async function confirmDeleteSession() {
+  const id  = document.getElementById('delete-sesh-id').value;
+  const btn = document.getElementById('delete-confirm-btn');
+  btn.disabled = true; btn.textContent = 'Deleting...';
+  try {
+    await sbDelete('schedule', '?id=eq.' + id);
+    allSchedule = allSchedule.filter(r => r.id !== parseInt(id));
+    filteredSchedule = filteredSchedule.filter(r => r.id !== parseInt(id));
+    populateScheduleFilters();
+    renderSchedulePageData();
+    closeModal('delete-confirm-modal');
+  } catch(err) {
+    alert('❌ Delete failed: ' + err.message);
+  }
+  btn.disabled = false; btn.textContent = 'Yes, Delete';
+}
+
+// ═══════════════════════════════════════════════════════════════
 // NAVIGATION & MODALS
 // ═══════════════════════════════════════════════════════════════
 function showPage(pageId, btnEl) {
@@ -1064,6 +1495,10 @@ function showPage(pageId, btnEl) {
   if (pageId === 'students') { filterStudents(); }
   if (pageId === 'mentors') renderMentorsTable();
   if (pageId === 'batch-mapping') { renderBatchMappings(); }
+  if (pageId === 'schedule') {
+    if (!allSchedule.length) loadSchedule().then(() => renderScheduleTable());
+    else renderScheduleTable();
+  }
   if (pageId === 'exports') {
     const from = document.getElementById('exp-att-from');
     const to = document.getElementById('exp-att-to');
