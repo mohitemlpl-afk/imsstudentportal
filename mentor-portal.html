@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>IMS Mentor Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0B0D11;--bg2:#111318;--surface:#16191F;--surface2:#1C2028;--surface3:#232830;
+  --border:#2A2F3A;--border2:#353B47;--text:#EEF0F4;--text2:#8A90A0;--text3:#555C6E;
+  --accent:#4F7CFF;--accent2:#6B93FF;--accent-glow:rgba(79,124,255,0.15);--accent-dim:rgba(79,124,255,0.08);
+  --green:#10D98B;--green-dim:rgba(16,217,139,0.1);--green-text:#0FBF7A;
+  --red:#FF5C5C;--red-dim:rgba(255,92,92,0.1);
+  --amber:#FFB740;--amber-dim:rgba(255,183,64,0.1);
+  --purple:#9B6DFF;--purple-dim:rgba(155,109,255,0.1);
+  --cyan:#22D3EE;--cyan-dim:rgba(34,211,238,0.1);
+  --radius:12px;--radius-sm:8px;--radius-lg:16px;
+  --shadow:0 1px 3px rgba(0,0,0,0.4),0 8px 32px rgba(0,0,0,0.3);
+  --font:'Inter',sans-serif;--font-display:'Space Grotesk',sans-serif;
+  --sidebar-w:230px;
+}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:10px}
+
+/* LOGIN */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(79,124,255,0.12) 0%,transparent 70%),var(--bg);padding:24px;}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:48px 44px;max-width:420px;width:100%;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.login-card::before{content:'';position:absolute;top:-1px;left:-1px;right:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+.login-title{font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.login-sub{font-size:13px;color:var(--text2);margin-bottom:28px;}
+.form-group{margin-bottom:14px;text-align:left;}
+.form-label{font-size:11px;font-weight:700;color:var(--text3);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;}
+.form-input{width:100%;padding:11px 14px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-family:var(--font);font-size:13px;color:var(--text);background:var(--surface2);outline:none;transition:all .15s;}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+.btn-primary{width:100%;padding:12px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:#fff;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-1px);box-shadow:0 8px 20px rgba(79,124,255,0.3);}
+.btn-primary:disabled{background:var(--text3);cursor:not-allowed;transform:none;}
+.error-msg{background:var(--red-dim);border:1px solid rgba(255,92,92,0.3);color:var(--red);padding:10px 14px;border-radius:var(--radius-sm);font-size:12px;margin-bottom:14px;display:none;}
+
+/* APP */
+#app{display:none;min-height:100vh;flex-direction:column;}
+#app.visible{display:flex;}
+
+/* TOPNAV */
+.topnav{background:rgba(17,19,24,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;height:60px;position:sticky;top:0;z-index:200;}
+.topnav-logo img{height:32px;display:block;}
+.topnav-spacer{flex:1;}
+.role-badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;}
+.role-super_admin{background:rgba(255,183,64,0.15);color:var(--amber);border:1px solid rgba(255,183,64,0.3);}
+.role-super_mentor{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(155,109,255,0.3);}
+.role-mentor{background:var(--accent-dim);color:var(--accent2);border:1px solid rgba(79,124,255,0.3);}
+.topnav-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;}
+.logout-btn{padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:none;font-family:var(--font);font-size:12px;color:var(--text2);cursor:pointer;transition:all .15s;}
+.logout-btn:hover{background:var(--red-dim);color:var(--red);border-color:var(--red);}
+
+/* SIDEBAR */
+.app-body{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);padding:16px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;}
+.sidebar-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:12px 12px 4px;margin-top:4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;font-family:var(--font);}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:var(--accent-dim);color:var(--accent);font-weight:600;border:1px solid rgba(79,124,255,0.2);}
+.nav-icon{font-size:15px;flex-shrink:0;width:18px;text-align:center;}
+
+/* MAIN */
+.main-content{flex:1;overflow-y:auto;padding:28px 32px;}
+.page{display:none;}.page.active{display:block;}
+.page-header{margin-bottom:24px;}
+.page-title{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.page-sub{font-size:13px;color:var(--text3);}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;margin-bottom:20px;}
+.card:hover{border-color:var(--border2);}
+.card-title{font-family:var(--font-display);font-size:14px;font-weight:600;color:var(--text);margin-bottom:16px;}
+.card-sub{font-size:12px;color:var(--text3);margin-top:-12px;margin-bottom:16px;}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;transition:all .2s;}
+.stat-card:hover{border-color:var(--border2);transform:translateY(-1px);}
+.stat-label{font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;}
+.stat-val{font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--text);line-height:1;}
+.stat-delta{font-size:11px;margin-top:6px;color:var(--text3);}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding:10px 12px;border-bottom:1px solid var(--border);text-align:left;}
+.data-table td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);}
+.data-table tr:hover td{background:var(--surface2);color:var(--text);}
+.data-table td:first-child{font-weight:600;color:var(--text);}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;}
+.badge-green{background:var(--green-dim);color:var(--green-text);border:1px solid rgba(16,217,139,0.2);}
+.badge-blue{background:var(--accent-dim);color:var(--accent2);border:1px solid rgba(79,124,255,0.2);}
+.badge-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,92,92,0.2);}
+.badge-amber{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(255,183,64,0.2);}
+.badge-purple{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(155,109,255,0.2);}
+
+/* SEARCH */
+.search-bar{width:100%;padding:10px 14px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:var(--font);font-size:13px;outline:none;margin-bottom:16px;transition:all .15s;}
+.search-bar:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:20px;background:var(--surface2);padding:4px;border-radius:var(--radius-sm);}
+.tab-btn{flex:1;padding:8px 12px;border-radius:6px;border:none;background:none;font-family:var(--font);font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s;}
+.tab-btn.active{background:var(--surface3);color:var(--text);font-weight:600;}
+
+/* FORM */
+.form-select{width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-family:var(--font);font-size:13px;color:var(--text);background:var(--surface2);outline:none;transition:all .15s;}
+.form-select:focus{border-color:var(--accent);}
+.form-textarea{width:100%;height:80px;resize:vertical;border:1px solid var(--border2);border-radius:var(--radius-sm);padding:10px 12px;font-family:var(--font);font-size:13px;color:var(--text);background:var(--surface2);outline:none;}
+
+/* TOGGLE SWITCH */
+.toggle-wrap{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);transition:background .15s;}
+.toggle-wrap:hover{background:var(--surface2);}
+.toggle-wrap:last-child{border-bottom:none;}
+.toggle-name{font-size:13px;font-weight:500;color:var(--text);}
+.toggle-meta{font-size:11px;color:var(--text3);}
+.toggle{position:relative;width:42px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--surface3);border-radius:24px;transition:.3s;border:1px solid var(--border2);}
+.toggle-slider:before{position:absolute;content:'';height:16px;width:16px;left:3px;bottom:3px;background:var(--text3);border-radius:50%;transition:.3s;}
+.toggle input:checked+.toggle-slider{background:var(--green);border-color:var(--green);}
+.toggle input:checked+.toggle-slider:before{transform:translateX(18px);background:#fff;}
+
+/* PROGRESS */
+.prog-track{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+
+/* STUDENT CARD */
+.student-row{display:flex;align-items:center;gap:14px;padding:14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.student-row:hover{background:var(--surface2);}
+.student-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
+.student-name{font-size:13px;font-weight:600;color:var(--text);}
+.student-meta{font-size:11px;color:var(--text3);}
+
+/* QR SCANNER */
+#qr-video-container{position:relative;width:100%;max-width:400px;margin:0 auto;}
+#qr-video{width:100%;border-radius:var(--radius);border:2px solid var(--accent);}
+.qr-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:200px;height:200px;border:2px solid var(--accent);border-radius:12px;box-shadow:0 0 0 1000px rgba(0,0,0,0.5);}
+.qr-corner{position:absolute;width:20px;height:20px;border-color:var(--accent);border-style:solid;}
+.qr-corner-tl{top:-2px;left:-2px;border-width:3px 0 0 3px;border-radius:4px 0 0 0;}
+.qr-corner-tr{top:-2px;right:-2px;border-width:3px 3px 0 0;border-radius:0 4px 0 0;}
+.qr-corner-bl{bottom:-2px;left:-2px;border-width:0 0 3px 3px;border-radius:0 0 0 4px;}
+.qr-corner-br{bottom:-2px;right:-2px;border-width:0 3px 3px 0;border-radius:0 0 4px 0;}
+.scan-line{position:absolute;left:0;right:0;height:2px;background:var(--accent);animation:scan 2s linear infinite;}
+@keyframes scan{0%{top:10px;}100%{top:190px;}}
+.scanned-list{max-height:200px;overflow-y:auto;margin-top:12px;}
+.scanned-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--green-dim);border:1px solid rgba(16,217,139,0.2);border-radius:8px;margin-bottom:6px;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;padding:24px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:28px;max-width:600px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.modal-title{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.modal-sub{font-size:12px;color:var(--text3);margin-bottom:20px;}
+.modal-close{float:right;background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;line-height:1;}
+.modal-close:hover{color:var(--text);}
+
+/* SCORE ROW */
+.score-row{background:var(--surface2);border-radius:var(--radius);padding:14px;margin-bottom:8px;border:1px solid var(--border);}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+
+/* EMPTY */
+.empty-state{padding:40px;text-align:center;color:var(--text3);}
+.empty-icon{font-size:32px;margin-bottom:12px;opacity:.5;}
+
+/* FILTER PILLS */
+.filter-pills{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.filter-pill{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;transition:all .15s;}
+.filter-pill:hover{border-color:var(--accent);color:var(--accent);}
+.filter-pill.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+/* CHART */
+.chart-wrap{position:relative;height:220px;margin-bottom:8px;}
+
+/* NOTICE */
+.notice{padding:12px 16px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;margin-bottom:16px;}
+.notice-info{background:var(--accent-dim);color:var(--accent2);border:1px solid rgba(79,124,255,0.2);}
+.notice-success{background:var(--green-dim);color:var(--green-text);border:1px solid rgba(16,217,139,0.2);}
+.notice-warn{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(255,183,64,0.2);}
+
+@media(max-width:768px){.sidebar{display:none;}.main-content{padding:20px 16px;}.two-col{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;">
+      <img src="https://imsgujarat.com/wp-content/uploads/elementor/thumbs/high-low-ims-logo-q88bznzqyw17qyylsbpjt2obvw4pcwyu13wepnvt34.png" alt="IMS" style="height:40px;">
+    </div>
+    <h1 class="login-title">Mentor Portal</h1>
+    <p class="login-sub">Sign in with your IMS mentor credentials</p>
+    <div class="error-msg" id="login-error"></div>
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input type="email" id="login-email" class="form-input" placeholder="mentor@imsindia.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" id="login-password" class="form-input" placeholder="Enter your password" autocomplete="current-password">
+    </div>
+    <button class="btn-primary" onclick="handleLogin()" id="login-btn">Sign In</button>
+    <p style="font-size:11px;color:var(--text3);margin-top:16px;">Contact admin if you need access</p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <nav class="topnav">
+    <div class="topnav-logo">
+      <img src="https://imsgujarat.com/wp-content/uploads/elementor/thumbs/high-low-ims-logo-q88bznzqyw17qyylsbpjt2obvw4pcwyu13wepnvt34.png" alt="IMS">
+    </div>
+    <div style="margin-left:12px;font-size:12px;color:var(--text3);">Mentor Portal</div>
+    <div class="topnav-spacer"></div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <span class="role-badge" id="nav-role-badge">Mentor</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="topnav-avatar" id="nav-avatar">M</div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);" id="nav-name">---</div>
+          <div style="font-size:11px;color:var(--text3);" id="nav-batches">---</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Sign out</button>
+    </div>
+  </nav>
+
+  <div class="app-body">
+    <aside class="sidebar">
+      <div class="sidebar-label">Overview</div>
+      <button class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">🏠</span>Dashboard</button>
+
+      <div class="sidebar-label">Students</div>
+      <button class="nav-item" onclick="showPage('students',this)"><span class="nav-icon">👥</span>Student Directory</button>
+
+      <div class="sidebar-label">Attendance</div>
+      <button class="nav-item" onclick="showPage('take-attendance',this)"><span class="nav-icon">✅</span>Take Attendance</button>
+      <button class="nav-item" onclick="showPage('attendance-records',this)"><span class="nav-icon">📅</span>Attendance Records</button>
+
+      <div class="sidebar-label">Performance</div>
+      <button class="nav-item" onclick="showPage('batch-performance',this)"><span class="nav-icon">📊</span>Batch Performance</button>
+
+      <div class="sidebar-label">Account</div>
+      <button class="nav-item" onclick="showPage('change-password',this)"><span class="nav-icon">🔑</span>Change Password</button>
+    </aside>
+
+    <main class="main-content">
+
+      <!-- DASHBOARD -->
+      <div id="page-dashboard" class="page active">
+        <div class="page-header">
+          <div class="page-title">Dashboard</div>
+          <div class="page-sub" id="dash-sub">Welcome back</div>
+        </div>
+        <div class="stat-grid" id="dash-stats"></div>
+        <div class="two-col">
+          <div class="card">
+            <div class="card-title">📅 Today's Schedule</div>
+            <div id="dash-today-schedule"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">📊 Batch Attendance Overview</div>
+            <div id="dash-att-overview"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">🏆 Top Performers — Latest SimCAT</div>
+          <div id="dash-top-performers"></div>
+        </div>
+      </div>
+
+      <!-- STUDENT DIRECTORY -->
+      <div id="page-students" class="page">
+        <div class="page-header">
+          <div class="page-title">Student Directory</div>
+          <div class="page-sub" id="students-sub">All students in your batches</div>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;">
+          <input type="text" class="search-bar" id="student-search" placeholder="🔍  Search by name, ID or batch..." oninput="filterStudentList()" style="margin-bottom:0;flex:1;">
+          <select class="form-select" id="batch-filter" onchange="filterStudentList()" style="width:160px;">
+            <option value="all">All Batches</option>
+          </select>
+        </div>
+        <div class="card" style="padding:0;">
+          <div id="student-list-container"></div>
+        </div>
+      </div>
+
+      <!-- TAKE ATTENDANCE -->
+      <div id="page-take-attendance" class="page">
+        <div class="page-header">
+          <div class="page-title">Take Attendance</div>
+          <div class="page-sub">Mark attendance for a session</div>
+        </div>
+
+        <!-- Step 1: Session Setup -->
+        <div class="card" id="att-setup-card">
+          <div class="card-title">Step 1 — Select Session</div>
+          <div class="two-col" style="margin-bottom:14px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Batch</label>
+              <select class="form-select" id="att-batch-select" onchange="loadAttTopics()"></select>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Date</label>
+              <input type="date" id="att-date-select" class="form-input" onchange="loadAttTopics()">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Session / Topic</label>
+            <select class="form-select" id="att-topic-select">
+              <option value="">— Select batch and date first —</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px;">
+            <button class="btn-primary" onclick="startManualAttendance()" style="flex:1;">📋 Manual List</button>
+            <button class="btn-primary" onclick="startQRAttendance()" style="flex:1;background:var(--purple);">📷 QR Scanner</button>
+          </div>
+        </div>
+
+        <!-- Manual Attendance -->
+        <div id="att-manual-section" style="display:none;">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+              <div>
+                <div class="card-title" style="margin-bottom:2px;">Manual Attendance</div>
+                <div style="font-size:12px;color:var(--text3);" id="att-manual-session-label">—</div>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <button onclick="markAllPresent()" style="padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--green);background:var(--green-dim);color:var(--green-text);font-size:12px;font-weight:600;cursor:pointer;">✓ Mark All Present</button>
+                <button onclick="markAllAbsent()" style="padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--red);background:var(--red-dim);color:var(--red);font-size:12px;font-weight:600;cursor:pointer;">✗ Mark All Absent</button>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;margin-bottom:12px;font-size:12px;color:var(--text3);">
+              <span>Present: <b id="manual-present-count" style="color:var(--green-text);">0</b></span>
+              <span>Absent: <b id="manual-absent-count" style="color:var(--red);">0</b></span>
+              <span>Total: <b id="manual-total-count" style="color:var(--text);">0</b></span>
+            </div>
+            <div id="manual-att-list"></div>
+            <button class="btn-primary" onclick="submitManualAttendance()" style="margin-top:16px;" id="submit-manual-btn">Submit Attendance</button>
+          </div>
+        </div>
+
+        <!-- QR Attendance -->
+        <div id="att-qr-section" style="display:none;">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div>
+                <div class="card-title" style="margin-bottom:2px;">QR Scanner</div>
+                <div style="font-size:12px;color:var(--text3);" id="att-qr-session-label">—</div>
+              </div>
+              <button onclick="stopQRScanner()" style="padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:none;color:var(--text2);font-size:12px;cursor:pointer;">Stop Scanner</button>
+            </div>
+            <div id="qr-video-container">
+              <video id="qr-video" autoplay playsinline muted></video>
+              <div class="qr-overlay">
+                <div class="qr-corner qr-corner-tl"></div>
+                <div class="qr-corner qr-corner-tr"></div>
+                <div class="qr-corner qr-corner-bl"></div>
+                <div class="qr-corner qr-corner-br"></div>
+                <div class="scan-line"></div>
+              </div>
+            </div>
+            <canvas id="qr-canvas" style="display:none;"></canvas>
+            <div style="margin-top:16px;">
+              <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px;">Scanned (<span id="scanned-count">0</span>)</div>
+              <div class="scanned-list" id="scanned-list"></div>
+            </div>
+            <button class="btn-primary" onclick="submitQRAttendance()" style="margin-top:16px;" id="submit-qr-btn">Submit & Mark Absent Remaining</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ATTENDANCE RECORDS -->
+      <div id="page-attendance-records" class="page">
+        <div class="page-header">
+          <div class="page-title">Attendance Records</div>
+          <div class="page-sub">View and manage past attendance</div>
+        </div>
+        <div class="card">
+          <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+            <select class="form-select" id="rec-batch-filter" onchange="loadAttendanceRecords()" style="width:150px;">
+              <option value="all">All Batches</option>
+            </select>
+            <input type="date" id="rec-date-from" class="form-input" onchange="loadAttendanceRecords()" style="width:160px;">
+            <input type="date" id="rec-date-to" class="form-input" onchange="loadAttendanceRecords()" style="width:160px;">
+            <button onclick="exportAttendanceCSV()" style="padding:9px 16px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text2)'">⬇️ Export CSV</button>
+          </div>
+          <div id="att-records-container"></div>
+        </div>
+      </div>
+
+      <!-- BATCH PERFORMANCE -->
+      <div id="page-batch-performance" class="page">
+        <div class="page-header">
+          <div class="page-title">Batch Performance</div>
+          <div class="page-sub">SimCAT analytics across your batches</div>
+        </div>
+        <div class="form-group" style="max-width:200px;margin-bottom:20px;">
+          <select class="form-select" id="perf-batch-select" onchange="loadBatchPerformance()"></select>
+        </div>
+        <div class="stat-grid" id="perf-stats"></div>
+        <div class="card">
+          <div class="card-title">Percentile Distribution</div>
+          <div class="chart-wrap"><canvas id="perfChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Student Rankings — Latest SimCAT</div>
+          <div id="perf-rankings"></div>
+        </div>
+      </div>
+
+      <!-- CHANGE PASSWORD -->
+      <div id="page-change-password" class="page">
+        <div class="page-header">
+          <div class="page-title">Change Password</div>
+          <div class="page-sub">Update your login credentials</div>
+        </div>
+        <div class="card" style="max-width:440px;">
+          <div id="pw-msg" style="display:none;" class="notice"></div>
+          <div class="form-group">
+            <label class="form-label">Current Password</label>
+            <input type="password" id="pw-current" class="form-input" placeholder="Enter current password">
+          </div>
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+            <input type="password" id="pw-new" class="form-input" placeholder="Minimum 8 characters">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
+            <input type="password" id="pw-confirm" class="form-input" placeholder="Repeat new password">
+          </div>
+          <button class="btn-primary" onclick="changePassword()" id="pw-btn">Update Password</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- STUDENT DETAIL MODAL -->
+<div class="modal-overlay" id="student-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeStudentModal()">✕</button>
+    <div id="student-modal-content"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════════════
+const CONFIG = {
+  SUPABASE_URL: 'https://ofhcxvekfplhgzpxutce.supabase.co/rest/v1/',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9maGN4dmVrZnBsaGd6cHh1dGNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDg5MDIsImV4cCI6MjA5NjgyNDkwMn0.0X57t9-4u3TO1tBn1wIkj0R-0RJfvDgolC5nRtQrUlE'
+};
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+let currentMentor = null;
+let myBatches = [];
+let allStudents = [];
+let filteredStudents = [];
+let scheduleData = [];
+let attendanceData = [];
+let manualAttStudents = [];
+let scannedStudents = new Set();
+let qrStream = null;
+let qrAnimFrame = null;
+let perfChartInstance = null;
+
+// ═══════════════════════════════════════════════════════════════
+// SUPABASE HELPERS
+// ═══════════════════════════════════════════════════════════════
+async function sbFetch(table, query = '') {
+  const res = await fetch(`${CONFIG.SUPABASE_URL}${table}${query}`, {
+    headers: {
+      'apikey': CONFIG.SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${CONFIG.SUPABASE_ANON_KEY}`,
+      'Accept': 'application/json'
+    }
+  });
+  if (!res.ok) throw new Error(`${res.status} ${await res.text()}`);
+  return res.json();
+}
+
+async function sbInsert(table, rows) {
+  const res = await fetch(`${CONFIG.SUPABASE_URL}${table}`, {
+    method: 'POST',
+    headers: {
+      'apikey': CONFIG.SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${CONFIG.SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify(Array.isArray(rows) ? rows : [rows])
+  });
+  if (!res.ok) throw new Error(`Insert failed: ${await res.text()}`);
+  return true;
+}
+
+async function sbUpsert(table, rows, onConflict = '') {
+  const res = await fetch(`${CONFIG.SUPABASE_URL}${table}${onConflict ? `?on_conflict=${onConflict}` : ''}`, {
+    method: 'POST',
+    headers: {
+      'apikey': CONFIG.SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${CONFIG.SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'resolution=merge-duplicates,return=minimal'
+    },
+    body: JSON.stringify(Array.isArray(rows) ? rows : [rows])
+  });
+  if (!res.ok) throw new Error(`Upsert failed: ${await res.text()}`);
+  return true;
+}
+
+async function sbUpdate(table, query, data) {
+  const res = await fetch(`${CONFIG.SUPABASE_URL}${table}${query}`, {
+    method: 'PATCH',
+    headers: {
+      'apikey': CONFIG.SUPABASE_ANON_KEY,
+      'Authorization': `Bearer ${CONFIG.SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error(`Update failed: ${await res.text()}`);
+  return true;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SIMPLE PASSWORD HASH (SHA-256 via Web Crypto)
+// ═══════════════════════════════════════════════════════════════
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password + 'IMS_SALT_2026');
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════════════════
+async function handleLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn');
+
+  errEl.style.display = 'none';
+  if (!email || !password) { showLoginError('Please enter email and password.'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Signing in...';
+
+  try {
+    const hash = await hashPassword(password);
+    const mentors = await sbFetch('mentors', `?email=eq.${encodeURIComponent(email)}&select=*`);
+
+    if (!mentors || mentors.length === 0) {
+      showLoginError('Email not found. Contact admin.');
+      btn.disabled = false; btn.textContent = 'Sign In'; return;
+    }
+
+    const mentor = mentors[0];
+    if (!mentor.is_active) {
+      showLoginError('Account is inactive. Contact admin.');
+      btn.disabled = false; btn.textContent = 'Sign In'; return;
+    }
+
+    if (mentor.password_hash !== hash) {
+      showLoginError('Incorrect password. Try again.');
+      btn.disabled = false; btn.textContent = 'Sign In'; return;
+    }
+
+    currentMentor = mentor;
+    sessionStorage.setItem('mp_mentor', JSON.stringify(mentor));
+    await launchApp();
+
+  } catch(err) {
+    showLoginError('Connection error: ' + err.message);
+    btn.disabled = false; btn.textContent = 'Sign In';
+  }
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+async function launchApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+
+  // Set nav
+  const initials = currentMentor.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  document.getElementById('nav-avatar').textContent = initials;
+  document.getElementById('nav-name').textContent = currentMentor.name;
+
+  const roleLabel = { super_admin: 'Super Admin', super_mentor: 'Super Mentor', mentor: 'Mentor', operations: 'Operations' };
+  const roleEl = document.getElementById('nav-role-badge');
+  roleEl.textContent = roleLabel[currentMentor.role] || currentMentor.role;
+  roleEl.className = 'role-badge role-' + currentMentor.role;
+
+  // Load batches
+  await loadMyBatches();
+  await loadAllStudents();
+  await loadSchedule();
+  renderDashboard();
+  populateBatchDropdowns();
+}
+
+async function loadMyBatches() {
+  try {
+    if (currentMentor.role === 'super_admin' || currentMentor.role === 'super_mentor') {
+      // See all batches
+      const rows = await sbFetch('batch_mentor_mapping', '?is_active=eq.true&select=batch_id,course');
+      myBatches = [...new Set(rows.map(r => r.batch_id))];
+    } else {
+      const rows = await sbFetch('batch_mentor_mapping', `?mentor_id=eq.${currentMentor.mentor_id}&is_active=eq.true&select=batch_id,course`);
+      myBatches = rows.map(r => r.batch_id);
+    }
+    document.getElementById('nav-batches').textContent = myBatches.length ? 'Batches: ' + myBatches.join(', ') : 'No batches assigned';
+  } catch(err) {
+    console.error('Batch load error:', err);
+    myBatches = [];
+  }
+}
+
+async function loadAllStudents() {
+  try {
+    let query = '?select=*&order=name.asc';
+    if (currentMentor.role !== 'super_admin' && currentMentor.role !== 'super_mentor') {
+      if (!myBatches.length) { allStudents = []; return; }
+      query = `?batch=in.(${myBatches.map(b => `"${b}"`).join(',')})&select=*&order=name.asc`;
+    }
+    allStudents = await sbFetch('students', query);
+    filteredStudents = [...allStudents];
+  } catch(err) {
+    console.error('Student load error:', err);
+    allStudents = [];
+  }
+}
+
+async function loadSchedule() {
+  try {
+    let query = '?order=date.asc,time.asc';
+    if (currentMentor.role !== 'super_admin' && currentMentor.role !== 'super_mentor' && myBatches.length) {
+      query = `?batch=in.(${myBatches.map(b => `"${b}"`).join(',')})&order=date.asc,time.asc`;
+    }
+    scheduleData = await sbFetch('schedule', query);
+  } catch(err) {
+    console.error('Schedule load error:', err);
+    scheduleData = [];
+  }
+}
+
+function logout() {
+  if (qrStream) { qrStream.getTracks().forEach(t => t.stop()); }
+  sessionStorage.removeItem('mp_mentor');
+  location.reload();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════════════
+function fmtDate(str) {
+  if (!str) return '—';
+  try { return new Date(str).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'}); }
+  catch(e) { return str; }
+}
+
+function today() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function populateBatchDropdowns() {
+  const selectors = ['att-batch-select', 'rec-batch-filter', 'perf-batch-select', 'batch-filter'];
+  selectors.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const hasAll = el.querySelector('option[value="all"]');
+    if (!hasAll) el.innerHTML = '<option value="all">All Batches</option>';
+    myBatches.forEach(b => {
+      if (!el.querySelector(`option[value="${b}"]`)) {
+        const opt = document.createElement('option');
+        opt.value = b; opt.textContent = b;
+        el.appendChild(opt);
+      }
+    });
+  });
+  // Set today's date for attendance
+  const dateEl = document.getElementById('att-date-select');
+  if (dateEl) dateEl.value = today();
+  // Default date range for records
+  const fromEl = document.getElementById('rec-date-from');
+  const toEl = document.getElementById('rec-date-to');
+  if (fromEl) fromEl.value = new Date(Date.now() - 30*24*60*60*1000).toISOString().split('T')[0];
+  if (toEl) toEl.value = today();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════════════
+async function renderDashboard() {
+  document.getElementById('dash-sub').textContent = `Welcome back, ${currentMentor.name} · ${new Date().toLocaleDateString('en-IN', {weekday:'long', day:'numeric', month:'long'})}`;
+
+  // Stats
+  const totalStudents = allStudents.length;
+  const totalBatches = myBatches.length;
+
+  // Today's attendance
+  let todayPct = '—';
+  try {
+    const todayAtt = await sbFetch('attendance', `?date=eq.${today()}&select=status`);
+    const myTodayAtt = todayAtt;
+    if (myTodayAtt.length) {
+      const pres = myTodayAtt.filter(r => r.status === 'Present').length;
+      todayPct = Math.round(pres / myTodayAtt.length * 100) + '%';
+    }
+  } catch(e) {}
+
+  document.getElementById('dash-stats').innerHTML = `
+    <div class="stat-card" style="border-top:2px solid var(--accent);">
+      <div class="stat-label">My Students</div>
+      <div class="stat-val">${totalStudents}</div>
+      <div class="stat-delta">${totalBatches} batch${totalBatches !== 1 ? 'es' : ''}</div>
+    </div>
+    <div class="stat-card" style="border-top:2px solid var(--green);">
+      <div class="stat-label">Today's Attendance</div>
+      <div class="stat-val">${todayPct}</div>
+      <div class="stat-delta">${today()}</div>
+    </div>
+    <div class="stat-card" style="border-top:2px solid var(--purple);">
+      <div class="stat-label">Batches</div>
+      <div class="stat-val">${totalBatches}</div>
+      <div class="stat-delta">${myBatches.join(' · ') || '—'}</div>
+    </div>
+  `;
+
+  // Today's schedule
+  const todaySched = scheduleData.filter(s => s.date === today());
+  const schedEl = document.getElementById('dash-today-schedule');
+  if (!todaySched.length) {
+    schedEl.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div style="font-size:13px;">No sessions today</div></div>';
+  } else {
+    schedEl.innerHTML = todaySched.map(s => `
+      <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div style="width:80px;flex-shrink:0;">
+          <div style="font-size:11px;font-weight:700;color:var(--text);">${s.time || '—'}</div>
+          <div style="font-size:10px;color:var(--text3);">${s.batch}</div>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);">${s.topic || '—'}</div>
+          <div style="font-size:11px;color:var(--text3);">${s.faculty || '—'} · ${s.mode || '—'}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  // Attendance overview per batch
+  const attEl = document.getElementById('dash-att-overview');
+  try {
+    const batchData = [];
+    for (const batch of myBatches.slice(0, 5)) {
+      const rows = await sbFetch('attendance', `?batch=eq.${batch}&select=status`);
+      const pres = rows.filter(r => r.status === 'Present').length;
+      const pct = rows.length ? Math.round(pres / rows.length * 100) : 0;
+      batchData.push({ batch, pct, total: rows.length });
+    }
+    attEl.innerHTML = batchData.map(b => `
+      <div style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px;">
+          <span style="font-weight:600;color:var(--text);">${b.batch}</span>
+          <span style="color:${b.pct >= 75 ? 'var(--green-text)' : b.pct >= 60 ? 'var(--amber)' : 'var(--red)'};">${b.pct}%</span>
+        </div>
+        <div class="prog-track">
+          <div class="prog-fill" style="width:${b.pct}%;background:${b.pct >= 75 ? 'var(--green)' : b.pct >= 60 ? 'var(--amber)' : 'var(--red)'};"></div>
+        </div>
+      </div>`).join('') || '<div class="empty-state"><div style="font-size:13px;">No attendance data</div></div>';
+  } catch(e) { attEl.innerHTML = '<div style="color:var(--text3);font-size:13px;">Could not load</div>'; }
+
+  // Top performers
+  try {
+    const simcatRows = await sbFetch('simcat_scores', `?order=overall_percentile.desc&limit=5&select=student_id,test_name,marks_obtained,overall_percentile`);
+    const perfEl = document.getElementById('dash-top-performers');
+    if (!simcatRows.length) {
+      perfEl.innerHTML = '<div class="empty-state"><div style="font-size:13px;">No SimCAT data</div></div>';
+    } else {
+      perfEl.innerHTML = `<table class="data-table">
+        <thead><tr><th>#</th><th>Student ID</th><th>Test</th><th>Score</th><th>Percentile</th></tr></thead>
+        <tbody>${simcatRows.map((r, i) => `
+          <tr>
+            <td style="color:var(--text3);">${i + 1}</td>
+            <td>${r.student_id}</td>
+            <td style="color:var(--text2);">${r.test_name}</td>
+            <td><span class="badge badge-blue">${r.marks_obtained}/204</span></td>
+            <td><span class="badge badge-green">${parseFloat(r.overall_percentile).toFixed(2)}%ile</span></td>
+          </tr>`).join('')}
+        </tbody></table>`;
+    }
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STUDENT DIRECTORY
+// ═══════════════════════════════════════════════════════════════
+function renderStudentList() {
+  const container = document.getElementById('student-list-container');
+  if (!filteredStudents.length) {
+    container.innerHTML = '<div class="empty-state"><div class="empty-icon">👥</div><div style="font-size:13px;">No students found</div></div>';
+    return;
+  }
+  container.innerHTML = filteredStudents.map(s => {
+    const initials = s.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    return `
+      <div class="student-row" onclick="openStudentModal('${s.id}')">
+        <div class="student-avatar">${initials}</div>
+        <div style="flex:1;min-width:0;">
+          <div class="student-name">${s.name}</div>
+          <div class="student-meta">${s.id} · ${s.batch} · ${s.target_exam}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <span class="badge badge-blue">${s.batch}</span>
+        </div>
+        <div style="color:var(--text3);font-size:18px;margin-left:8px;">›</div>
+      </div>`;
+  }).join('');
+  document.getElementById('students-sub').textContent = `${filteredStudents.length} students in your batches`;
+}
+
+function filterStudentList() {
+  const q = document.getElementById('student-search').value.toLowerCase();
+  const batch = document.getElementById('batch-filter').value;
+  filteredStudents = allStudents.filter(s => {
+    const matchQ = !q || s.name.toLowerCase().includes(q) || String(s.id).toLowerCase().includes(q) || s.batch.toLowerCase().includes(q);
+    const matchB = batch === 'all' || s.batch === batch;
+    return matchQ && matchB;
+  });
+  renderStudentList();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STUDENT DETAIL MODAL
+// ═══════════════════════════════════════════════════════════════
+async function openStudentModal(studentId) {
+  const modal = document.getElementById('student-modal');
+  const content = document.getElementById('student-modal-content');
+  modal.classList.add('show');
+  content.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);">Loading student data...</div>';
+
+  try {
+    const student = allStudents.find(s => String(s.id) === String(studentId));
+    if (!student) throw new Error('Student not found');
+
+    const [simcat, bench, module_, att] = await Promise.all([
+      sbFetch('simcat_scores', `?student_id=eq.${studentId}&order=test_date.asc`),
+      sbFetch('benchmarking_scores', `?student_id=eq.${studentId}&order=test_date.desc`),
+      sbFetch('module_test_scores', `?student_id=eq.${studentId}&order=test_date.desc`),
+      sbFetch('attendance', `?student_id=eq.${studentId}&select=status,date,topic,batch`)
+    ]);
+
+    const pres = att.filter(r => r.status === 'Present').length;
+    const attPct = att.length ? Math.round(pres / att.length * 100) : 0;
+    const peakPct = simcat.length ? Math.max(...simcat.map(s => parseFloat(s.overall_percentile) || 0)) : 0;
+    const avgScore = simcat.length ? (simcat.reduce((s, r) => s + (parseFloat(r.marks_obtained) || 0), 0) / simcat.length).toFixed(1) : '—';
+    const initials = student.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+
+    content.innerHTML = `
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+        <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;flex-shrink:0;">${initials}</div>
+        <div style="flex:1;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--text);">${student.name}</div>
+          <div style="font-size:12px;color:var(--text3);">${student.id} · ${student.batch} · ${student.target_exam} · ${student.email}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px;">${student.phone || '—'}</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
+        <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:12px;text-align:center;border:1px solid var(--border);">
+          <div style="font-size:20px;font-weight:700;color:var(--accent);">${attPct}%</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px;">Attendance</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:12px;text-align:center;border:1px solid var(--border);">
+          <div style="font-size:20px;font-weight:700;color:var(--green);">${peakPct.toFixed(2)}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px;">Peak %ile</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:12px;text-align:center;border:1px solid var(--border);">
+          <div style="font-size:20px;font-weight:700;color:var(--purple);">${avgScore}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px;">Avg Score</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:12px;text-align:center;border:1px solid var(--border);">
+          <div style="font-size:20px;font-weight:700;color:var(--amber);">${simcat.length}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px;">SimCATs</div>
+        </div>
+      </div>
+
+      ${simcat.length ? `
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;">SimCAT History</div>
+      ${simcat.map(s => `
+        <div class="score-row" style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <div style="font-weight:600;font-size:13px;">${s.test_name}</div>
+            <div style="font-size:14px;font-weight:700;color:var(--accent);">${s.marks_obtained}/204 <span style="font-size:11px;color:var(--green-text);">${parseFloat(s.overall_percentile).toFixed(2)}%ile</span></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;font-size:11px;">
+            <div style="background:rgba(255,183,64,0.08);border-radius:6px;padding:5px 8px;">VARC: <b style="color:var(--amber);">${s.varc_marks_obtained}/72</b></div>
+            <div style="background:rgba(155,109,255,0.08);border-radius:6px;padding:5px 8px;">DILR: <b style="color:var(--purple);">${s.dilr_marks_obtained}/66</b></div>
+            <div style="background:rgba(16,217,139,0.08);border-radius:6px;padding:5px 8px;">QA: <b style="color:var(--green);">${s.qa_marks_obtained}/66</b></div>
+          </div>
+        </div>`).join('')}` : '<div style="color:var(--text3);font-size:13px;margin-bottom:16px;">No SimCAT data</div>'}
+
+      ${att.length ? `
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin:16px 0 10px;">Recent Attendance</div>
+      ${att.slice(0, 10).map(a => `
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;">
+          <span style="color:var(--text2);">${fmtDate(a.date)} · ${a.topic || '—'}</span>
+          <span class="${a.status === 'Present' ? 'badge badge-green' : 'badge badge-red'}">${a.status}</span>
+        </div>`).join('')}` : ''}
+
+      <button onclick="exportStudentReport('${studentId}')" style="margin-top:20px;width:100%;padding:10px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;">⬇️ Export Student Report (CSV)</button>
+    `;
+  } catch(err) {
+    content.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div style="font-size:13px;">Error loading: ${err.message}</div></div>`;
+  }
+}
+
+function closeStudentModal() {
+  document.getElementById('student-modal').classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ATTENDANCE — SETUP
+// ═══════════════════════════════════════════════════════════════
+async function loadAttTopics() {
+  const batch = document.getElementById('att-batch-select').value;
+  const date = document.getElementById('att-date-select').value;
+  const topicSel = document.getElementById('att-topic-select');
+
+  if (!batch || !date) return;
+
+  try {
+    const sessions = scheduleData.filter(s => s.batch === batch && s.date === date);
+    if (!sessions.length) {
+      topicSel.innerHTML = '<option value="">No sessions scheduled for this date</option>';
+    } else {
+      topicSel.innerHTML = sessions.map(s =>
+        `<option value="${s.id}">${s.time || ''} — ${s.topic || 'Unnamed Session'} (${s.faculty || '—'})</option>`
+      ).join('');
+    }
+  } catch(err) {
+    topicSel.innerHTML = '<option value="">Error loading sessions</option>';
+  }
+}
+
+async function getBatchStudents(batch) {
+  return allStudents.filter(s => s.batch === batch);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MANUAL ATTENDANCE
+// ═══════════════════════════════════════════════════════════════
+async function startManualAttendance() {
+  const batch = document.getElementById('att-batch-select').value;
+  const date = document.getElementById('att-date-select').value;
+  const topicId = document.getElementById('att-topic-select').value;
+  const topicText = document.getElementById('att-topic-select').selectedOptions[0]?.text || '—';
+
+  if (!batch || !date) { alert('Please select batch and date.'); return; }
+
+  manualAttStudents = await getBatchStudents(batch);
+  if (!manualAttStudents.length) { alert('No students found in this batch.'); return; }
+
+  document.getElementById('att-manual-section').style.display = 'block';
+  document.getElementById('att-qr-section').style.display = 'none';
+  document.getElementById('att-manual-session-label').textContent = `${batch} · ${fmtDate(date)} · ${topicText}`;
+
+  renderManualList();
+}
+
+function renderManualList() {
+  const list = document.getElementById('manual-att-list');
+  let present = 0, absent = 0;
+
+  list.innerHTML = manualAttStudents.map((s, idx) => {
+    const isPresent = s._present !== false; // default present
+    if (isPresent) present++; else absent++;
+    return `
+      <div class="toggle-wrap" id="toggle-wrap-${idx}">
+        <div>
+          <div class="toggle-name">${s.name}</div>
+          <div class="toggle-meta">${s.id} · ${s.batch}</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" ${isPresent ? 'checked' : ''} onchange="toggleAttendance(${idx}, this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>`;
+  }).join('');
+
+  // Initialize all as present by default
+  manualAttStudents.forEach(s => { if (s._present === undefined) s._present = true; });
+  updateManualCounts();
+}
+
+function toggleAttendance(idx, checked) {
+  manualAttStudents[idx]._present = checked;
+  updateManualCounts();
+}
+
+function updateManualCounts() {
+  const present = manualAttStudents.filter(s => s._present !== false).length;
+  document.getElementById('manual-present-count').textContent = present;
+  document.getElementById('manual-absent-count').textContent = manualAttStudents.length - present;
+  document.getElementById('manual-total-count').textContent = manualAttStudents.length;
+}
+
+function markAllPresent() {
+  manualAttStudents.forEach(s => s._present = true);
+  renderManualList();
+}
+
+function markAllAbsent() {
+  manualAttStudents.forEach(s => s._present = false);
+  renderManualList();
+}
+
+async function submitManualAttendance() {
+  const batch = document.getElementById('att-batch-select').value;
+  const date = document.getElementById('att-date-select').value;
+  const topicSel = document.getElementById('att-topic-select');
+  const topicId = topicSel.value;
+  const topicText = topicSel.selectedOptions[0]?.text || '';
+
+  const session = scheduleData.find(s => String(s.id) === String(topicId));
+  const btn = document.getElementById('submit-manual-btn');
+  btn.disabled = true; btn.textContent = 'Submitting...';
+
+  try {
+    const rows = manualAttStudents.map(s => ({
+      date,
+      student_id: String(s.id),
+      student_name: s.name,
+      student_email: s.email || '',
+      ims_pin: String(s.id),
+      batch,
+      course: session?.course || '',
+      section: session?.section || '',
+      topic: session?.topic || topicText,
+      faculty: session?.faculty || '',
+      mentor: currentMentor.name,
+      mentor_id: currentMentor.mentor_id,
+      status: s._present !== false ? 'Present' : 'Absent',
+      marked_by: currentMentor.mentor_id,
+      marking_method: 'manual',
+      schedule_id: topicId || null,
+      timestamp: new Date().toISOString()
+    }));
+
+    await sbUpsert('attendance', rows, 'student_id,date,batch,topic');
+    alert(`✅ Attendance submitted for ${rows.length} students.\nPresent: ${rows.filter(r=>r.status==='Present').length} | Absent: ${rows.filter(r=>r.status==='Absent').length}`);
+    document.getElementById('att-manual-section').style.display = 'none';
+    manualAttStudents = [];
+  } catch(err) {
+    alert('❌ Error: ' + err.message);
+  }
+  btn.disabled = false; btn.textContent = 'Submit Attendance';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// QR ATTENDANCE
+// ═══════════════════════════════════════════════════════════════
+async function startQRAttendance() {
+  const batch = document.getElementById('att-batch-select').value;
+  const date = document.getElementById('att-date-select').value;
+  if (!batch || !date) { alert('Please select batch and date.'); return; }
+
+  manualAttStudents = await getBatchStudents(batch);
+  scannedStudents = new Set();
+  document.getElementById('att-qr-section').style.display = 'block';
+  document.getElementById('att-manual-section').style.display = 'none';
+
+  const topicText = document.getElementById('att-topic-select').selectedOptions[0]?.text || '—';
+  document.getElementById('att-qr-session-label').textContent = `${batch} · ${fmtDate(date)} · ${topicText}`;
+
+  try {
+    qrStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    const video = document.getElementById('qr-video');
+    video.srcObject = qrStream;
+    video.play();
+    video.onloadedmetadata = () => scanQRFrame();
+  } catch(err) {
+    alert('Camera access denied: ' + err.message);
+  }
+}
+
+function scanQRFrame() {
+  const video = document.getElementById('qr-video');
+  const canvas = document.getElementById('qr-canvas');
+  if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) {
+    qrAnimFrame = requestAnimationFrame(scanQRFrame);
+    return;
+  }
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+  if (code && code.data) {
+    const studentId = code.data.trim();
+    if (!scannedStudents.has(studentId)) {
+      const student = manualAttStudents.find(s => String(s.id) === studentId);
+      if (student) {
+        scannedStudents.add(studentId);
+        updateScannedList();
+        // Flash feedback
+        const overlay = document.querySelector('.qr-overlay');
+        if (overlay) {
+          overlay.style.borderColor = 'var(--green)';
+          setTimeout(() => { if (overlay) overlay.style.borderColor = 'var(--accent)'; }, 500);
+        }
+      }
+    }
+  }
+  qrAnimFrame = requestAnimationFrame(scanQRFrame);
+}
+
+function updateScannedList() {
+  document.getElementById('scanned-count').textContent = scannedStudents.size;
+  const list = document.getElementById('scanned-list');
+  list.innerHTML = [...scannedStudents].map(id => {
+    const s = manualAttStudents.find(st => String(st.id) === id);
+    return `<div class="scanned-item">
+      <span style="font-size:12px;font-weight:600;color:var(--green-text);">✓ ${s ? s.name : id}</span>
+      <span style="font-size:10px;color:var(--text3);">${id}</span>
+    </div>`;
+  }).join('');
+}
+
+function stopQRScanner() {
+  if (qrStream) { qrStream.getTracks().forEach(t => t.stop()); qrStream = null; }
+  if (qrAnimFrame) { cancelAnimationFrame(qrAnimFrame); qrAnimFrame = null; }
+}
+
+async function submitQRAttendance() {
+  const batch = document.getElementById('att-batch-select').value;
+  const date = document.getElementById('att-date-select').value;
+  const topicSel = document.getElementById('att-topic-select');
+  const topicId = topicSel.value;
+  const session = scheduleData.find(s => String(s.id) === String(topicId));
+  const btn = document.getElementById('submit-qr-btn');
+
+  stopQRScanner();
+  btn.disabled = true; btn.textContent = 'Submitting...';
+
+  try {
+    const rows = manualAttStudents.map(s => ({
+      date, student_id: String(s.id), student_name: s.name,
+      student_email: s.email || '', ims_pin: String(s.id),
+      batch, course: session?.course || '',
+      section: session?.section || '', topic: session?.topic || '',
+      faculty: session?.faculty || '', mentor: currentMentor.name,
+      mentor_id: currentMentor.mentor_id,
+      status: scannedStudents.has(String(s.id)) ? 'Present' : 'Absent',
+      marked_by: currentMentor.mentor_id, marking_method: 'qr',
+      schedule_id: topicId || null, timestamp: new Date().toISOString()
+    }));
+
+    await sbUpsert('attendance', rows, 'student_id,date,batch,topic');
+    const pres = rows.filter(r => r.status === 'Present').length;
+    alert(`✅ QR Attendance submitted!\nPresent: ${pres} | Absent: ${rows.length - pres}`);
+    document.getElementById('att-qr-section').style.display = 'none';
+    scannedStudents = new Set();
+  } catch(err) {
+    alert('❌ Error: ' + err.message);
+  }
+  btn.disabled = false; btn.textContent = 'Submit & Mark Absent Remaining';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ATTENDANCE RECORDS
+// ═══════════════════════════════════════════════════════════════
+async function loadAttendanceRecords() {
+  const batch = document.getElementById('rec-batch-filter').value;
+  const from = document.getElementById('rec-date-from').value;
+  const to = document.getElementById('rec-date-to').value;
+  const container = document.getElementById('att-records-container');
+  container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3);">Loading...</div>';
+
+  try {
+    let query = `?date=gte.${from}&date=lte.${to}&order=date.desc,student_name.asc`;
+    if (batch !== 'all') query += `&batch=eq.${batch}`;
+
+    attendanceData = await sbFetch('attendance', query);
+
+    if (!attendanceData.length) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div style="font-size:13px;">No records found</div></div>';
+      return;
+    }
+
+    // Group by date
+    const byDate = {};
+    attendanceData.forEach(r => {
+      if (!byDate[r.date]) byDate[r.date] = [];
+      byDate[r.date].push(r);
+    });
+
+    container.innerHTML = Object.entries(byDate).map(([date, rows]) => {
+      const pres = rows.filter(r => r.status === 'Present').length;
+      return `
+        <div style="margin-bottom:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:2px solid var(--border2);margin-bottom:8px;">
+            <div style="font-size:13px;font-weight:700;color:var(--text);">${fmtDate(date)}</div>
+            <div style="font-size:12px;color:var(--text3);">
+              <span style="color:var(--green-text);font-weight:600;">${pres} present</span> · ${rows.length - pres} absent · ${rows.length} total
+            </div>
+          </div>
+          <table class="data-table" style="font-size:12px;">
+            <thead><tr><th>Student</th><th>ID</th><th>Batch</th><th>Topic</th><th>Method</th><th>Status</th></tr></thead>
+            <tbody>${rows.map(r => `
+              <tr>
+                <td>${r.student_name || '—'}</td>
+                <td style="color:var(--text3);">${r.student_id}</td>
+                <td style="color:var(--text3);">${r.batch}</td>
+                <td style="color:var(--text2);">${r.topic || '—'}</td>
+                <td><span style="font-size:10px;color:var(--text3);">${r.marking_method || '—'}</span></td>
+                <td><span class="${r.status === 'Present' ? 'badge badge-green' : 'badge badge-red'}">${r.status}</span></td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>`;
+    }).join('');
+  } catch(err) {
+    container.innerHTML = `<div class="empty-state"><div style="font-size:13px;">Error: ${err.message}</div></div>`;
+  }
+}
+
+function exportAttendanceCSV() {
+  if (!attendanceData.length) { alert('No data to export. Please load records first.'); return; }
+  const headers = ['Date','Student Name','Student ID','Batch','Course','Topic','Faculty','Status','Method','Timestamp'];
+  const rows = attendanceData.map(r => [r.date, r.student_name, r.student_id, r.batch, r.course, r.topic, r.faculty, r.status, r.marking_method, r.timestamp].map(v => `"${v || ''}"`).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  downloadFile(csv, `attendance_${today()}.csv`, 'text/csv');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BATCH PERFORMANCE
+// ═══════════════════════════════════════════════════════════════
+async function loadBatchPerformance() {
+  const batch = document.getElementById('perf-batch-select').value;
+  const statsEl = document.getElementById('perf-stats');
+  const rankEl = document.getElementById('perf-rankings');
+  statsEl.innerHTML = '<div style="color:var(--text3);font-size:13px;">Loading...</div>';
+
+  try {
+    const batchStudents = allStudents.filter(s => batch === 'all' || s.batch === batch);
+    const studentIds = batchStudents.map(s => String(s.id));
+    if (!studentIds.length) { statsEl.innerHTML = '<div style="color:var(--text3);">No students</div>'; return; }
+
+    const simcatRows = await sbFetch('simcat_scores',
+      `?student_id=in.(${studentIds.map(id=>`"${id}"`).join(',')})&order=test_date.desc`
+    );
+
+    if (!simcatRows.length) {
+      statsEl.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:20px;">No SimCAT data for this batch</div>';
+      rankEl.innerHTML = ''; return;
+    }
+
+    const avgPct = (simcatRows.reduce((s, r) => s + parseFloat(r.overall_percentile || 0), 0) / simcatRows.length).toFixed(2);
+    const peakPct = Math.max(...simcatRows.map(r => parseFloat(r.overall_percentile || 0))).toFixed(2);
+    const avgScore = (simcatRows.reduce((s, r) => s + parseFloat(r.marks_obtained || 0), 0) / simcatRows.length).toFixed(1);
+
+    statsEl.innerHTML = `
+      <div class="stat-card" style="border-top:2px solid var(--accent);"><div class="stat-label">Tests Taken</div><div class="stat-val">${simcatRows.length}</div></div>
+      <div class="stat-card" style="border-top:2px solid var(--green);"><div class="stat-label">Avg Percentile</div><div class="stat-val">${avgPct}</div></div>
+      <div class="stat-card" style="border-top:2px solid var(--purple);"><div class="stat-label">Peak Percentile</div><div class="stat-val">${peakPct}</div></div>
+      <div class="stat-card" style="border-top:2px solid var(--amber);"><div class="stat-label">Avg Score</div><div class="stat-val">${avgScore}</div></div>
+    `;
+
+    // Rankings — latest test per student
+    const latestPerStudent = {};
+    simcatRows.forEach(r => {
+      if (!latestPerStudent[r.student_id] || r.test_date > latestPerStudent[r.student_id].test_date) {
+        latestPerStudent[r.student_id] = r;
+      }
+    });
+
+    const ranked = Object.values(latestPerStudent).sort((a, b) => parseFloat(b.overall_percentile) - parseFloat(a.overall_percentile));
+    rankEl.innerHTML = `<table class="data-table">
+      <thead><tr><th>Rank</th><th>Student</th><th>ID</th><th>Last Test</th><th>Score</th><th>Percentile</th></tr></thead>
+      <tbody>${ranked.map((r, i) => {
+        const student = batchStudents.find(s => String(s.id) === String(r.student_id));
+        return `<tr>
+          <td style="color:${i===0?'var(--amber)':i===1?'var(--text3)':i===2?'var(--amber-dim)':'var(--text3)'};">${i+1}</td>
+          <td>${student?.name || r.student_id}</td>
+          <td style="color:var(--text3);font-size:11px;">${r.student_id}</td>
+          <td style="color:var(--text2);">${r.test_name}</td>
+          <td><span class="badge badge-blue">${r.marks_obtained}/204</span></td>
+          <td><span class="badge badge-green">${parseFloat(r.overall_percentile).toFixed(2)}%ile</span></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+
+    // Chart
+    if (perfChartInstance) perfChartInstance.destroy();
+    const ctx = document.getElementById('perfChart');
+    if (ctx) {
+      const buckets = {'0-20':0,'21-40':0,'41-60':0,'61-80':0,'81-90':0,'91-95':0,'96-99':0,'99+':0};
+      Object.values(latestPerStudent).forEach(r => {
+        const p = parseFloat(r.overall_percentile);
+        if (p <= 20) buckets['0-20']++;
+        else if (p <= 40) buckets['21-40']++;
+        else if (p <= 60) buckets['41-60']++;
+        else if (p <= 80) buckets['61-80']++;
+        else if (p <= 90) buckets['81-90']++;
+        else if (p <= 95) buckets['91-95']++;
+        else if (p <= 99) buckets['96-99']++;
+        else buckets['99+']++;
+      });
+      perfChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(buckets),
+          datasets: [{ label: 'Students', data: Object.values(buckets), backgroundColor: 'rgba(79,124,255,0.6)', borderColor: '#4F7CFF', borderWidth: 1, borderRadius: 6 }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1C2028', titleColor: '#EEF0F4', bodyColor: '#8A90A0', borderColor: '#2A2F3A', borderWidth: 1 } },
+          scales: {
+            y: { ticks: { color: '#555C6E', stepSize: 1 }, grid: { color: 'rgba(42,47,58,0.6)' } },
+            x: { ticks: { color: '#555C6E' }, grid: { color: 'rgba(42,47,58,0.6)' } }
+          }
+        }
+      });
+    }
+  } catch(err) {
+    statsEl.innerHTML = `<div style="color:var(--red);font-size:13px;">Error: ${err.message}</div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CHANGE PASSWORD
+// ═══════════════════════════════════════════════════════════════
+async function changePassword() {
+  const current = document.getElementById('pw-current').value;
+  const newPw = document.getElementById('pw-new').value;
+  const confirm = document.getElementById('pw-confirm').value;
+  const msg = document.getElementById('pw-msg');
+  const btn = document.getElementById('pw-btn');
+
+  msg.style.display = 'none';
+  if (!current || !newPw || !confirm) { showPwMsg('All fields required.', 'warn'); return; }
+  if (newPw.length < 8) { showPwMsg('Password must be at least 8 characters.', 'warn'); return; }
+  if (newPw !== confirm) { showPwMsg('Passwords do not match.', 'warn'); return; }
+
+  const currentHash = await hashPassword(current);
+  if (currentHash !== currentMentor.password_hash) { showPwMsg('Current password is incorrect.', 'warn'); return; }
+
+  btn.disabled = true; btn.textContent = 'Updating...';
+  try {
+    const newHash = await hashPassword(newPw);
+    await sbUpdate('mentors', `?mentor_id=eq.${currentMentor.mentor_id}`, { password_hash: newHash, updated_at: new Date().toISOString() });
+    currentMentor.password_hash = newHash;
+    sessionStorage.setItem('mp_mentor', JSON.stringify(currentMentor));
+    showPwMsg('✅ Password updated successfully!', 'success');
+    document.getElementById('pw-current').value = '';
+    document.getElementById('pw-new').value = '';
+    document.getElementById('pw-confirm').value = '';
+  } catch(err) {
+    showPwMsg('Error: ' + err.message, 'warn');
+  }
+  btn.disabled = false; btn.textContent = 'Update Password';
+}
+
+function showPwMsg(text, type) {
+  const el = document.getElementById('pw-msg');
+  el.textContent = text;
+  el.className = `notice notice-${type}`;
+  el.style.display = 'block';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════════════════════
+async function exportStudentReport(studentId) {
+  const student = allStudents.find(s => String(s.id) === String(studentId));
+  if (!student) return;
+  const [simcat, att] = await Promise.all([
+    sbFetch('simcat_scores', `?student_id=eq.${studentId}&order=test_date.asc`),
+    sbFetch('attendance', `?student_id=eq.${studentId}&order=date.desc`)
+  ]);
+  const rows = [
+    ['Student Report', student.name],['ID', student.id],['Batch', student.batch],['Email', student.email],[''],
+    ['SimCAT History'],
+    ['Test','Date','Score','Percentile','VARC','DILR','QA','Accuracy'],
+    ...simcat.map(s => [s.test_name, s.test_date, s.marks_obtained, s.overall_percentile, s.varc_marks_obtained, s.dilr_marks_obtained, s.qa_marks_obtained, s.overall_accuracy]),
+    [''],['Attendance'],['Date','Topic','Status'],
+    ...att.map(a => [a.date, a.topic, a.status])
+  ];
+  const csv = rows.map(r => Array.isArray(r) ? r.map(v => `"${v || ''}"`).join(',') : r).join('\n');
+  downloadFile(csv, `${student.name.replace(' ','_')}_report.csv`, 'text/csv');
+}
+
+function downloadFile(content, filename, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+function showPage(pageId, btnEl) {
+  document.querySelectorAll('.page').forEach(p => { p.style.display = 'none'; p.classList.remove('active'); });
+  const target = document.getElementById('page-' + pageId);
+  if (target) { target.style.display = 'block'; target.classList.add('active'); }
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+
+  if (pageId === 'students') renderStudentList();
+  if (pageId === 'attendance-records') loadAttendanceRecords();
+  if (pageId === 'batch-performance') {
+    const sel = document.getElementById('perf-batch-select');
+    if (sel && sel.options.length > 1) loadBatchPerformance();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// WINDOW LOAD
+// ═══════════════════════════════════════════════════════════════
+window.onload = async () => {
+  const saved = sessionStorage.getItem('mp_mentor');
+  if (saved) {
+    currentMentor = JSON.parse(saved);
+    await launchApp();
+  }
+  // Enter key on login
+  document.getElementById('login-password')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleLogin();
+  });
+};
+</script>
+</body>
+</html>

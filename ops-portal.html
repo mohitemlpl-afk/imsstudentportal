@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>IMS Operations Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0B0D11;--bg2:#111318;--surface:#16191F;--surface2:#1C2028;--surface3:#232830;
+  --border:#2A2F3A;--border2:#353B47;--text:#EEF0F4;--text2:#8A90A0;--text3:#555C6E;
+  --accent:#4F7CFF;--accent2:#6B93FF;--accent-dim:rgba(79,124,255,0.08);
+  --green:#10D98B;--green-dim:rgba(16,217,139,0.1);--green-text:#0FBF7A;
+  --red:#FF5C5C;--red-dim:rgba(255,92,92,0.1);
+  --amber:#FFB740;--amber-dim:rgba(255,183,64,0.1);
+  --purple:#9B6DFF;--purple-dim:rgba(155,109,255,0.1);
+  --radius:12px;--radius-sm:8px;--radius-lg:16px;
+  --shadow:0 1px 3px rgba(0,0,0,0.4),0 8px 32px rgba(0,0,0,0.3);
+  --font:'Inter',sans-serif;--font-display:'Space Grotesk',sans-serif;
+  --sidebar-w:230px;
+}
+html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:10px}
+
+/* LOGIN */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(255,183,64,0.1) 0%,transparent 70%),var(--bg);padding:24px;}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:48px 44px;max-width:420px;width:100%;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.login-card::before{content:'';position:absolute;top:-1px;left:-1px;right:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--amber),transparent);}
+.login-title{font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.login-sub{font-size:13px;color:var(--text2);margin-bottom:28px;}
+.form-group{margin-bottom:14px;text-align:left;}
+.form-label{font-size:11px;font-weight:700;color:var(--text3);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;}
+.form-input{width:100%;padding:11px 14px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-family:var(--font);font-size:13px;color:var(--text);background:var(--surface2);outline:none;transition:all .15s;}
+.form-input:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,183,64,0.1);}
+.btn-primary{width:100%;padding:12px;border-radius:var(--radius-sm);border:none;background:var(--amber);color:#000;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px);}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.error-msg{background:var(--red-dim);border:1px solid rgba(255,92,92,0.3);color:var(--red);padding:10px 14px;border-radius:var(--radius-sm);font-size:12px;margin-bottom:14px;display:none;}
+
+/* APP */
+#app{display:none;min-height:100vh;flex-direction:column;}
+#app.visible{display:flex;}
+.topnav{background:rgba(17,19,24,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;height:60px;position:sticky;top:0;z-index:200;}
+.topnav-logo img{height:32px;display:block;}
+.topnav-spacer{flex:1;}
+.ops-badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;background:var(--amber-dim);color:var(--amber);border:1px solid rgba(255,183,64,0.3);}
+.topnav-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--amber),#ff6b35);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#000;}
+.logout-btn{padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:none;font-family:var(--font);font-size:12px;color:var(--text2);cursor:pointer;transition:all .15s;}
+.logout-btn:hover{background:var(--red-dim);color:var(--red);border-color:var(--red);}
+
+/* LAYOUT */
+.app-body{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);padding:16px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;}
+.sidebar-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:12px 12px 4px;margin-top:4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border:none;background:none;width:100%;text-align:left;font-family:var(--font);}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:rgba(255,183,64,0.08);color:var(--amber);font-weight:600;border:1px solid rgba(255,183,64,0.2);}
+.nav-icon{font-size:15px;flex-shrink:0;width:18px;text-align:center;}
+.main-content{flex:1;overflow-y:auto;padding:28px 32px;}
+.page{display:none;}.page.active{display:block;}
+.page-header{margin-bottom:24px;}
+.page-title{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.page-sub{font-size:13px;color:var(--text3);}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;margin-bottom:20px;}
+.card:hover{border-color:var(--border2);}
+.card-title{font-family:var(--font-display);font-size:14px;font-weight:600;color:var(--text);margin-bottom:16px;}
+.card-sub{font-size:12px;color:var(--text3);margin-top:-12px;margin-bottom:16px;}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;transition:all .2s;}
+.stat-label{font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;}
+.stat-val{font-family:var(--font-display);font-size:28px;font-weight:700;color:var(--text);line-height:1;}
+.stat-delta{font-size:11px;margin-top:6px;color:var(--text3);}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding:10px 12px;border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;}
+.data-table td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);vertical-align:middle;}
+.data-table tr:hover td{background:var(--surface2);}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;}
+.badge-green{background:var(--green-dim);color:var(--green-text);border:1px solid rgba(16,217,139,0.2);}
+.badge-blue{background:var(--accent-dim);color:var(--accent2);border:1px solid rgba(79,124,255,0.2);}
+.badge-red{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,92,92,0.2);}
+.badge-amber{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(255,183,64,0.2);}
+
+/* FORM ELEMENTS */
+.form-select{width:100%;padding:10px 12px;border:1px solid var(--border2);border-radius:var(--radius-sm);font-family:var(--font);font-size:13px;color:var(--text);background:var(--surface2);outline:none;transition:all .15s;}
+.form-select:focus{border-color:var(--amber);}
+.form-textarea{width:100%;height:80px;resize:vertical;border:1px solid var(--border2);border-radius:var(--radius-sm);padding:10px 12px;font-family:var(--font);font-size:13px;color:var(--text);background:var(--surface2);outline:none;}
+.search-bar{width:100%;padding:10px 14px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-family:var(--font);font-size:13px;outline:none;transition:all .15s;}
+.search-bar:focus{border-color:var(--amber);}
+
+/* BUTTONS */
+.btn-sm{padding:6px 14px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--font);}
+.btn-sm:hover{border-color:var(--amber);color:var(--amber);}
+.btn-sm-danger{border-color:rgba(255,92,92,0.3);color:var(--red);background:var(--red-dim);}
+.btn-sm-success{border-color:rgba(16,217,139,0.3);color:var(--green-text);background:var(--green-dim);}
+.btn-sm-primary{border-color:rgba(79,124,255,0.3);color:var(--accent2);background:var(--accent-dim);}
+.btn-full{width:100%;padding:11px;border-radius:var(--radius-sm);border:none;background:var(--amber);color:#000;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:16px;}
+.btn-full:hover{opacity:.9;}
+.btn-full:disabled{opacity:.5;cursor:not-allowed;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.75);z-index:1000;align-items:center;justify-content:center;padding:24px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:28px;max-width:580px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.modal-title{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.modal-sub{font-size:12px;color:var(--text3);margin-bottom:20px;}
+.modal-close{float:right;background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;line-height:1;padding:0;}
+.modal-close:hover{color:var(--text);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.notice{padding:12px 16px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;margin-bottom:14px;}
+.notice-success{background:var(--green-dim);color:var(--green-text);border:1px solid rgba(16,217,139,0.2);}
+.notice-warn{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(255,183,64,0.2);}
+.notice-error{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,92,92,0.2);}
+.empty-state{padding:40px;text-align:center;color:var(--text3);}
+.divider{border:none;border-top:1px solid var(--border);margin:16px 0;}
+
+@media(max-width:768px){.sidebar{display:none;}.main-content{padding:20px 16px;}.two-col{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:center;">
+      <img src="https://imsgujarat.com/wp-content/uploads/elementor/thumbs/high-low-ims-logo-q88bznzqyw17qyylsbpjt2obvw4pcwyu13wepnvt34.png" alt="IMS" style="height:40px;">
+    </div>
+    <h1 class="login-title">Operations Portal</h1>
+    <p class="login-sub">IMS internal operations access</p>
+    <div class="error-msg" id="login-error"></div>
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <input type="email" id="login-email" class="form-input" placeholder="ops@imsindia.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" id="login-password" class="form-input" placeholder="Enter password">
+    </div>
+    <button class="btn-primary" onclick="handleLogin()" id="login-btn">Sign In</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <nav class="topnav">
+    <div class="topnav-logo">
+      <img src="https://imsgujarat.com/wp-content/uploads/elementor/thumbs/high-low-ims-logo-q88bznzqyw17qyylsbpjt2obvw4pcwyu13wepnvt34.png" alt="IMS">
+    </div>
+    <div style="margin-left:12px;font-size:12px;color:var(--text3);">Operations Portal</div>
+    <div class="topnav-spacer"></div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <span class="ops-badge" id="nav-role">Operations</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="topnav-avatar" id="nav-avatar">OP</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text);" id="nav-name">---</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Sign out</button>
+    </div>
+  </nav>
+
+  <div class="app-body">
+    <aside class="sidebar">
+      <div class="sidebar-label">Overview</div>
+      <button class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">🏠</span>Dashboard</button>
+
+      <div class="sidebar-label">Students</div>
+      <button class="nav-item" onclick="showPage('students',this)"><span class="nav-icon">👥</span>Student Records</button>
+      <button class="nav-item" onclick="showPage('add-student',this)"><span class="nav-icon">➕</span>Add Student</button>
+
+      <div class="sidebar-label">Mentors</div>
+      <button class="nav-item" onclick="showPage('mentors',this)"><span class="nav-icon">🧑‍🏫</span>Mentor Accounts</button>
+      <button class="nav-item" onclick="showPage('add-mentor',this)"><span class="nav-icon">➕</span>Add Mentor</button>
+      <button class="nav-item" onclick="showPage('batch-mapping',this)"><span class="nav-icon">🔗</span>Batch Assignments</button>
+
+      <div class="sidebar-label">Exports</div>
+      <button class="nav-item" onclick="showPage('exports',this)"><span class="nav-icon">⬇️</span>Export Data</button>
+    </aside>
+
+    <main class="main-content">
+
+      <!-- DASHBOARD -->
+      <div id="page-dashboard" class="page active">
+        <div class="page-header">
+          <div class="page-title">Operations Dashboard</div>
+          <div class="page-sub" id="dash-sub">IMS Gujarat internal management</div>
+        </div>
+        <div class="stat-grid" id="dash-stats">
+          <div class="stat-card" style="border-top:2px solid var(--amber);"><div class="stat-label">Total Students</div><div class="stat-val" id="stat-students">—</div></div>
+          <div class="stat-card" style="border-top:2px solid var(--accent);"><div class="stat-label">Total Mentors</div><div class="stat-val" id="stat-mentors">—</div></div>
+          <div class="stat-card" style="border-top:2px solid var(--green);"><div class="stat-label">Active Batches</div><div class="stat-val" id="stat-batches">—</div></div>
+          <div class="stat-card" style="border-top:2px solid var(--purple);"><div class="stat-label">SimCAT Records</div><div class="stat-val" id="stat-simcats">—</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Batch Overview</div>
+          <div id="dash-batch-overview"></div>
+        </div>
+      </div>
+
+      <!-- STUDENT RECORDS -->
+      <div id="page-students" class="page">
+        <div class="page-header">
+          <div class="page-title">Student Records</div>
+          <div class="page-sub">Edit student details, reassign batches, manage accounts</div>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+          <input type="text" class="search-bar" id="stu-search" placeholder="🔍  Search name, ID, email, batch..." oninput="filterStudents()" style="flex:1;min-width:200px;">
+          <select class="form-select" id="stu-batch-filter" onchange="filterStudents()" style="width:150px;">
+            <option value="all">All Batches</option>
+          </select>
+          <select class="form-select" id="stu-exam-filter" onchange="filterStudents()" style="width:130px;">
+            <option value="all">All Exams</option>
+            <option value="CAT">CAT</option>
+            <option value="NMAT">NMAT</option>
+            <option value="XAT">XAT</option>
+            <option value="SNAP">SNAP</option>
+          </select>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Name</th><th>IMS ID</th><th>Email</th><th>Phone</th>
+                  <th>Batch</th><th>Exam</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="students-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="stu-pagination" style="display:flex;gap:8px;align-items:center;margin-top:12px;font-size:12px;color:var(--text3);"></div>
+      </div>
+
+      <!-- ADD STUDENT -->
+      <div id="page-add-student" class="page">
+        <div class="page-header">
+          <div class="page-title">Add New Student</div>
+          <div class="page-sub">Register a new student into the system</div>
+        </div>
+        <div class="card" style="max-width:560px;">
+          <div id="add-stu-msg" style="display:none;" class="notice"></div>
+          <div class="two-col">
+            <div class="form-group">
+              <label class="form-label">Full Name *</label>
+              <input type="text" id="ns-name" class="form-input" placeholder="Student full name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">IMS ID / PIN *</label>
+              <input type="text" id="ns-id" class="form-input" placeholder="IMS0001000001">
+            </div>
+          </div>
+          <div class="two-col">
+            <div class="form-group">
+              <label class="form-label">Email Address *</label>
+              <input type="email" id="ns-email" class="form-input" placeholder="student@email.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <input type="text" id="ns-phone" class="form-input" placeholder="10-digit mobile">
+            </div>
+          </div>
+          <div class="two-col">
+            <div class="form-group">
+              <label class="form-label">Batch *</label>
+              <input type="text" id="ns-batch" class="form-input" placeholder="e.g. 2601">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Target Exam *</label>
+              <select id="ns-exam" class="form-select">
+                <option value="CAT">CAT</option>
+                <option value="NMAT">NMAT</option>
+                <option value="XAT">XAT</option>
+                <option value="SNAP">SNAP</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn-full" onclick="addStudent()" id="add-stu-btn">Add Student</button>
+        </div>
+      </div>
+
+      <!-- MENTORS -->
+      <div id="page-mentors" class="page">
+        <div class="page-header">
+          <div class="page-title">Mentor Accounts</div>
+          <div class="page-sub">Manage mentor access and credentials</div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead>
+                <tr><th>Name</th><th>Email</th><th>Mentor ID</th><th>Role</th><th>Batches</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="mentors-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADD MENTOR -->
+      <div id="page-add-mentor" class="page">
+        <div class="page-header">
+          <div class="page-title">Add Mentor Account</div>
+          <div class="page-sub">Create login access for a new mentor</div>
+        </div>
+        <div class="card" style="max-width:560px;">
+          <div id="add-mentor-msg" style="display:none;" class="notice"></div>
+          <div class="two-col">
+            <div class="form-group">
+              <label class="form-label">Full Name *</label>
+              <input type="text" id="nm-name" class="form-input" placeholder="Mentor name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Mentor ID *</label>
+              <input type="text" id="nm-id" class="form-input" placeholder="IMS-MENTOR-001">
+            </div>
+          </div>
+          <div class="two-col">
+            <div class="form-group">
+              <label class="form-label">Email *</label>
+              <input type="email" id="nm-email" class="form-input" placeholder="mentor@imsindia.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone</label>
+              <input type="text" id="nm-phone" class="form-input" placeholder="10-digit mobile">
+            </div>
+          </div>
+          <div class="two-col">
+            <div class="form-group">
+              <label class="form-label">Role *</label>
+              <select id="nm-role" class="form-select">
+                <option value="mentor">Mentor</option>
+                <option value="super_mentor">Super Mentor</option>
+                <option value="super_admin">Super Admin</option>
+                <option value="operations">Operations</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Initial Password *</label>
+              <input type="password" id="nm-password" class="form-input" placeholder="Min 8 characters">
+            </div>
+          </div>
+          <button class="btn-full" onclick="addMentor()" id="add-mentor-btn">Create Account</button>
+        </div>
+      </div>
+
+      <!-- BATCH ASSIGNMENTS -->
+      <div id="page-batch-mapping" class="page">
+        <div class="page-header">
+          <div class="page-title">Batch Assignments</div>
+          <div class="page-sub">Assign batches to mentors</div>
+        </div>
+        <div class="card" style="max-width:480px;">
+          <div class="card-title">Assign Batch to Mentor</div>
+          <div id="assign-msg" style="display:none;" class="notice"></div>
+          <div class="form-group">
+            <label class="form-label">Mentor</label>
+            <select id="assign-mentor" class="form-select"><option value="">— Select mentor —</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Batch ID</label>
+            <input type="text" id="assign-batch" class="form-input" placeholder="e.g. 2601">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Course</label>
+            <input type="text" id="assign-course" class="form-input" placeholder="e.g. CAT26">
+          </div>
+          <button class="btn-full" onclick="assignBatch()" id="assign-btn">Assign Batch</button>
+        </div>
+        <div class="card">
+          <div class="card-title">Current Assignments</div>
+          <div id="batch-mapping-table"></div>
+        </div>
+      </div>
+
+      <!-- EXPORTS -->
+      <div id="page-exports" class="page">
+        <div class="page-header">
+          <div class="page-title">Export Data</div>
+          <div class="page-sub">Download data as CSV for reporting</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-title">👥 All Students</div>
+            <p style="font-size:12px;color:var(--text3);margin-bottom:16px;">Export complete student master data including IMS ID, batch, email, phone, exam.</p>
+            <div class="form-group">
+              <label class="form-label">Filter by Batch</label>
+              <select class="form-select" id="exp-stu-batch"><option value="all">All Batches</option></select>
+            </div>
+            <button class="btn-full" style="margin-top:8px;" onclick="exportStudents()">⬇️ Export Students CSV</button>
+          </div>
+
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-title">📊 SimCAT Scores</div>
+            <p style="font-size:12px;color:var(--text3);margin-bottom:16px;">Export all SimCAT test records with section-wise breakdown.</p>
+            <div class="form-group">
+              <label class="form-label">Filter by Batch</label>
+              <select class="form-select" id="exp-simcat-batch"><option value="all">All Batches</option></select>
+            </div>
+            <button class="btn-full" style="margin-top:8px;" onclick="exportSimcat()">⬇️ Export SimCAT CSV</button>
+          </div>
+
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-title">📅 Attendance Records</div>
+            <p style="font-size:12px;color:var(--text3);margin-bottom:16px;">Export attendance logs with date, topic, faculty, and status.</p>
+            <div class="two-col" style="gap:8px;margin-bottom:0;">
+              <div class="form-group" style="margin-bottom:8px;">
+                <label class="form-label">From Date</label>
+                <input type="date" id="exp-att-from" class="form-input">
+              </div>
+              <div class="form-group" style="margin-bottom:8px;">
+                <label class="form-label">To Date</label>
+                <input type="date" id="exp-att-to" class="form-input">
+              </div>
+            </div>
+            <button class="btn-full" style="margin-top:4px;" onclick="exportAttendance()">⬇️ Export Attendance CSV</button>
+          </div>
+
+          <div class="card" style="margin-bottom:0;">
+            <div class="card-title">🏆 Mentor List</div>
+            <p style="font-size:12px;color:var(--text3);margin-bottom:16px;">Export all mentor accounts with roles and batch assignments.</p>
+            <button class="btn-full" style="margin-top:8px;" onclick="exportMentors()">⬇️ Export Mentors CSV</button>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- EDIT STUDENT MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('edit-modal')">✕</button>
+    <div class="modal-title">Edit Student Details</div>
+    <div class="modal-sub">Update student information</div>
+    <div id="edit-msg" style="display:none;" class="notice"></div>
+    <input type="hidden" id="edit-student-original-id">
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" id="edit-name" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">IMS ID</label>
+        <input type="text" id="edit-id" class="form-input" disabled style="opacity:.5;cursor:not-allowed;">
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="edit-email" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone</label>
+        <input type="text" id="edit-phone" class="form-input">
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label">Batch</label>
+        <input type="text" id="edit-batch" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Target Exam</label>
+        <select id="edit-exam" class="form-select">
+          <option value="CAT">CAT</option>
+          <option value="NMAT">NMAT</option>
+          <option value="XAT">XAT</option>
+          <option value="SNAP">SNAP</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-full" onclick="saveStudentEdit()" id="edit-save-btn">Save Changes</button>
+  </div>
+</div>
+
+<!-- RESET PASSWORD MODAL -->
+<div class="modal-overlay" id="reset-pw-modal">
+  <div class="modal" style="max-width:400px;">
+    <button class="modal-close" onclick="closeModal('reset-pw-modal')">✕</button>
+    <div class="modal-title">Reset Mentor Password</div>
+    <div class="modal-sub" id="reset-pw-sub">Set a new password</div>
+    <div id="reset-pw-msg" style="display:none;" class="notice"></div>
+    <input type="hidden" id="reset-mentor-id">
+    <div class="form-group">
+      <label class="form-label">New Password</label>
+      <input type="password" id="reset-pw-new" class="form-input" placeholder="Min 8 characters">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Confirm Password</label>
+      <input type="password" id="reset-pw-confirm" class="form-input" placeholder="Repeat password">
+    </div>
+    <button class="btn-full" onclick="resetMentorPassword()" id="reset-pw-btn">Set New Password</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CONFIG & STATE
+// ═══════════════════════════════════════════════════════════════
+const CONFIG = {
+  SUPABASE_URL: 'https://ofhcxvekfplhgzpxutce.supabase.co/rest/v1/',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9maGN4dmVrZnBsaGd6cHh1dGNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDg5MDIsImV4cCI6MjA5NjgyNDkwMn0.0X57t9-4u3TO1tBn1wIkj0R-0RJfvDgolC5nRtQrUlE'
+};
+
+let currentOps = null;
+let allStudents = [];
+let allMentors = [];
+let allBatchMappings = [];
+let filteredStudents = [];
+let stuPage = 0;
+const PAGE_SIZE = 25;
+
+// ═══════════════════════════════════════════════════════════════
+// SUPABASE HELPERS
+// ═══════════════════════════════════════════════════════════════
+async function sbFetch(table, query = '') {
+  const res = await fetch(`${CONFIG.SUPABASE_URL}${table}${query}`, {
+    headers: { 'apikey': CONFIG.SUPABASE_ANON_KEY, 'Authorization': `Bearer ${CONFIG.SUPABASE_ANON_KEY}`, 'Accept': 'application/json' }
+  });
+  if (!res.ok) throw new Error(`${res.status}: ${await res.text()}`);
+  return res.json();
+}
+
+async function sbInsert(table, data) {
+  const res = await fetch(`${CONFIG.SUPABASE_URL}${table}`, {
+    method: 'POST',
+    headers: { 'apikey': CONFIG.SUPABASE_ANON_KEY, 'Authorization': `Bearer ${CONFIG.SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return true;
+}
+
+async function sbUpdate(table, query, data) {
+  const res = await fetch(`${CONFIG.SUPABASE_URL}${table}${query}`, {
+    method: 'PATCH',
+    headers: { 'apikey': CONFIG.SUPABASE_ANON_KEY, 'Authorization': `Bearer ${CONFIG.SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return true;
+}
+
+async function sbDelete(table, query) {
+  const res = await fetch(`${CONFIG.SUPABASE_URL}${table}${query}`, {
+    method: 'DELETE',
+    headers: { 'apikey': CONFIG.SUPABASE_ANON_KEY, 'Authorization': `Bearer ${CONFIG.SUPABASE_ANON_KEY}` }
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return true;
+}
+
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password + 'IMS_SALT_2026');
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════════════════
+async function handleLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn');
+  errEl.style.display = 'none';
+  if (!email || !password) { showErr('Enter email and password.'); return; }
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  try {
+    const hash = await hashPassword(password);
+    const mentors = await sbFetch('mentors', `?email=eq.${encodeURIComponent(email)}&select=*`);
+    if (!mentors || !mentors.length) { showErr('Email not found.'); btn.disabled=false; btn.textContent='Sign In'; return; }
+    const m = mentors[0];
+    if (!['super_admin','operations'].includes(m.role)) { showErr('No operations access for this account.'); btn.disabled=false; btn.textContent='Sign In'; return; }
+    if (!m.is_active) { showErr('Account inactive. Contact admin.'); btn.disabled=false; btn.textContent='Sign In'; return; }
+    if (m.password_hash !== hash) { showErr('Incorrect password.'); btn.disabled=false; btn.textContent='Sign In'; return; }
+    currentOps = m;
+    sessionStorage.setItem('op_user', JSON.stringify(m));
+    await launchApp();
+  } catch(err) { showErr('Error: ' + err.message); btn.disabled=false; btn.textContent='Sign In'; }
+}
+
+function showErr(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+async function launchApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+  const initials = currentOps.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('nav-avatar').textContent = initials;
+  document.getElementById('nav-name').textContent = currentOps.name;
+  const roleLabel = { super_admin:'Super Admin', operations:'Operations' };
+  document.getElementById('nav-role').textContent = roleLabel[currentOps.role] || currentOps.role;
+  await loadAllData();
+  renderDashboard();
+}
+
+async function loadAllData() {
+  try {
+    [allStudents, allMentors, allBatchMappings] = await Promise.all([
+      sbFetch('students', '?select=*&order=name.asc'),
+      sbFetch('mentors', '?select=*&order=name.asc'),
+      sbFetch('batch_mentor_mapping', '?select=*&order=batch_id.asc')
+    ]);
+    filteredStudents = [...allStudents];
+    populateBatchDropdowns();
+    populateMentorDropdown();
+  } catch(err) { console.error('Data load error:', err); }
+}
+
+function logout() {
+  sessionStorage.removeItem('op_user');
+  location.reload();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════════════
+function today() { return new Date().toISOString().split('T')[0]; }
+function fmtDate(str) {
+  if (!str) return '—';
+  try { return new Date(str).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }
+  catch(e) { return str; }
+}
+
+function populateBatchDropdowns() {
+  const batches = [...new Set(allStudents.map(s => s.batch).filter(Boolean))].sort();
+  ['stu-batch-filter','exp-stu-batch','exp-simcat-batch'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = '<option value="all">All Batches</option>';
+    batches.forEach(b => { const o=document.createElement('option'); o.value=b; o.textContent=b; el.appendChild(o); });
+  });
+}
+
+function populateMentorDropdown() {
+  const sel = document.getElementById('assign-mentor');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— Select mentor —</option>';
+  allMentors.filter(m => m.role === 'mentor').forEach(m => {
+    const o = document.createElement('option');
+    o.value = m.mentor_id; o.textContent = m.name + ' (' + m.mentor_id + ')';
+    sel.appendChild(o);
+  });
+}
+
+function downloadCSV(content, filename) {
+  const blob = new Blob([content], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function showNotice(elId, msg, type) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'notice notice-' + type;
+  el.style.display = 'block';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════════════
+async function renderDashboard() {
+  document.getElementById('stat-students').textContent = allStudents.length;
+  document.getElementById('stat-mentors').textContent = allMentors.filter(m => m.role === 'mentor').length;
+  const batches = [...new Set(allStudents.map(s => s.batch).filter(Boolean))];
+  document.getElementById('stat-batches').textContent = batches.length;
+  try {
+    const simcatCount = await sbFetch('simcat_scores', '?select=id');
+    document.getElementById('stat-simcats').textContent = simcatCount.length;
+  } catch(e) { document.getElementById('stat-simcats').textContent = '—'; }
+
+  const batchEl = document.getElementById('dash-batch-overview');
+  const batchStats = batches.map(b => {
+    const students = allStudents.filter(s => s.batch === b);
+    const mapping = allBatchMappings.find(m => m.batch_id === b);
+    const mentor = mapping ? allMentors.find(m => m.mentor_id === mapping.mentor_id) : null;
+    return { batch: b, count: students.length, mentor: mentor?.name || '—', course: mapping?.course || '—' };
+  });
+
+  batchEl.innerHTML = `<table class="data-table">
+    <thead><tr><th>Batch</th><th>Course</th><th>Students</th><th>Mentor</th></tr></thead>
+    <tbody>${batchStats.map(b => `
+      <tr>
+        <td>${b.batch}</td>
+        <td style="color:var(--text3);">${b.course}</td>
+        <td><span class="badge badge-blue">${b.count}</span></td>
+        <td style="color:var(--text2);">${b.mentor}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// STUDENT RECORDS
+// ═══════════════════════════════════════════════════════════════
+function filterStudents() {
+  const q = document.getElementById('stu-search').value.toLowerCase();
+  const batch = document.getElementById('stu-batch-filter').value;
+  const exam = document.getElementById('stu-exam-filter').value;
+  filteredStudents = allStudents.filter(s => {
+    const mQ = !q || [s.name,String(s.id),s.email,s.batch].some(v => String(v||'').toLowerCase().includes(q));
+    const mB = batch === 'all' || s.batch === batch;
+    const mE = exam === 'all' || s.target_exam === exam;
+    return mQ && mB && mE;
+  });
+  stuPage = 0;
+  renderStudentsTable();
+}
+
+function renderStudentsTable() {
+  const tbody = document.getElementById('students-table-body');
+  const start = stuPage * PAGE_SIZE;
+  const pageData = filteredStudents.slice(start, start + PAGE_SIZE);
+
+  if (!pageData.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div style="font-size:13px;">No students found</div></div></td></tr>`;
+  } else {
+    tbody.innerHTML = pageData.map(s => `
+      <tr>
+        <td style="font-weight:600;color:var(--text);">${s.name}</td>
+        <td style="font-family:monospace;font-size:11px;">${s.id}</td>
+        <td style="color:var(--text2);">${s.email}</td>
+        <td style="color:var(--text3);">${s.phone || '—'}</td>
+        <td><span class="badge badge-blue">${s.batch}</span></td>
+        <td><span class="badge badge-amber">${s.target_exam}</span></td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-sm btn-sm-primary" onclick="openEditModal('${s.id}')">✏️ Edit</button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+
+  // Pagination
+  const total = filteredStudents.length;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  const pagEl = document.getElementById('stu-pagination');
+  pagEl.innerHTML = total > PAGE_SIZE ? `
+    <span style="flex:1;">Showing ${start+1}–${Math.min(start+PAGE_SIZE,total)} of ${total}</span>
+    <button class="btn-sm" onclick="stuPage=Math.max(0,stuPage-1);renderStudentsTable();" ${stuPage===0?'disabled':''}>‹ Prev</button>
+    <button class="btn-sm" onclick="stuPage=Math.min(${totalPages-1},stuPage+1);renderStudentsTable();" ${stuPage>=totalPages-1?'disabled':''}>Next ›</button>
+  ` : `<span>Showing ${total} student${total!==1?'s':''}</span>`;
+}
+
+function openEditModal(studentId) {
+  const s = allStudents.find(st => String(st.id) === String(studentId));
+  if (!s) return;
+  document.getElementById('edit-student-original-id').value = s.id;
+  document.getElementById('edit-name').value = s.name || '';
+  document.getElementById('edit-id').value = s.id || '';
+  document.getElementById('edit-email').value = s.email || '';
+  document.getElementById('edit-phone').value = s.phone || '';
+  document.getElementById('edit-batch').value = s.batch || '';
+  document.getElementById('edit-exam').value = s.target_exam || 'CAT';
+  document.getElementById('edit-msg').style.display = 'none';
+  document.getElementById('edit-modal').classList.add('show');
+}
+
+async function saveStudentEdit() {
+  const originalId = document.getElementById('edit-student-original-id').value;
+  const btn = document.getElementById('edit-save-btn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  try {
+    const updates = {
+      name:        document.getElementById('edit-name').value.trim(),
+      email:       document.getElementById('edit-email').value.trim().toLowerCase(),
+      phone:       document.getElementById('edit-phone').value.trim(),
+      batch:       document.getElementById('edit-batch').value.trim(),
+      target_exam: document.getElementById('edit-exam').value
+    };
+    if (!updates.name || !updates.email || !updates.batch) throw new Error('Name, email and batch are required.');
+    await sbUpdate('students', `?id=eq.${encodeURIComponent(originalId)}`, updates);
+    // Update local state
+    const idx = allStudents.findIndex(s => String(s.id) === String(originalId));
+    if (idx !== -1) { allStudents[idx] = { ...allStudents[idx], ...updates }; }
+    filteredStudents = [...allStudents];
+    renderStudentsTable();
+    populateBatchDropdowns();
+    showNotice('edit-msg', '✅ Student updated successfully!', 'success');
+  } catch(err) {
+    showNotice('edit-msg', '❌ ' + err.message, 'error');
+  }
+  btn.disabled = false; btn.textContent = 'Save Changes';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ADD STUDENT
+// ═══════════════════════════════════════════════════════════════
+async function addStudent() {
+  const btn = document.getElementById('add-stu-btn');
+  const name  = document.getElementById('ns-name').value.trim();
+  const id    = document.getElementById('ns-id').value.trim();
+  const email = document.getElementById('ns-email').value.trim().toLowerCase();
+  const phone = document.getElementById('ns-phone').value.trim();
+  const batch = document.getElementById('ns-batch').value.trim();
+  const exam  = document.getElementById('ns-exam').value;
+
+  if (!name || !id || !email || !batch) { showNotice('add-stu-msg','All required fields must be filled.','warn'); return; }
+  if (allStudents.find(s => String(s.id) === id)) { showNotice('add-stu-msg','Student ID already exists.','warn'); return; }
+
+  btn.disabled = true; btn.textContent = 'Adding...';
+  try {
+    await sbInsert('students', { id, name, email, phone, batch, target_exam: exam });
+    allStudents.push({ id, name, email, phone, batch, target_exam: exam });
+    filteredStudents = [...allStudents];
+    populateBatchDropdowns();
+    showNotice('add-stu-msg','✅ Student added successfully!','success');
+    ['ns-name','ns-id','ns-email','ns-phone','ns-batch'].forEach(i => document.getElementById(i).value = '');
+  } catch(err) { showNotice('add-stu-msg','❌ ' + err.message,'error'); }
+  btn.disabled = false; btn.textContent = 'Add Student';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MENTOR MANAGEMENT
+// ═══════════════════════════════════════════════════════════════
+function renderMentorsTable() {
+  const tbody = document.getElementById('mentors-table-body');
+  if (!allMentors.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div style="font-size:13px;">No mentors found</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = allMentors.map(m => {
+    const batches = allBatchMappings.filter(b => b.mentor_id === m.mentor_id).map(b => b.batch_id).join(', ') || '—';
+    const roleColors = { super_admin:'badge-amber', super_mentor:'badge-purple', mentor:'badge-blue', operations:'badge-green' };
+    return `
+      <tr>
+        <td style="font-weight:600;color:var(--text);">${m.name}</td>
+        <td style="color:var(--text2);">${m.email}</td>
+        <td style="font-family:monospace;font-size:11px;color:var(--text3);">${m.mentor_id}</td>
+        <td><span class="badge ${roleColors[m.role]||'badge-blue'}">${m.role}</span></td>
+        <td style="color:var(--text3);font-size:11px;">${batches}</td>
+        <td><span class="badge ${m.is_active?'badge-green':'badge-red'}">${m.is_active?'Active':'Inactive'}</span></td>
+        <td>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="btn-sm btn-sm-primary" onclick="openResetPw('${m.mentor_id}','${m.name}')">🔑 Reset PW</button>
+            <button class="btn-sm ${m.is_active?'btn-sm-danger':'btn-sm-success'}" onclick="toggleMentorStatus('${m.mentor_id}',${m.is_active})">${m.is_active?'Deactivate':'Activate'}</button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+async function addMentor() {
+  const btn = document.getElementById('add-mentor-btn');
+  const name     = document.getElementById('nm-name').value.trim();
+  const mentorId = document.getElementById('nm-id').value.trim();
+  const email    = document.getElementById('nm-email').value.trim().toLowerCase();
+  const phone    = document.getElementById('nm-phone').value.trim();
+  const role     = document.getElementById('nm-role').value;
+  const password = document.getElementById('nm-password').value;
+
+  if (!name || !mentorId || !email || !password) { showNotice('add-mentor-msg','All required fields must be filled.','warn'); return; }
+  if (password.length < 8) { showNotice('add-mentor-msg','Password must be at least 8 characters.','warn'); return; }
+  if (allMentors.find(m => m.mentor_id === mentorId || m.email === email)) { showNotice('add-mentor-msg','Mentor ID or email already exists.','warn'); return; }
+
+  btn.disabled = true; btn.textContent = 'Creating...';
+  try {
+    const hash = await hashPassword(password);
+    await sbInsert('mentors', { mentor_id: mentorId, name, email, phone, role, password_hash: hash, is_active: true });
+    allMentors.push({ mentor_id: mentorId, name, email, phone, role, is_active: true });
+    populateMentorDropdown();
+    showNotice('add-mentor-msg','✅ Mentor account created! They can now log in at mentor.html','success');
+    ['nm-name','nm-id','nm-email','nm-phone','nm-password'].forEach(i => document.getElementById(i).value = '');
+  } catch(err) { showNotice('add-mentor-msg','❌ ' + err.message,'error'); }
+  btn.disabled = false; btn.textContent = 'Create Account';
+}
+
+function openResetPw(mentorId, name) {
+  document.getElementById('reset-mentor-id').value = mentorId;
+  document.getElementById('reset-pw-sub').textContent = 'Resetting password for ' + name;
+  document.getElementById('reset-pw-new').value = '';
+  document.getElementById('reset-pw-confirm').value = '';
+  document.getElementById('reset-pw-msg').style.display = 'none';
+  document.getElementById('reset-pw-modal').classList.add('show');
+}
+
+async function resetMentorPassword() {
+  const mentorId = document.getElementById('reset-mentor-id').value;
+  const newPw = document.getElementById('reset-pw-new').value;
+  const confirm = document.getElementById('reset-pw-confirm').value;
+  const btn = document.getElementById('reset-pw-btn');
+
+  if (!newPw || !confirm) { showNotice('reset-pw-msg','Enter and confirm password.','warn'); return; }
+  if (newPw.length < 8) { showNotice('reset-pw-msg','Minimum 8 characters.','warn'); return; }
+  if (newPw !== confirm) { showNotice('reset-pw-msg','Passwords do not match.','warn'); return; }
+
+  btn.disabled = true; btn.textContent = 'Updating...';
+  try {
+    const hash = await hashPassword(newPw);
+    await sbUpdate('mentors', `?mentor_id=eq.${mentorId}`, { password_hash: hash, updated_at: new Date().toISOString() });
+    showNotice('reset-pw-msg','✅ Password reset successfully!','success');
+  } catch(err) { showNotice('reset-pw-msg','❌ ' + err.message,'error'); }
+  btn.disabled = false; btn.textContent = 'Set New Password';
+}
+
+async function toggleMentorStatus(mentorId, isActive) {
+  if (!confirm(`${isActive ? 'Deactivate' : 'Activate'} this mentor account?`)) return;
+  try {
+    await sbUpdate('mentors', `?mentor_id=eq.${mentorId}`, { is_active: !isActive });
+    const m = allMentors.find(m => m.mentor_id === mentorId);
+    if (m) m.is_active = !isActive;
+    renderMentorsTable();
+  } catch(err) { alert('Error: ' + err.message); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BATCH ASSIGNMENTS
+// ═══════════════════════════════════════════════════════════════
+function renderBatchMappings() {
+  const el = document.getElementById('batch-mapping-table');
+  if (!allBatchMappings.length) {
+    el.innerHTML = '<div class="empty-state"><div style="font-size:13px;">No assignments yet</div></div>';
+    return;
+  }
+  el.innerHTML = `<table class="data-table">
+    <thead><tr><th>Batch</th><th>Course</th><th>Mentor</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody>${allBatchMappings.map(m => {
+      const mentor = allMentors.find(mn => mn.mentor_id === m.mentor_id);
+      return `<tr>
+        <td>${m.batch_id}</td>
+        <td style="color:var(--text3);">${m.course || '—'}</td>
+        <td>${mentor?.name || m.mentor_id}</td>
+        <td><span class="badge ${m.is_active?'badge-green':'badge-red'}">${m.is_active?'Active':'Inactive'}</span></td>
+        <td><button class="btn-sm btn-sm-danger" onclick="removeBatchMapping(${m.id})">Remove</button></td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+async function assignBatch() {
+  const btn = document.getElementById('assign-btn');
+  const mentorId = document.getElementById('assign-mentor').value;
+  const batch = document.getElementById('assign-batch').value.trim();
+  const course = document.getElementById('assign-course').value.trim();
+  if (!mentorId || !batch) { showNotice('assign-msg','Select a mentor and enter batch ID.','warn'); return; }
+
+  btn.disabled = true; btn.textContent = 'Assigning...';
+  try {
+    await sbInsert('batch_mentor_mapping', { mentor_id: mentorId, batch_id: batch, course, is_active: true });
+    const newMapping = { mentor_id: mentorId, batch_id: batch, course, is_active: true, id: Date.now() };
+    allBatchMappings.push(newMapping);
+    renderBatchMappings();
+    document.getElementById('assign-batch').value = '';
+    document.getElementById('assign-course').value = '';
+    showNotice('assign-msg','✅ Batch assigned successfully!','success');
+  } catch(err) { showNotice('assign-msg','❌ ' + err.message,'error'); }
+  btn.disabled = false; btn.textContent = 'Assign Batch';
+}
+
+async function removeBatchMapping(id) {
+  if (!confirm('Remove this batch assignment?')) return;
+  try {
+    await sbDelete('batch_mentor_mapping', `?id=eq.${id}`);
+    allBatchMappings = allBatchMappings.filter(m => m.id !== id);
+    renderBatchMappings();
+  } catch(err) { alert('Error: ' + err.message); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXPORTS
+// ═══════════════════════════════════════════════════════════════
+async function exportStudents() {
+  const batch = document.getElementById('exp-stu-batch').value;
+  const data = batch === 'all' ? allStudents : allStudents.filter(s => s.batch === batch);
+  const headers = ['ID','Name','Email','Phone','Batch','Target Exam'];
+  const rows = data.map(s => [s.id, s.name, s.email, s.phone, s.batch, s.target_exam].map(v => `"${v||''}"`).join(','));
+  downloadCSV([headers.join(','), ...rows].join('\n'), `students_${today()}.csv`);
+}
+
+async function exportSimcat() {
+  const batch = document.getElementById('exp-simcat-batch').value;
+  try {
+    let simcat = await sbFetch('simcat_scores', '?order=test_date.desc');
+    if (batch !== 'all') {
+      const batchIds = allStudents.filter(s => s.batch === batch).map(s => String(s.id));
+      simcat = simcat.filter(r => batchIds.includes(String(r.student_id)));
+    }
+    const headers = ['Student ID','Test Name','Date','Score','Total','Percentile','VARC','DILR','QA','Accuracy','Rank'];
+    const rows = simcat.map(r => [r.student_id,r.test_name,r.test_date,r.marks_obtained,r.total_marks,r.overall_percentile,r.varc_marks_obtained,r.dilr_marks_obtained,r.qa_marks_obtained,r.overall_accuracy,r.student_rank].map(v=>`"${v||''}"`).join(','));
+    downloadCSV([headers.join(','),...rows].join('\n'), `simcat_scores_${today()}.csv`);
+  } catch(err) { alert('Export error: ' + err.message); }
+}
+
+async function exportAttendance() {
+  const from = document.getElementById('exp-att-from').value || '2020-01-01';
+  const to = document.getElementById('exp-att-to').value || today();
+  try {
+    const data = await sbFetch('attendance', `?date=gte.${from}&date=lte.${to}&order=date.desc`);
+    const headers = ['Date','Student Name','Student ID','Batch','Course','Topic','Faculty','Mentor','Status','Method'];
+    const rows = data.map(r => [r.date,r.student_name,r.student_id,r.batch,r.course,r.topic,r.faculty,r.mentor,r.status,r.marking_method].map(v=>`"${v||''}"`).join(','));
+    downloadCSV([headers.join(','),...rows].join('\n'), `attendance_${from}_to_${to}.csv`);
+  } catch(err) { alert('Export error: ' + err.message); }
+}
+
+async function exportMentors() {
+  const headers = ['Mentor ID','Name','Email','Phone','Role','Active','Batches'];
+  const rows = allMentors.map(m => {
+    const batches = allBatchMappings.filter(b => b.mentor_id === m.mentor_id).map(b => b.batch_id).join('; ');
+    return [m.mentor_id,m.name,m.email,m.phone,m.role,m.is_active?'Yes':'No',batches].map(v=>`"${v||''}"`).join(',');
+  });
+  downloadCSV([headers.join(','),...rows].join('\n'), `mentors_${today()}.csv`);
+}
+
+function downloadCSV(content, filename) {
+  const blob = new Blob([content], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NAVIGATION & MODALS
+// ═══════════════════════════════════════════════════════════════
+function showPage(pageId, btnEl) {
+  document.querySelectorAll('.page').forEach(p => { p.style.display='none'; p.classList.remove('active'); });
+  const target = document.getElementById('page-' + pageId);
+  if (target) { target.style.display='block'; target.classList.add('active'); }
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+
+  if (pageId === 'students') { filterStudents(); }
+  if (pageId === 'mentors') renderMentorsTable();
+  if (pageId === 'batch-mapping') { renderBatchMappings(); }
+  if (pageId === 'exports') {
+    const from = document.getElementById('exp-att-from');
+    const to = document.getElementById('exp-att-to');
+    if (from && !from.value) from.value = new Date(Date.now()-30*24*60*60*1000).toISOString().split('T')[0];
+    if (to && !to.value) to.value = today();
+  }
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+// ═══════════════════════════════════════════════════════════════
+// WINDOW LOAD
+// ═══════════════════════════════════════════════════════════════
+window.onload = async () => {
+  const saved = sessionStorage.getItem('op_user');
+  if (saved) { currentOps = JSON.parse(saved); await launchApp(); }
+  document.getElementById('login-password')?.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+};
+</script>
+</body>
+</html>
