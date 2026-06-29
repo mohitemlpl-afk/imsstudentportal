@@ -1063,15 +1063,50 @@ async function fetchAllData() {
   const sid = String(currentStudent.id).trim();
   const batch = String(currentStudent.batch).trim();
 
-  const [att, sched, prog, ann, mat, cat, nmat, xat, snap] = await Promise.all([
-    fetchSheetData('Attendance'), fetchSheetData('Schedule'), fetchSheetData('Learning Flow'),
+  // Attendance and Schedule now come from Supabase
+  // Announcements, Material, Progress still from Google Sheets
+  const [prog, ann, mat, cat, nmat, xat, snap] = await Promise.all([
+    fetchSheetData('Learning Flow'),
     fetchSheetData('Announcements'), fetchSheetData('Material'),
     fetchSheetData('Scores CAT'), fetchSheetData('Scores NMAT'),
     fetchSheetData('Scores XAT'), fetchSheetData('Scores SNAP')
   ]);
 
-  allAttendance = Array.isArray(att) ? att.filter(r => String(r['StudentID']).trim() === sid) : [];
-  allSchedule   = Array.isArray(sched) ? sched.filter(r => String(r['BatchID']).trim() === batch) : [];
+  // Attendance from Supabase
+  try {
+    const attData = await supabaseFetch(`attendance?student_id=eq.${encodeURIComponent(sid)}&order=date.desc`);
+    allAttendance = (attData || []).map(r => ({
+      Date: r.date,
+      Subject: r.section || r.topic || 'Session',
+      Status: r.status,
+      Topic: r.topic,
+      Batch: r.batch
+    }));
+  } catch(e) {
+    console.warn('Supabase attendance fallback to sheets:', e);
+    const att = await fetchSheetData('Attendance');
+    allAttendance = Array.isArray(att) ? att.filter(r => String(r['StudentID']).trim() === sid) : [];
+  }
+
+  // Schedule from Supabase
+  try {
+    const schedData = await supabaseFetch(`schedule?batch=eq.${encodeURIComponent(batch)}&order=date.asc,time.asc`);
+    allSchedule = (schedData || []).map(r => ({
+      Date: r.date,
+      Time: r.time,
+      Topic: r.topic,
+      Subject: r.section || '',
+      'Room / Mode': r.mode || '',
+      'Join Link': r.join_link || '',
+      BatchID: r.batch,
+      Faculty: r.faculty
+    }));
+  } catch(e) {
+    console.warn('Supabase schedule fallback to sheets:', e);
+    const sched = await fetchSheetData('Schedule');
+    allSchedule = Array.isArray(sched) ? sched.filter(r => String(r['BatchID']).trim() === batch) : [];
+  }
+
   allProgress   = Array.isArray(prog) ? prog.filter(r => String(r['StudentID']).trim() === sid) : [];
   myMaterials   = Array.isArray(mat) ? mat.filter(r => r['Target Batch'] === 'ALL' || String(r['Target Batch']).trim() === batch) : [];
   myAnnouncements = Array.isArray(ann) ? ann.filter(r => r['Target Batch'] === 'ALL' || String(r['Target Batch']).trim() === batch) : [];
