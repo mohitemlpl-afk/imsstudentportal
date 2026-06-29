@@ -248,6 +248,9 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
       <button class="nav-item" onclick="showPage('take-attendance',this)"><span class="nav-icon">✅</span>Take Attendance</button>
       <button class="nav-item" onclick="showPage('attendance-records',this)"><span class="nav-icon">📅</span>Attendance Records</button>
 
+      <div class="sidebar-label">Schedule</div>
+      <button class="nav-item" onclick="showPage('schedule',this)"><span class="nav-icon">📍</span>View Schedule</button>
+
       <div class="sidebar-label">Performance</div>
       <button class="nav-item" onclick="showPage('batch-performance',this)"><span class="nav-icon">📊</span>Batch Performance</button>
 
@@ -421,6 +424,37 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
         </div>
       </div>
 
+      <!-- SCHEDULE -->
+      <div id="page-schedule" class="page">
+        <div class="page-header">
+          <div class="page-title">Class Schedule</div>
+          <div class="page-sub">Upcoming sessions — add Zoom links for online classes</div>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+          <select class="form-select" id="sched-batch-filter" onchange="renderSchedulePage()" style="width:160px;">
+            <option value="all">All Batches</option>
+          </select>
+          <select class="form-select" id="sched-mode-filter" onchange="renderSchedulePage()" style="width:140px;">
+            <option value="all">All Modes</option>
+            <option value="Online">Online Only</option>
+            <option value="Offline">Offline Only</option>
+          </select>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div style="overflow-x:auto;">
+            <table class="data-table" id="schedule-table">
+              <thead>
+                <tr>
+                  <th>Date</th><th>Time</th><th>Batch</th><th>Topic</th>
+                  <th>Faculty</th><th>Mode</th><th>Zoom Link</th>
+                </tr>
+              </thead>
+              <tbody id="schedule-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <!-- CHANGE PASSWORD -->
       <div id="page-change-password" class="page">
         <div class="page-header">
@@ -454,6 +488,22 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
   <div class="modal">
     <button class="modal-close" onclick="closeStudentModal()">✕</button>
     <div id="student-modal-content"></div>
+  </div>
+</div>
+
+<!-- ZOOM LINK MODAL -->
+<div class="modal-overlay" id="zoom-modal">
+  <div class="modal" style="max-width:480px;">
+    <button class="modal-close" onclick="closeZoomModal()">✕</button>
+    <div class="modal-title">Set Zoom / Join Link</div>
+    <div class="modal-sub" id="zoom-modal-sub">Add or update the online session link</div>
+    <div id="zoom-msg" style="display:none;" class="notice notice-success"></div>
+    <input type="hidden" id="zoom-schedule-id">
+    <div class="form-group" style="margin-top:8px;">
+      <label class="form-label">Zoom / Google Meet / Join Link</label>
+      <input type="url" id="zoom-link-input" class="form-input" placeholder="https://zoom.us/j/...">
+    </div>
+    <button class="btn-primary" onclick="saveZoomLink()" id="zoom-save-btn" style="margin-top:8px;">Save Link</button>
   </div>
 </div>
 
@@ -1425,6 +1475,101 @@ function downloadFile(content, filename, type) {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// SCHEDULE PAGE
+// ═══════════════════════════════════════════════════════════════
+function initScheduleFilters() {
+  const sel = document.getElementById('sched-batch-filter');
+  if (!sel) return;
+  sel.innerHTML = '<option value="all">All Batches</option>';
+  myBatches.forEach(b => {
+    const o = document.createElement('option');
+    o.value = b; o.textContent = b; sel.appendChild(o);
+  });
+}
+
+function renderSchedulePage() {
+  const batchFilter = document.getElementById('sched-batch-filter')?.value || 'all';
+  const modeFilter  = document.getElementById('sched-mode-filter')?.value  || 'all';
+  const tbody = document.getElementById('schedule-table-body');
+  if (!tbody) return;
+
+  let data = [...scheduleData];
+  if (batchFilter !== 'all') data = data.filter(s => s.batch === batchFilter);
+  if (modeFilter  !== 'all') data = data.filter(s => s.mode  === modeFilter);
+
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div style="font-size:13px;">No sessions found</div></div></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = data.map(s => {
+    const isOnline = s.mode && s.mode.toLowerCase().includes('online');
+    const hasLink  = s.join_link && s.join_link.trim();
+    const modeColor = isOnline ? 'var(--green-text)' : 'var(--amber)';
+    const safeLink  = (s.join_link || '').replace(/'/g, "\'");
+    const safeTopic = (s.topic || '').replace(/'/g, "\'");
+
+    const linkCell = isOnline
+      ? (hasLink
+          ? '<div style="display:flex;align-items:center;gap:6px;">'
+            + '<a href="' + s.join_link + '" target="_blank" style="font-size:11px;color:var(--accent2);font-weight:600;text-decoration:none;background:var(--accent-dim);border:1px solid rgba(79,124,255,0.3);padding:3px 8px;border-radius:6px;">🎥 Join</a>'
+            + '<button onclick="openZoomModal(' + s.id + ',\'' + safeLink + '\',\'' + safeTopic + '\',\'' + s.batch + '\')" style="font-size:10px;color:var(--text3);background:none;border:none;cursor:pointer;">✏️</button>'
+            + '</div>'
+          : '<button onclick="openZoomModal(' + s.id + ',\'\',\'' + safeTopic + '\',\'' + s.batch + '\')" style="font-size:11px;color:var(--amber);font-weight:600;background:var(--amber-dim);border:1px solid rgba(255,183,64,0.3);padding:3px 10px;border-radius:6px;cursor:pointer;">➕ Add Link</button>')
+      : '<span style="font-size:11px;color:var(--text3);">Offline</span>';
+
+    return '<tr>'
+      + '<td style="white-space:nowrap;">' + fmtDate(s.date) + '</td>'
+      + '<td style="font-size:11px;color:var(--text2);white-space:nowrap;">' + (s.time || '—') + '</td>'
+      + '<td><span class="badge badge-blue">' + s.batch + '</span></td>'
+      + '<td style="max-width:220px;"><div style="font-size:12px;font-weight:600;color:var(--text);">' + (s.topic || '—') + '</div>'
+      + (s.section ? '<div style="font-size:10px;color:var(--text3);">' + s.section + '</div>' : '') + '</td>'
+      + '<td style="font-size:11px;color:var(--text3);">' + (s.faculty || '—') + '</td>'
+      + '<td><span style="font-size:11px;font-weight:600;color:' + modeColor + ';">' + (s.mode || '—') + '</span></td>'
+      + '<td>' + linkCell + '</td>'
+      + '</tr>';
+  }).join('');
+}
+
+function openZoomModal(scheduleId, existingLink, topic, batch) {
+  document.getElementById('zoom-schedule-id').value  = scheduleId;
+  document.getElementById('zoom-link-input').value   = existingLink || '';
+  document.getElementById('zoom-modal-sub').textContent = batch + ' — ' + topic;
+  document.getElementById('zoom-msg').style.display  = 'none';
+  document.getElementById('zoom-modal').classList.add('show');
+}
+
+function closeZoomModal() {
+  document.getElementById('zoom-modal').classList.remove('show');
+}
+
+async function saveZoomLink() {
+  const scheduleId = document.getElementById('zoom-schedule-id').value;
+  const link = document.getElementById('zoom-link-input').value.trim();
+  const btn  = document.getElementById('zoom-save-btn');
+  const msg  = document.getElementById('zoom-msg');
+
+  if (!link) {
+    msg.textContent = '⚠️ Please enter a valid link.';
+    msg.className = 'notice notice-warn'; msg.style.display = 'block'; return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Saving...';
+  try {
+    await sbUpdate('schedule', '?id=eq.' + scheduleId, { join_link: link });
+    const s = scheduleData.find(r => String(r.id) === String(scheduleId));
+    if (s) s.join_link = link;
+    msg.textContent = '✅ Link saved! Students can now join from their portal.';
+    msg.className = 'notice notice-success'; msg.style.display = 'block';
+    setTimeout(() => { closeZoomModal(); renderSchedulePage(); }, 1500);
+  } catch(err) {
+    msg.textContent = '❌ Error: ' + err.message;
+    msg.className = 'notice notice-error'; msg.style.display = 'block';
+  }
+  btn.disabled = false; btn.textContent = 'Save Link';
+}
+
+// ═══════════════════════════════════════════════════════════════
 // NAVIGATION
 // ═══════════════════════════════════════════════════════════════
 function showPage(pageId, btnEl) {
@@ -1436,6 +1581,7 @@ function showPage(pageId, btnEl) {
 
   if (pageId === 'students') renderStudentList();
   if (pageId === 'attendance-records') loadAttendanceRecords();
+  if (pageId === 'schedule') { initScheduleFilters(); renderSchedulePage(); }
   if (pageId === 'batch-performance') {
     const sel = document.getElementById('perf-batch-select');
     if (sel && sel.options.length > 1) loadBatchPerformance();
