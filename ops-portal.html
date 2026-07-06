@@ -597,7 +597,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
             </div>
             <input type="hidden" id="collect-student-id">
             <input type="hidden" id="collect-book-record-id">
-            <button class="btn-full" onclick="submitCollection()" id="collect-submit-btn">✅ Confirm Collection</button>
+            <button class="btn-full" onclick="submitCollection()" id="collect-submit-btn">Confirm Collection</button>
           </div>
         </div>
       </div>
@@ -1044,7 +1044,7 @@ function renderStudentsTable() {
         <td><span class="badge badge-amber">${s.target_exam}</span></td>
         <td>
           <div style="display:flex;gap:6px;">
-            <button class="btn-sm btn-sm-primary" onclick="openEditModal('${s.id}')">✏️ Edit</button>
+            <button class="btn-sm btn-sm-primary" onclick="openEditModal('${s.id}')">Edit</button>
           </div>
         </td>
       </tr>`).join('');
@@ -1095,9 +1095,9 @@ async function saveStudentEdit() {
     filteredStudents = [...allStudents];
     renderStudentsTable();
     populateBatchDropdowns();
-    showNotice('edit-msg', '✅ Student updated successfully!', 'success');
+    showNotice('edit-msg', 'Student updated successfully!', 'success');
   } catch(err) {
-    showNotice('edit-msg', '❌ ' + err.message, 'error');
+    showNotice('edit-msg', 'Error: ' + err.message, 'error');
   }
   btn.disabled = false; btn.textContent = 'Save Changes';
 }
@@ -1123,9 +1123,9 @@ async function addStudent() {
     allStudents.push({ id, name, email, phone, batch, target_exam: exam });
     filteredStudents = [...allStudents];
     populateBatchDropdowns();
-    showNotice('add-stu-msg','✅ Student added successfully!','success');
+    showNotice('add-stu-msg',' Student added successfully!','success');
     ['ns-name','ns-id','ns-email','ns-phone','ns-batch'].forEach(i => document.getElementById(i).value = '');
-  } catch(err) { showNotice('add-stu-msg','❌ ' + err.message,'error'); }
+  } catch(err) { showNotice('add-stu-msg','Error: ' + err.message,'error'); }
   btn.disabled = false; btn.textContent = 'Add Student';
 }
 
@@ -1151,7 +1151,7 @@ function renderMentorsTable() {
         <td><span class="badge ${m.is_active?'badge-green':'badge-red'}">${m.is_active?'Active':'Inactive'}</span></td>
         <td>
           <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <button class="btn-sm btn-sm-primary" onclick="openResetPw('${m.mentor_id}','${m.name}')">🔑 Reset PW</button>
+            <button class="btn-sm btn-sm-primary" onclick="openResetPw('${m.mentor_id}','${m.name}')">Reset PW</button>
             <button class="btn-sm ${m.is_active?'btn-sm-danger':'btn-sm-success'}" onclick="toggleMentorStatus('${m.mentor_id}',${m.is_active})">${m.is_active?'Deactivate':'Activate'}</button>
           </div>
         </td>
@@ -1178,9 +1178,9 @@ async function addMentor() {
     await sbInsert('mentors', { mentor_id: mentorId, name, email, phone, role, password_hash: hash, is_active: true });
     allMentors.push({ mentor_id: mentorId, name, email, phone, role, is_active: true });
     populateMentorDropdown();
-    showNotice('add-mentor-msg','✅ Mentor account created! They can now log in at mentor.html','success');
+    showNotice('add-mentor-msg','Mentor account created! They can now log in at mentor.html','success');
     ['nm-name','nm-id','nm-email','nm-phone','nm-password'].forEach(i => document.getElementById(i).value = '');
-  } catch(err) { showNotice('add-mentor-msg','❌ ' + err.message,'error'); }
+  } catch(err) { showNotice('add-mentor-msg','Error: ' + err.message,'error'); }
   btn.disabled = false; btn.textContent = 'Create Account';
 }
 
@@ -1207,8 +1207,8 @@ async function resetMentorPassword() {
   try {
     const hash = await hashPassword(newPw);
     await sbUpdate('mentors', `?mentor_id=eq.${mentorId}`, { password_hash: hash, updated_at: new Date().toISOString() });
-    showNotice('reset-pw-msg','✅ Password reset successfully!','success');
-  } catch(err) { showNotice('reset-pw-msg','❌ ' + err.message,'error'); }
+    showNotice('reset-pw-msg','Password reset successfully!','success');
+  } catch(err) { showNotice('reset-pw-msg','Error: ' + err.message,'error'); }
   btn.disabled = false; btn.textContent = 'Set New Password';
 }
 
@@ -1261,7 +1261,7 @@ async function assignBatch() {
     );
     if (existing) {
       if (existing.is_active) {
-        showNotice('assign-msg','⚠️ This batch is already assigned to this mentor.','warn');
+        showNotice('assign-msg','This batch is already assigned to this mentor.','warn');
         btn.disabled = false; btn.textContent = 'Assign Batch'; return;
       } else {
         // Reactivate if previously removed
@@ -1269,7 +1269,7 @@ async function assignBatch() {
         existing.is_active = true;
         existing.course = course;
         renderBatchMappings();
-        showNotice('assign-msg','✅ Batch reassigned successfully!','success');
+        showNotice('assign-msg','Batch reassigned successfully!','success');
         btn.disabled = false; btn.textContent = 'Assign Batch'; return;
       }
     }
@@ -1279,13 +1279,13 @@ async function assignBatch() {
     renderBatchMappings();
     document.getElementById('assign-batch').value = '';
     document.getElementById('assign-course').value = '';
-    showNotice('assign-msg','✅ Batch assigned successfully!','success');
+    showNotice('assign-msg','Batch assigned successfully!','success');
   } catch(err) {
     // Handle duplicate key gracefully
     if (err.message.includes('23505') || err.message.includes('duplicate')) {
-      showNotice('assign-msg','⚠️ This batch-mentor combination already exists. Check Current Assignments below.','warn');
+      showNotice('assign-msg','This batch-mentor combination already exists. Check Current Assignments below.','warn');
     } else {
-      showNotice('assign-msg','❌ ' + err.message,'error');
+      showNotice('assign-msg','Error: ' + err.message,'error');
     }
   }
   btn.disabled = false; btn.textContent = 'Assign Batch';
@@ -1434,7 +1434,7 @@ function renderSchedulePageData() {
 
       const linkCell = isOnline
         ? (hasLink
-            ? '<a href="' + s.join_link + '" target="_blank" style="font-size:10px;color:var(--accent2);font-weight:600;text-decoration:none;white-space:nowrap;">🔗 Link ✓</a>'
+            ? '<a href="' + s.join_link + '" target="_blank" style="font-size:10px;color:var(--accent2);font-weight:600;text-decoration:none;white-space:nowrap;"> Link </a>'
             : '<span style="font-size:10px;color:var(--red);">No link</span>')
         : '<span style="font-size:10px;color:var(--text3);">—</span>';
 
@@ -1449,8 +1449,8 @@ function renderSchedulePageData() {
         + '<td><span style="font-size:10px;font-weight:600;color:' + modeColor + ';">' + (s.mode || '—') + '</span></td>'
         + '<td>' + linkCell + '</td>'
         + '<td><div style="display:flex;gap:4px;">'
-        + '<button class="btn-sm btn-sm-primary" onclick="openEditSession(' + s.id + ')">✏️</button>'
-        + '<button class="btn-sm btn-sm-danger" onclick="openDeleteSession(' + s.id + ')">🗑️</button>'
+        + '<button class="btn-sm btn-sm-primary" onclick="openEditSession(' + s.id + ')"></button>'
+        + '<button class="btn-sm btn-sm-danger" onclick="openDeleteSession(' + s.id + ')"></button>'
         + '</div></td>'
         + '</tr>';
     }).join('');
@@ -1502,13 +1502,13 @@ async function addSession() {
     if (newRows && newRows.length) allSchedule.push(newRows[0]);
     allSchedule.sort((a,b) => (a.date > b.date ? 1 : a.date < b.date ? -1 : 0));
     populateScheduleFilters();
-    showNotice('add-sesh-msg', '✅ Session added successfully!', 'success');
+    showNotice('add-sesh-msg', 'Session added successfully!', 'success');
     ['as-course','as-batch','as-time','as-section','as-topic','as-faculty','as-mentor','as-link'].forEach(id => {
       const el = document.getElementById(id); if (el) el.value = '';
     });
     document.getElementById('as-date').value = '';
   } catch(err) {
-    showNotice('add-sesh-msg', '❌ ' + err.message, 'error');
+    showNotice('add-sesh-msg', 'Error: ' + err.message, 'error');
   }
   btn.disabled = false; btn.textContent = 'Add Session';
 }
@@ -1561,10 +1561,10 @@ async function saveSessionEdit() {
     filteredSchedule = [...allSchedule];
     populateScheduleFilters();
     renderSchedulePageData();
-    showNotice('edit-sesh-msg', '✅ Session updated!', 'success');
+    showNotice('edit-sesh-msg', 'Session updated!', 'success');
     setTimeout(() => closeModal('edit-session-modal'), 1200);
   } catch(err) {
-    showNotice('edit-sesh-msg', '❌ ' + err.message, 'error');
+    showNotice('edit-sesh-msg', 'Error: ' + err.message, 'error');
   }
   btn.disabled = false; btn.textContent = 'Save Changes';
 }
@@ -1595,7 +1595,7 @@ async function confirmDeleteSession() {
     renderSchedulePageData();
     closeModal('delete-confirm-modal');
   } catch(err) {
-    alert('❌ Delete failed: ' + err.message);
+    alert('Delete failed: ' + err.message);
   }
   btn.disabled = false; btn.textContent = 'Yes, Delete';
 }
@@ -1677,7 +1677,7 @@ async function renderBooksDashboard() {
           </div>
           <span class="badge badge-red">Pending</span>
         </div>`).join('')
-    : '<div class="empty-state"><div style="font-size:13px;">No pending collections 🎉</div></div>';
+    : '<div class="empty-state"><div style="font-size:13px;">No pending collections</div></div>';
 
   // Recent collected
   const recentEl = document.getElementById('books-recent-list');
@@ -1758,7 +1758,7 @@ async function logHOReceipt() {
     (r.part === part || (part !== 'Both' && r.part === 'Both'))
   );
   if (existing && !existing.collected) {
-    showNotice('ho-log-msg', '⚠️ A pending record already exists for this student and part. Check dashboard.', 'warn');
+    showNotice('ho-log-msg', 'A pending record already exists for this student and part. Check dashboard.', 'warn');
     return;
   }
 
@@ -1795,11 +1795,11 @@ async function logHOReceipt() {
     if (sendWA && phone) {
       const partLabel = part === 'Both' ? 'Part A & Part B' : 'Part ' + part;
       await sendBookArrivalWhatsApp(phone, name, partLabel);
-      showNotice('ho-log-msg', '✅ Receipt logged & WhatsApp notification sent to ' + phone, 'success');
+      showNotice('ho-log-msg', 'Receipt logged + WhatsApp sent to ' + phone, 'success');
     } else {
       showNotice('ho-log-msg', sendWA && !phone
-        ? '✅ Receipt logged. WhatsApp skipped — no phone number on record.'
-        : '✅ Receipt logged successfully.', 'success');
+        ? 'Receipt logged. WhatsApp skipped - no phone number on record.'
+        : 'Receipt logged successfully.', 'success');
     }
 
     // Reset form
@@ -1812,7 +1812,7 @@ async function logHOReceipt() {
     selectedBookStudent = null;
 
   } catch(err) {
-    showNotice('ho-log-msg', '❌ ' + err.message, 'error');
+    showNotice('ho-log-msg', 'Error: ' + err.message, 'error');
   }
   btn.disabled = false; btn.textContent = 'Log Receipt & Notify Student';
 }
@@ -2010,7 +2010,7 @@ async function submitCollection() {
     }
 
     const student = allStudents.find(s => String(s.id) === String(studentId));
-    alert('✅ Collection confirmed for ' + (student?.name || studentId) + '!\nTimestamp: ' + new Date().toLocaleString('en-IN'));
+    alert('Collection confirmed for ' + (student?.name || studentId) + '! Timestamp: ' + new Date().toLocaleString('en-IN'));
 
     // Reset
     document.getElementById('collect-search').value = '';
@@ -2019,9 +2019,9 @@ async function submitCollection() {
     clearSignature();
 
   } catch(err) {
-    alert('❌ Error: ' + err.message);
+    alert('Error: ' + err.message);
   }
-  btn.disabled = false; btn.textContent = '✅ Confirm Collection';
+  btn.disabled = false; btn.textContent = 'Confirm Collection';
 }
 
 // ═══════════════════════════════════════════════════════════════
