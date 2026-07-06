@@ -182,6 +182,11 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
       <button class="nav-item" onclick="showPage('schedule',this)"><span class="nav-icon">📍</span>Manage Schedule</button>
       <button class="nav-item" onclick="showPage('add-session',this)"><span class="nav-icon">➕</span>Add Session</button>
 
+      <div class="sidebar-label">Books</div>
+      <button class="nav-item" onclick="showPage('books-dashboard',this)"><span class="nav-icon">📚</span>Books Dashboard</button>
+      <button class="nav-item" onclick="showPage('books-log-ho',this)"><span class="nav-icon">📦</span>Log HO Receipt</button>
+      <button class="nav-item" onclick="showPage('books-collect',this)"><span class="nav-icon">✍️</span>Mark Collection</button>
+
       <div class="sidebar-label">Exports</div>
       <button class="nav-item" onclick="showPage('exports',this)"><span class="nav-icon">⬇️</span>Export Data</button>
     </aside>
@@ -481,6 +486,119 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
             <input type="url" id="as-link" class="form-input" placeholder="https://zoom.us/j/... (optional)">
           </div>
           <button class="btn-full" onclick="addSession()" id="add-sesh-btn">Add Session</button>
+        </div>
+      </div>
+
+      <!-- BOOKS DASHBOARD -->
+      <div id="page-books-dashboard" class="page">
+        <div class="page-header">
+          <div class="page-title">📚 Books Dashboard</div>
+          <div class="page-sub">Track HO receipts and student collections</div>
+        </div>
+        <div class="stat-grid" id="books-stat-grid"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div class="card">
+            <div class="card-title">📦 Pending Collection</div>
+            <div class="card-sub">Books received from HO, not yet collected by student</div>
+            <div id="books-pending-list"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">✅ Recently Collected</div>
+            <div class="card-sub">Last 10 collections</div>
+            <div id="books-recent-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOG HO RECEIPT -->
+      <div id="page-books-log-ho" class="page">
+        <div class="page-header">
+          <div class="page-title">📦 Log HO Receipt</div>
+          <div class="page-sub">Record books received from Head Office for a student</div>
+        </div>
+        <div class="card" style="max-width:560px;">
+          <div id="ho-log-msg" style="display:none;" class="notice"></div>
+          <div class="form-group">
+            <label class="form-label">Search Student *</label>
+            <input type="text" id="ho-student-search" class="form-input" placeholder="Type name or IMS ID..." oninput="searchStudentForBooks()">
+            <div id="ho-student-results" style="background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);margin-top:4px;display:none;max-height:200px;overflow-y:auto;"></div>
+          </div>
+          <div id="ho-selected-student" style="display:none;background:var(--accent-dim);border:1px solid rgba(79,124,255,0.2);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px;">
+            <div style="font-size:12px;color:var(--text3);margin-bottom:2px;">Selected Student</div>
+            <div style="font-weight:700;color:var(--text);" id="ho-sel-name">—</div>
+            <div style="font-size:11px;color:var(--text3);" id="ho-sel-meta">—</div>
+            <input type="hidden" id="ho-sel-id">
+            <input type="hidden" id="ho-sel-batch">
+            <input type="hidden" id="ho-sel-course">
+            <input type="hidden" id="ho-sel-phone">
+          </div>
+          <div class="two-col">
+            <div class="form-group">
+              <label class="form-label">Book Part *</label>
+              <select id="ho-part" class="form-select">
+                <option value="A">Part A</option>
+                <option value="B">Part B</option>
+                <option value="Both">Both Parts</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Book Set / Title</label>
+              <input type="text" id="ho-book-set" class="form-input" placeholder="e.g. CAT 2026 Set">
+            </div>
+          </div>
+          <div class="two-col">
+            <div class="form-group">
+              <label class="form-label">HO Received Date *</label>
+              <input type="date" id="ho-date" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Dispatch Reference</label>
+              <input type="text" id="ho-ref" class="form-input" placeholder="HO dispatch ref no.">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="display:flex;align-items:center;gap:8px;">
+              <input type="checkbox" id="ho-send-wa" checked style="width:14px;height:14px;">
+              Send WhatsApp notification to student automatically
+            </label>
+          </div>
+          <button class="btn-full" onclick="logHOReceipt()" id="ho-log-btn">Log Receipt & Notify Student</button>
+        </div>
+      </div>
+
+      <!-- MARK COLLECTION -->
+      <div id="page-books-collect" class="page">
+        <div class="page-header">
+          <div class="page-title">✍️ Mark Book Collection</div>
+          <div class="page-sub">Student is at counter — confirm collection with digital signature</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
+          <!-- Left: Search & Select -->
+          <div class="card">
+            <div class="card-title">Step 1 — Find Student</div>
+            <input type="text" id="collect-search" class="search-bar" placeholder="🔍  Search by name or IMS ID..." oninput="searchStudentForCollection()">
+            <div id="collect-results"></div>
+          </div>
+          <!-- Right: Signature Pad -->
+          <div class="card" id="signature-card" style="display:none;">
+            <div class="card-title">Step 2 — Confirm & Sign</div>
+            <div id="collect-student-info" style="background:var(--surface2);border-radius:var(--radius-sm);padding:12px;margin-bottom:16px;border:1px solid var(--border);"></div>
+            <div class="form-group">
+              <label class="form-label">Book Part Being Collected</label>
+              <select id="collect-part" class="form-select"></select>
+            </div>
+            <div style="margin-bottom:14px;">
+              <label class="form-label" style="margin-bottom:8px;display:block;">Student Signature *</label>
+              <div style="position:relative;border:2px dashed var(--border2);border-radius:var(--radius-sm);background:var(--surface2);">
+                <canvas id="signature-canvas" width="400" height="160" style="display:block;width:100%;height:160px;border-radius:var(--radius-sm);cursor:crosshair;touch-action:none;"></canvas>
+                <button onclick="clearSignature()" style="position:absolute;top:8px;right:8px;padding:4px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--surface3);color:var(--text2);font-size:11px;cursor:pointer;">Clear</button>
+              </div>
+              <div style="font-size:11px;color:var(--text3);margin-top:4px;">Student signs above using finger or stylus</div>
+            </div>
+            <input type="hidden" id="collect-student-id">
+            <input type="hidden" id="collect-book-record-id">
+            <button class="btn-full" onclick="submitCollection()" id="collect-submit-btn">✅ Confirm Collection</button>
+          </div>
         </div>
       </div>
 
@@ -1483,6 +1601,431 @@ async function confirmDeleteSession() {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// BOOKS — CONFIG
+// ═══════════════════════════════════════════════════════════════
+const AISENSY_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTNmYmQ0MjM5MDU0MGMwNjMzYzc2ZSIsIm5hbWUiOiJFY2xlY3RpYyBNaW5kIExhYnMgUHZ0IEx0ZCIsImFwcE5hbWUiOiJBaVNlbnN5IiwiY2xpZW50SWQiOiI2ODUzZmJkNDIzOTA1NDBjMDYzM2M3NjkiLCJhY3RpdmVQbGFuIjoiUFJPX1lFQVJMWSIsImlhdCI6MTc1NTc2ODkyOX0.bQNy0CjXLFOKGf77LYWccrurCgT3mY0p3j_gXIfCI1E';
+const AISENSY_TEMPLATE = 'book_arrival_notification';
+
+// ═══════════════════════════════════════════════════════════════
+// BOOKS — STATE
+// ═══════════════════════════════════════════════════════════════
+let allBookRecords  = [];
+let selectedBookStudent = null;
+let signatureCanvas = null;
+let signatureCtx    = null;
+let isDrawing       = false;
+let hasSignature    = false;
+
+// ═══════════════════════════════════════════════════════════════
+// BOOKS — LOAD DATA
+// ═══════════════════════════════════════════════════════════════
+async function loadBookRecords() {
+  try {
+    allBookRecords = await sbFetch('book_inventory', '?order=created_at.desc');
+  } catch(err) {
+    console.error('Book records error:', err);
+    allBookRecords = [];
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOOKS — DASHBOARD
+// ═══════════════════════════════════════════════════════════════
+async function renderBooksDashboard() {
+  await loadBookRecords();
+
+  const total     = allBookRecords.length;
+  const pending   = allBookRecords.filter(r => !r.collected).length;
+  const collected = allBookRecords.filter(r => r.collected).length;
+  const partA     = allBookRecords.filter(r => r.part === 'A' || r.part === 'Both').length;
+  const partB     = allBookRecords.filter(r => r.part === 'B' || r.part === 'Both').length;
+
+  document.getElementById('books-stat-grid').innerHTML = `
+    <div class="stat-card" style="border-top:2px solid var(--amber);">
+      <div class="stat-label">Total Logged</div>
+      <div class="stat-val">${total}</div>
+      <div class="stat-delta">from HO</div>
+    </div>
+    <div class="stat-card" style="border-top:2px solid var(--red);">
+      <div class="stat-label">Pending Collection</div>
+      <div class="stat-val">${pending}</div>
+      <div class="stat-delta" style="color:var(--red);">not yet collected</div>
+    </div>
+    <div class="stat-card" style="border-top:2px solid var(--green);">
+      <div class="stat-label">Collected</div>
+      <div class="stat-val">${collected}</div>
+      <div class="stat-delta" style="color:var(--green-text);">students collected</div>
+    </div>
+    <div class="stat-card" style="border-top:2px solid var(--accent);">
+      <div class="stat-label">Part A Logged</div>
+      <div class="stat-val">${partA}</div>
+    </div>
+    <div class="stat-card" style="border-top:2px solid var(--purple);">
+      <div class="stat-label">Part B Logged</div>
+      <div class="stat-val">${partB}</div>
+    </div>`;
+
+  // Pending list
+  const pendingEl = document.getElementById('books-pending-list');
+  const pendingRecs = allBookRecords.filter(r => !r.collected).slice(0, 15);
+  pendingEl.innerHTML = pendingRecs.length
+    ? pendingRecs.map(r => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);">${r.student_name || r.student_id}</div>
+            <div style="font-size:11px;color:var(--text3);">${r.batch || '—'} · Part ${r.part} · ${fmtDate(r.ho_received_date)}</div>
+          </div>
+          <span class="badge badge-red">Pending</span>
+        </div>`).join('')
+    : '<div class="empty-state"><div style="font-size:13px;">No pending collections 🎉</div></div>';
+
+  // Recent collected
+  const recentEl = document.getElementById('books-recent-list');
+  const recentRecs = allBookRecords.filter(r => r.collected).slice(0, 10);
+  recentEl.innerHTML = recentRecs.length
+    ? recentRecs.map(r => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);">${r.student_name || r.student_id}</div>
+            <div style="font-size:11px;color:var(--text3);">${r.batch || '—'} · Part ${r.part} · ${fmtDate(r.collected_at)}</div>
+          </div>
+          <span class="badge badge-green">Collected</span>
+        </div>`).join('')
+    : '<div class="empty-state"><div style="font-size:13px;">No collections yet</div></div>';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOOKS — SEARCH STUDENT (for HO log)
+// ═══════════════════════════════════════════════════════════════
+function searchStudentForBooks() {
+  const q = document.getElementById('ho-student-search').value.toLowerCase().trim();
+  const resultsEl = document.getElementById('ho-student-results');
+  if (!q || q.length < 2) { resultsEl.style.display = 'none'; return; }
+
+  const matches = allStudents.filter(s =>
+    s.name.toLowerCase().includes(q) || String(s.id).toLowerCase().includes(q)
+  ).slice(0, 8);
+
+  if (!matches.length) { resultsEl.style.display = 'none'; return; }
+
+  resultsEl.style.display = 'block';
+  resultsEl.innerHTML = matches.map(s => `
+    <div onclick="selectBookStudent('${s.id}')"
+      style="padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s;"
+      onmouseover="this.style.background='var(--surface3)'" onmouseout="this.style.background=''">
+      <div style="font-size:13px;font-weight:600;color:var(--text);">${s.name}</div>
+      <div style="font-size:11px;color:var(--text3);">${s.id} · ${s.batch} · ${s.target_exam}</div>
+    </div>`).join('');
+}
+
+function selectBookStudent(studentId) {
+  const s = allStudents.find(st => String(st.id) === String(studentId));
+  if (!s) return;
+  selectedBookStudent = s;
+  document.getElementById('ho-sel-name').textContent  = s.name;
+  document.getElementById('ho-sel-meta').textContent  = s.id + ' · ' + s.batch + ' · ' + (s.phone || 'No phone');
+  document.getElementById('ho-sel-id').value          = s.id;
+  document.getElementById('ho-sel-batch').value       = s.batch;
+  document.getElementById('ho-sel-course').value      = s.target_exam || '';
+  document.getElementById('ho-sel-phone').value       = s.phone || '';
+  document.getElementById('ho-selected-student').style.display = 'block';
+  document.getElementById('ho-student-results').style.display  = 'none';
+  document.getElementById('ho-student-search').value = s.name;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOOKS — LOG HO RECEIPT
+// ═══════════════════════════════════════════════════════════════
+async function logHOReceipt() {
+  const btn      = document.getElementById('ho-log-btn');
+  const studentId = document.getElementById('ho-sel-id').value;
+  const batch    = document.getElementById('ho-sel-batch').value;
+  const course   = document.getElementById('ho-sel-course').value;
+  const phone    = document.getElementById('ho-sel-phone').value;
+  const name     = document.getElementById('ho-sel-name').textContent;
+  const part     = document.getElementById('ho-part').value;
+  const bookSet  = document.getElementById('ho-book-set').value.trim();
+  const date     = document.getElementById('ho-date').value;
+  const ref      = document.getElementById('ho-ref').value.trim();
+  const sendWA   = document.getElementById('ho-send-wa').checked;
+
+  if (!studentId) { showNotice('ho-log-msg', 'Please select a student first.', 'warn'); return; }
+  if (!date)      { showNotice('ho-log-msg', 'Please enter the HO received date.', 'warn'); return; }
+
+  // Check if record already exists for this student + part
+  const existing = allBookRecords.find(r =>
+    String(r.student_id) === String(studentId) &&
+    (r.part === part || (part !== 'Both' && r.part === 'Both'))
+  );
+  if (existing && !existing.collected) {
+    showNotice('ho-log-msg', '⚠️ A pending record already exists for this student and part. Check dashboard.', 'warn');
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Logging...';
+  try {
+    const payload = {
+      student_id: String(studentId),
+      student_name: name,
+      student_email: selectedBookStudent?.email || '',
+      batch, course,
+      part, book_set: bookSet || null,
+      ho_received_date: date,
+      ho_dispatch_ref: ref || null,
+      logged_by: currentOps.name,
+      status: 'pending',
+      collected: false
+    };
+
+    const res = await fetch(CONFIG.SUPABASE_URL + 'book_inventory', {
+      method: 'POST',
+      headers: {
+        'apikey': CONFIG.SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + CONFIG.SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const newRec = await res.json();
+    if (newRec && newRec.length) allBookRecords.unshift(newRec[0]);
+
+    // Send WhatsApp
+    if (sendWA && phone) {
+      const partLabel = part === 'Both' ? 'Part A & Part B' : 'Part ' + part;
+      await sendBookArrivalWhatsApp(phone, name, partLabel);
+      showNotice('ho-log-msg', '✅ Receipt logged & WhatsApp notification sent to ' + phone, 'success');
+    } else {
+      showNotice('ho-log-msg', sendWA && !phone
+        ? '✅ Receipt logged. WhatsApp skipped — no phone number on record.'
+        : '✅ Receipt logged successfully.', 'success');
+    }
+
+    // Reset form
+    document.getElementById('ho-student-search').value = '';
+    document.getElementById('ho-selected-student').style.display = 'none';
+    document.getElementById('ho-sel-id').value = '';
+    document.getElementById('ho-date').value = '';
+    document.getElementById('ho-ref').value = '';
+    document.getElementById('ho-book-set').value = '';
+    selectedBookStudent = null;
+
+  } catch(err) {
+    showNotice('ho-log-msg', '❌ ' + err.message, 'error');
+  }
+  btn.disabled = false; btn.textContent = 'Log Receipt & Notify Student';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOOKS — WHATSAPP NOTIFICATION
+// ═══════════════════════════════════════════════════════════════
+async function sendBookArrivalWhatsApp(phone, studentName, partLabel) {
+  // Normalize phone — ensure it starts with 91 for India
+  let normalizedPhone = String(phone).replace(/\D/g, '');
+  if (normalizedPhone.length === 10) normalizedPhone = '91' + normalizedPhone;
+
+  const payload = {
+    apiKey: AISENSY_API_KEY,
+    campaignName: AISENSY_TEMPLATE,
+    destination: normalizedPhone,
+    userName: studentName,
+    templateParams: [studentName, partLabel],
+    media: {}
+  };
+
+  const res = await fetch('https://backend.aisensy.com/campaign/t1/api/v2', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    console.warn('WhatsApp send warning:', errText);
+    // Don't throw — log but don't block the receipt logging
+  }
+  return true;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOOKS — SEARCH STUDENT FOR COLLECTION
+// ═══════════════════════════════════════════════════════════════
+function searchStudentForCollection() {
+  const q = document.getElementById('collect-search').value.toLowerCase().trim();
+  const resultsEl = document.getElementById('collect-results');
+  if (!q || q.length < 2) { resultsEl.innerHTML = ''; return; }
+
+  // Only show students who have pending book records
+  const pendingIds = new Set(allBookRecords.filter(r => !r.collected).map(r => String(r.student_id)));
+  const matches = allStudents.filter(s =>
+    pendingIds.has(String(s.id)) &&
+    (s.name.toLowerCase().includes(q) || String(s.id).toLowerCase().includes(q))
+  ).slice(0, 8);
+
+  if (!matches.length) {
+    resultsEl.innerHTML = '<div style="padding:12px;font-size:12px;color:var(--text3);">No pending book records found for this student.</div>';
+    return;
+  }
+
+  resultsEl.innerHTML = matches.map(s => {
+    const recs = allBookRecords.filter(r => String(r.student_id) === String(s.id) && !r.collected);
+    return `
+      <div onclick="selectStudentForCollection('${s.id}')"
+        style="padding:12px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s;"
+        onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
+        <div style="font-size:13px;font-weight:600;color:var(--text);">${s.name}</div>
+        <div style="font-size:11px;color:var(--text3);">${s.id} · ${s.batch}</div>
+        <div style="margin-top:4px;display:flex;gap:6px;">
+          ${recs.map(r => `<span class="badge badge-amber">Part ${r.part}</span>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function selectStudentForCollection(studentId) {
+  const s = allStudents.find(st => String(st.id) === String(studentId));
+  if (!s) return;
+  const pendingRecs = allBookRecords.filter(r => String(r.student_id) === String(studentId) && !r.collected);
+  if (!pendingRecs.length) return;
+
+  document.getElementById('collect-student-id').value = studentId;
+  document.getElementById('collect-student-info').innerHTML = `
+    <div style="font-size:13px;font-weight:700;color:var(--text);">${s.name}</div>
+    <div style="font-size:11px;color:var(--text3);margin-top:2px;">${s.id} · ${s.batch} · ${s.phone || 'No phone'}</div>
+    <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
+      ${pendingRecs.map(r => `<span class="badge badge-amber">Part ${r.part} — logged ${fmtDate(r.ho_received_date)}</span>`).join('')}
+    </div>`;
+
+  // Populate part dropdown with only pending parts
+  const partSel = document.getElementById('collect-part');
+  partSel.innerHTML = pendingRecs.map(r =>
+    `<option value="${r.id}">Part ${r.part}${r.book_set ? ' — ' + r.book_set : ''}</option>`
+  ).join('');
+
+  document.getElementById('collect-book-record-id').value = pendingRecs[0].id;
+  document.getElementById('signature-card').style.display = 'block';
+
+  // Init signature canvas
+  initSignaturePad();
+  // Scroll to signature card
+  document.getElementById('signature-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOOKS — SIGNATURE PAD
+// ═══════════════════════════════════════════════════════════════
+function initSignaturePad() {
+  signatureCanvas = document.getElementById('signature-canvas');
+  signatureCtx   = signatureCanvas.getContext('2d');
+  clearSignature();
+  hasSignature = false;
+
+  // Set canvas resolution for crisp lines
+  const rect = signatureCanvas.getBoundingClientRect();
+  signatureCanvas.width  = rect.width  * window.devicePixelRatio;
+  signatureCanvas.height = rect.height * window.devicePixelRatio;
+  signatureCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  signatureCtx.strokeStyle = '#4F7CFF';
+  signatureCtx.lineWidth   = 2.5;
+  signatureCtx.lineCap     = 'round';
+  signatureCtx.lineJoin    = 'round';
+
+  // Mouse events
+  signatureCanvas.addEventListener('mousedown',  startDraw);
+  signatureCanvas.addEventListener('mousemove',  draw);
+  signatureCanvas.addEventListener('mouseup',    stopDraw);
+  signatureCanvas.addEventListener('mouseleave', stopDraw);
+
+  // Touch events for tablet
+  signatureCanvas.addEventListener('touchstart',  e => { e.preventDefault(); startDraw(e.touches[0]); }, { passive: false });
+  signatureCanvas.addEventListener('touchmove',   e => { e.preventDefault(); draw(e.touches[0]); },      { passive: false });
+  signatureCanvas.addEventListener('touchend',    e => { e.preventDefault(); stopDraw(); },              { passive: false });
+}
+
+function getPos(e) {
+  const rect = signatureCanvas.getBoundingClientRect();
+  return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+}
+
+function startDraw(e) {
+  isDrawing = true;
+  const p = getPos(e);
+  signatureCtx.beginPath();
+  signatureCtx.moveTo(p.x, p.y);
+}
+
+function draw(e) {
+  if (!isDrawing) return;
+  const p = getPos(e);
+  signatureCtx.lineTo(p.x, p.y);
+  signatureCtx.stroke();
+  hasSignature = true;
+}
+
+function stopDraw() { isDrawing = false; }
+
+function clearSignature() {
+  if (!signatureCtx) return;
+  signatureCtx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+  // Draw placeholder text
+  signatureCtx.fillStyle = 'rgba(85,92,110,0.4)';
+  signatureCtx.font = '13px Inter, sans-serif';
+  signatureCtx.textAlign = 'center';
+  signatureCtx.fillText('Student signs here', signatureCanvas.width / 2 / window.devicePixelRatio, 85);
+  hasSignature = false;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BOOKS — SUBMIT COLLECTION
+// ═══════════════════════════════════════════════════════════════
+async function submitCollection() {
+  const btn         = document.getElementById('collect-submit-btn');
+  const studentId   = document.getElementById('collect-student-id').value;
+  const recordId    = document.getElementById('collect-part').value; // selected record id
+  if (!studentId || !recordId) { alert('Please select a student and book part.'); return; }
+  if (!hasSignature) { alert('Please ask the student to sign before confirming.'); return; }
+
+  btn.disabled = true; btn.textContent = 'Saving...';
+  try {
+    // Get signature as base64 image
+    const signatureData = signatureCanvas.toDataURL('image/png');
+
+    await sbUpdate('book_inventory', '?id=eq.' + recordId, {
+      collected:      true,
+      collected_at:   new Date().toISOString(),
+      collected_by:   currentOps.name,
+      signature_data: signatureData,
+      status:         'collected',
+      updated_at:     new Date().toISOString()
+    });
+
+    // Update local cache
+    const rec = allBookRecords.find(r => r.id === parseInt(recordId));
+    if (rec) {
+      rec.collected    = true;
+      rec.collected_at = new Date().toISOString();
+      rec.collected_by = currentOps.name;
+      rec.status       = 'collected';
+    }
+
+    const student = allStudents.find(s => String(s.id) === String(studentId));
+    alert('✅ Collection confirmed for ' + (student?.name || studentId) + '!
+Timestamp: ' + new Date().toLocaleString('en-IN'));
+
+    // Reset
+    document.getElementById('collect-search').value = '';
+    document.getElementById('collect-results').innerHTML = '';
+    document.getElementById('signature-card').style.display = 'none';
+    clearSignature();
+
+  } catch(err) {
+    alert('❌ Error: ' + err.message);
+  }
+  btn.disabled = false; btn.textContent = '✅ Confirm Collection';
+}
+
+// ═══════════════════════════════════════════════════════════════
 // NAVIGATION & MODALS
 // ═══════════════════════════════════════════════════════════════
 function showPage(pageId, btnEl) {
@@ -1498,6 +2041,15 @@ function showPage(pageId, btnEl) {
   if (pageId === 'schedule') {
     if (!allSchedule.length) loadSchedule().then(() => renderScheduleTable());
     else renderScheduleTable();
+  }
+  if (pageId === 'books-dashboard') renderBooksDashboard();
+  if (pageId === 'books-log-ho') {
+    document.getElementById('ho-date').value = today();
+  }
+  if (pageId === 'books-collect') {
+    loadBookRecords();
+    document.getElementById('collect-results').innerHTML = '';
+    document.getElementById('signature-card').style.display = 'none';
   }
   if (pageId === 'exports') {
     const from = document.getElementById('exp-att-from');
