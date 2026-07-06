@@ -2010,8 +2010,7 @@ async function submitCollection() {
     }
 
     const student = allStudents.find(s => String(s.id) === String(studentId));
-    alert('✅ Collection confirmed for ' + (student?.name || studentId) + '!
-Timestamp: ' + new Date().toLocaleString('en-IN'));
+    alert('✅ Collection confirmed for ' + (student?.name || studentId) + '!\nTimestamp: ' + new Date().toLocaleString('en-IN'));
 
     // Reset
     document.getElementById('collect-search').value = '';
